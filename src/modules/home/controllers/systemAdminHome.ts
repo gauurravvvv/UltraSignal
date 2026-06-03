@@ -1,0 +1,68 @@
+/**
+ * systemAdminHome — returns summary counts for an organisation's dashboard.
+ *
+ * `totalAdmins` and `totalUsers` currently both query `User` without a role filter,
+ * so they return the same total count. This is a known limitation — splitting by role
+ * requires a role field query against the shared entity, which this controller does
+ * not currently do.
+ *
+ * The inner `Promise.all(...).catch` swallows count errors silently (counts default to
+ * undefined in response) so a failure in one counter does not 500 the whole endpoint.
+ * The org lookup check before the Promise.all still gates on org existence.
+ */
+import { Request, Response } from 'express';
+import { CODE } from '../../../../config/config';
+import {
+  GENERIC,
+  HOME as HOME_MSG,
+  ORGANISATION as ORGANISATION_MSG,
+} from '../../../shared/constants/response.messages';
+import { DatasourceS } from '../../../shared/db/entities/datasourceS.entity';
+import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { User } from '../../../shared/db/entities/user.entity';
+import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
+import Logger from '../../../shared/utility/logger/logger';
+import sendResponse from '../../../shared/utility/response';
+
+const systemAdminHome = async (req: Request, res: Response) => {
+  Logger.info(`System Admin Home Request`);
+
+  const id = res.locals.organisationId;
+  let response: any = {};
+
+  try {
+    const org: Organisation | null = await Organisation.findOne({
+      where: { id },
+      relations: ['config'],
+    });
+
+    if (!org) {
+      sendResponse(res, false, CODE.NOT_FOUND, ORGANISATION_MSG.NOT_FOUND);
+      return;
+    }
+    let totalDatabases = DatasourceS.count({ where: { organisationId: id } });
+    let totalAdmins = User.count({
+      where: { organisationId: id },
+    });
+    let totalUsers = User.count({
+      where: { organisationId: id },
+    });
+
+    await Promise.all([totalDatabases, totalAdmins, totalUsers])
+      .then(([databasesCount, adminsCount, usersCount]) => {
+        response.databasesCount = databasesCount;
+        response.adminsCount = adminsCount;
+        response.usersCount = usersCount;
+      })
+      .catch(error => {
+        Logger.error(`Error fetching home data: ${getErrorMessage(error)}`);
+      });
+
+    sendResponse(res, true, CODE.SUCCESS, HOME_MSG.FETCHED, response);
+  } catch (error) {
+    Logger.error(`Error in systemAdminHome: ${getErrorMessage(error)}`);
+    return sendResponse(res, false, CODE.SERVER_ERROR, GENERIC.SERVER_ERROR);
+  }
+};
+
+export default systemAdminHome;
