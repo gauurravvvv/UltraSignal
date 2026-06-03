@@ -1,7 +1,7 @@
 /**
  * DeleteRoleValidation — guards against deleting a role that is still in use.
  *
- * Default roles cannot be deleted because they are required for the org to function
+ * Default roles cannot be deleted because they are required for the client to function
  * (e.g., a base admin or user role that the system creates on onboarding).
  *
  * Active user and group assignments must be cleared first because deleting an
@@ -30,11 +30,11 @@ const DeleteRoleValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const { orgData } = res.locals;
+    const { clientData } = res.locals;
     const { id } = req.params;
 
     const role = await AppDataSource.getRepository(Role).findOne({
-      where: { id, organisationId: orgData.id },
+      where: { id, clientId: clientData.id },
     });
     if (!role) {
       return sendResponse(res, false, CODE.NOT_FOUND, ROLE_MSG.NOT_FOUND);
@@ -48,7 +48,7 @@ const DeleteRoleValidation = async (
       );
     }
 
-    // Per-org users carry roles via group membership only (no direct
+    // Per-client users carry roles via group membership only (no direct
     // `roleId` column on User). Count distinct users currently in any
     // group that references this role.
     const userCount: number = await AppDataSource
@@ -56,7 +56,7 @@ const DeleteRoleValidation = async (
       .createQueryBuilder('m')
       .innerJoin('m.group', 'g')
       .where('g.roleId = :id', { id })
-      .andWhere('g.organisationId = :orgId', { orgId: orgData.id })
+      .andWhere('g.clientId = :clientId', { clientId: clientData.id })
       .select('COUNT(DISTINCT m.userId)', 'count')
       .getRawOne()
       .then((r: { count: string } | undefined) => parseInt(r?.count ?? '0', 10));
@@ -72,7 +72,7 @@ const DeleteRoleValidation = async (
     // Block delete if assigned to any group
     const groupCount = await AppDataSource
       .getRepository(Group)
-      .count({ where: { roleId: id, organisationId: orgData.id } });
+      .count({ where: { roleId: id, clientId: clientData.id } });
     if (groupCount > 0) {
       return sendResponse(
         res,

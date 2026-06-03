@@ -1,11 +1,11 @@
 /**
  * ListUserValidation — validates pagination, filter, and multi-column sort
- * for the org-user list.
+ * for the client-user list.
  *
  * Sort + pagination follow the standard list contract — see src/utility/listSort.ts.
  * Org id is NOT accepted from the client — it is sourced from
- * `res.locals.orgData.id` (signed JWT). SanitizeOrgInputMiddleware
- * strips any inbound `orgId` / `organisationId` / `organisation`
+ * `res.locals.clientData.id` (signed JWT). SanitizeClientInputMiddleware
+ * strips any inbound `clientId` / `clientId` / `client`
  * keys before this validator runs. groupId is optional.
  */
 import { NextFunction, Request, Response } from 'express';

@@ -8,7 +8,7 @@
  * goes through `connectToSnowflake`, everything else through
  * `getDbConnection`. The key difference: this helper accepts a
  * PLAINTEXT password (the user just typed it into the form) and
- * skips `decryptForOrg`. The companion `openDatasourceConnection`
+ * skips `decryptForClient`. The companion `openDatasourceConnection`
  * stays the trusted decrypt-on-the-fly path for previously-saved
  * credentials.
  *

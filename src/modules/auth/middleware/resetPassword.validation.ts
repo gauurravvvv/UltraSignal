@@ -19,8 +19,8 @@ const ResetPasswordValidation = async (
     id: fields.id.required().messages({
       'any.required': 'User ID is required',
     }),
-    orgId: fields.id.required().messages({
-      'any.required': 'Organisation ID is required',
+    clientId: fields.id.required().messages({
+      'any.required': 'Client ID is required',
     }),
     otp: fields.otp.required(),
     password: fields.password.required(),

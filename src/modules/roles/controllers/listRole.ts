@@ -1,5 +1,5 @@
 /**
- * listRole — returns a paginated list of roles for an org with optional filters.
+ * listRole — returns a paginated list of roles for a client with optional filters.
  *
  * The filter parameter is a JSON string (not individual query params) to keep the
  * URL clean and allow arbitrary filter combinations without enumerating every
@@ -24,8 +24,8 @@ import { AppDataSource } from '../../../shared/db';
 const listRole = async (req: Request, res: Response) => {
   Logger.info('List Roles request');
 
-  const { orgData } = res.locals;
-  const orgId = orgData.id;
+  const { clientData } = res.locals;
+  const clientId = clientData.id;
   const {
     limit = MAX_ROW,
     page = DEFAULT_PAGE,
@@ -40,7 +40,7 @@ const listRole = async (req: Request, res: Response) => {
     const query = AppDataSource
       .getRepository(Role)
       .createQueryBuilder('role')
-      .where('role.organisationId = :orgId', { orgId });
+      .where('role.clientId = :clientId', { clientId });
 
     if (filter) {
       try {

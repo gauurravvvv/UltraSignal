@@ -2,7 +2,7 @@
  * updateRole — applies partial updates to a role using the pre-fetched entity.
  *
  * Default role guard runs in middleware (not here) — by the time this controller
- * runs, `res.locals.role` is guaranteed to be non-default and org-scoped.
+ * runs, `res.locals.role` is guaranteed to be non-default and client-scoped.
  */
 import { Request, Response } from 'express';
 import { CODE } from '../../../../config/config';

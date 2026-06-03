@@ -1,7 +1,8 @@
 /**
  * RefreshTokenValidation — validates POST /auth/refresh body.
- * Both fields are required: the opaque refresh token and the org name
+ * Both fields are required: the opaque refresh token and the client name
  * (needed to route to the correct DB when looking up the token).
+ * The client name is sent in the body as `client`.
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
@@ -19,9 +20,9 @@ const RefreshTokenValidation = async (
       'string.empty': 'Refresh token is required',
       'any.required': 'Refresh token is required',
     }),
-    organisation: Joi.string().trim().required().messages({
-      'string.empty': 'Organisation is required',
-      'any.required': 'Organisation is required',
+    client: Joi.string().trim().required().messages({
+      'string.empty': 'Client is required',
+      'any.required': 'Client is required',
     }),
   });
 

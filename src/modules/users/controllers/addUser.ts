@@ -1,5 +1,5 @@
 /**
- * addUser — creates an org user, atomically assigns group memberships, and sends
+ * addUser — creates a client user, atomically assigns group memberships, and sends
  * a setup-link email so the user can set their own password.
  *
  * Users never receive an initial password from this endpoint — the setup-token
@@ -13,7 +13,7 @@
  * user never lands in the DB without their intended group assignments.
  *
  * Email is fire-and-forget after the response is sent — a mail failure does not
- * roll back the DB write. The welcome email is decrypted from the org SMTP/SES
+ * roll back the DB write. The welcome email is decrypted from the client SMTP/SES
  * config at send time because credentials are stored encrypted at rest.
  */
 import { Request, Response } from 'express';
@@ -30,13 +30,13 @@ import {
 import { UserGroupMapping } from '../../../shared/db/entities/user-group-mapping.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import {
-  decryptForOrg,
-  encryptForOrg,
+  decryptForClient,
+  encryptForClient,
 } from '../../../shared/services/crypto.service';
 import { generateSetupToken } from '../../../shared/utility/generateSetupToken';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
-import { OrgEmailConfig } from '../../../shared/utility/mail';
+import { ClientEmailConfig } from '../../../shared/utility/mail';
 import welcomeEmailToUser from '../../../shared/utility/mail/welcomeEmailToUser';
 import sendResponse from '../../../shared/utility/response';
 import { AppDataSource } from '../../../shared/db';
@@ -53,7 +53,7 @@ const addUser = async (req: Request, res: Response) => {
     locale = 'en',
   } = req.body;
 
-  const { loggedInId, orgData } = res.locals;
+  const { loggedInId, clientData } = res.locals;
 
   try {
     const user = new User();
@@ -63,13 +63,13 @@ const addUser = async (req: Request, res: Response) => {
     user.email = email;
     user.username = username;
     user.status = STATUS.ACTIVE;
-    user.organisationName = orgData.name;
-    user.organisationId = orgData.id;
+    user.clientName = clientData.name;
+    user.clientId = clientData.id;
     user.createdBy = loggedInId;
     user.locale = locale;
 
     const setupToken = generateSetupToken();
-    user.setupToken = encryptForOrg(setupToken, orgData.config);
+    user.setupToken = encryptForClient(setupToken, clientData.config);
     user.setupTokenExpiresAt = new Date(
       Date.now() + SETUP_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
     );
@@ -92,27 +92,27 @@ const addUser = async (req: Request, res: Response) => {
 
     const fullName = `${firstName || ''} ${lastName || ''}`.trim();
 
-    const orgEmailConfig: OrgEmailConfig | undefined = orgData.config
+    const clientEmailConfig: ClientEmailConfig | undefined = clientData.config
       ?.emailProvider
       ? {
-          emailProvider: orgData.config.emailProvider,
-          smtpHost: orgData.config.smtpHost,
-          smtpPort: orgData.config.smtpPort,
-          smtpUser: orgData.config.smtpUser
-            ? decryptForOrg(orgData.config.smtpUser, orgData.config)
+          emailProvider: clientData.config.emailProvider,
+          smtpHost: clientData.config.smtpHost,
+          smtpPort: clientData.config.smtpPort,
+          smtpUser: clientData.config.smtpUser
+            ? decryptForClient(clientData.config.smtpUser, clientData.config)
             : null,
-          smtpPassword: orgData.config.smtpPassword
-            ? decryptForOrg(orgData.config.smtpPassword, orgData.config)
+          smtpPassword: clientData.config.smtpPassword
+            ? decryptForClient(clientData.config.smtpPassword, clientData.config)
             : null,
-          smtpFrom: orgData.config.smtpFrom,
-          sesRegion: orgData.config.sesRegion,
-          sesAccessKeyId: orgData.config.sesAccessKeyId
-            ? decryptForOrg(orgData.config.sesAccessKeyId, orgData.config)
+          smtpFrom: clientData.config.smtpFrom,
+          sesRegion: clientData.config.sesRegion,
+          sesAccessKeyId: clientData.config.sesAccessKeyId
+            ? decryptForClient(clientData.config.sesAccessKeyId, clientData.config)
             : null,
-          sesSecretAccessKey: orgData.config.sesSecretAccessKey
-            ? decryptForOrg(orgData.config.sesSecretAccessKey, orgData.config)
+          sesSecretAccessKey: clientData.config.sesSecretAccessKey
+            ? decryptForClient(clientData.config.sesSecretAccessKey, clientData.config)
             : null,
-          sesFrom: orgData.config.sesFrom,
+          sesFrom: clientData.config.sesFrom,
         }
       : undefined;
 
@@ -120,18 +120,18 @@ const addUser = async (req: Request, res: Response) => {
       email,
       fullName,
       username,
-      orgData.name,
+      clientData.name,
       user.id,
-      orgData.id,
+      clientData.id,
       setupToken,
-      orgEmailConfig,
+      clientEmailConfig,
       locale,
     );
 
     sendResponse(res, true, CODE.SUCCESS, USER_MSG.CREATED, user);
   } catch (error) {
     Logger.error(
-      `Error while creating organisation user: ${getErrorMessage(error)}`,
+      `Error while creating client user: ${getErrorMessage(error)}`,
     );
     return sendResponse(res, false, CODE.SERVER_ERROR, GENERIC.SERVER_ERROR);
   }

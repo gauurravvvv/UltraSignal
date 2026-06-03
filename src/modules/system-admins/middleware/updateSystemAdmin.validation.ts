@@ -10,9 +10,9 @@
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
 import { Not } from 'typeorm';
-import { SYSTEM_ORGANISATION, CODE, IS_DEFAULT } from '../../../../config/config';
+import { SYSTEM_CLIENT, CODE, IS_DEFAULT } from '../../../../config/config';
 import {
-  ORGANISATION,
+  CLIENT,
   SYSTEM_ADMIN as SYSTEM_ADMIN_MSG } from '../../../shared/constants/response.messages';
 import { User } from '../../../shared/db/entities/user.entity';
 import { fields } from '../../../shared/utility/joi.schemas';
@@ -45,7 +45,7 @@ const UpdateSystemAdminValidation = async (
   // Check if super admin exists
   try {
     const systemAdmin = await User.findOne({
-      where: { id, organisationName: SYSTEM_ORGANISATION.NAME } });
+      where: { id, clientName: SYSTEM_CLIENT.NAME } });
 
     if (!systemAdmin) {
       return sendResponse(
@@ -57,7 +57,7 @@ const UpdateSystemAdminValidation = async (
     }
 
     // Default (master_admin / bootstrap) system admin is fully immutable
-    // through this endpoint. Mirrors the org-user invariant in
+    // through this endpoint. Mirrors the client-user invariant in
     // updateUser.validation.ts.
     if (systemAdmin.isDefault === IS_DEFAULT.YES) {
       return sendResponse(
@@ -72,7 +72,7 @@ const UpdateSystemAdminValidation = async (
 
     // Duplicate checks (excluding current record)
     const isSystemAdminExistsWithUsername = await User.findOne({
-      where: { id: Not(id), username, organisationName: SYSTEM_ORGANISATION.NAME } });
+      where: { id: Not(id), username, clientName: SYSTEM_CLIENT.NAME } });
 
     if (isSystemAdminExistsWithUsername) {
       return sendResponse(
@@ -84,7 +84,7 @@ const UpdateSystemAdminValidation = async (
     }
 
     const isSystemAdminExistsWithEmail = await User.findOne({
-      where: { id: Not(id), email, organisationName: SYSTEM_ORGANISATION.NAME } });
+      where: { id: Not(id), email, clientName: SYSTEM_CLIENT.NAME } });
 
     if (isSystemAdminExistsWithEmail) {
       return sendResponse(
@@ -95,7 +95,7 @@ const UpdateSystemAdminValidation = async (
       );
     }
   } catch (err) {
-    return sendResponse(res, false, CODE.BAD_REQUEST, ORGANISATION.INVALID_ID);
+    return sendResponse(res, false, CODE.BAD_REQUEST, CLIENT.INVALID_ID);
   }
 
   next();

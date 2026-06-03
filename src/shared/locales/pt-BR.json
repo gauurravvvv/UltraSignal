@@ -37,7 +37,7 @@
     "account_locked": "Conta bloqueada. Por favor, entre em contato com o administrador",
     "role_inactive": "Sua função atribuída está inativa. Por favor, entre em contato com o administrador"
   },
-  "org": {
+  "client": {
     "created": "Organização criada com sucesso",
     "updated": "Organização atualizada com sucesso",
     "deleted": "Organização excluída com sucesso",
@@ -67,7 +67,7 @@
     "account_not_locked": "Esta conta não está bloqueada",
     "cannot_modify_default": "O administrador do sistema padrão não pode ser modificado"
   },
-  "org_admin": {
+  "client_admin": {
     "created": "Administrador criado com sucesso",
     "updated": "Administrador atualizado com sucesso",
     "deleted": "Administrador excluído com sucesso",
@@ -283,15 +283,15 @@
     "export_failed": "Falha ao exportar logs de auditoria",
     "no_logs_found": "Nenhum log de auditoria encontrado para os critérios especificados",
     "invalid_export_format": "Formato de exportação inválido. Formatos suportados: excel, pdf",
-    "org_required_for_export": "Por favor, selecione uma organização para exportar",
-    "no_logs_for_org": "Nenhum log de auditoria disponível para esta organização"
+    "client_required_for_export": "Por favor, selecione uma organização para exportar",
+    "no_logs_for_client": "Nenhum log de auditoria disponível para esta organização"
   },
   "login_activity": {
     "list_fetched": "Atividade de login obtida com sucesso",
     "fetch_failed": "Falha ao obter atividade de login",
     "export_failed": "Falha ao exportar atividade de login",
     "no_activity_found": "Nenhuma atividade de login encontrada para os critérios especificados",
-    "no_activity_for_org": "Nenhuma atividade de login disponível para esta organização"
+    "no_activity_for_client": "Nenhuma atividade de login disponível para esta organização"
   },
   "query": {
     "executed": "Consulta executada com sucesso",
@@ -347,7 +347,7 @@
     "welcome_subject": "Bem-vindo ao {{organisation}}",
     "welcome_greeting": "Bem-vindo, {{fullName}}!",
     "welcome_body": "Sua conta foi criada em <strong>{{organisation}}</strong>. Clique no botão abaixo para definir sua senha e ativar sua conta.",
-    "label_organisation": "Organização",
+    "label_client": "Organização",
     "label_username": "Nome de usuário",
     "set_password_btn": "Definir sua senha",
     "expiry_notice": "Este link expirará em {{setupTokenExpiryHours}} horas. Se você não esperava este e-mail, entre em contato com o seu administrador.",

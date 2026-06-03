@@ -20,7 +20,7 @@ import {
   USER as USER_MSG,
 } from '../../../shared/constants/response.messages';
 import { User } from '../../../shared/db/entities/user.entity';
-import { encryptForOrg } from '../../../shared/services/crypto.service';
+import { encryptForClient } from '../../../shared/services/crypto.service';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
 import {
@@ -34,15 +34,15 @@ const updateOrgUserPassword = async (req: Request, res: Response) => {
   Logger.info(`Update user password request`);
 
   const { newPassword } = req.body;
-  const { loggedInId, orgData, orgUser } = res.locals;
+  const { loggedInId, clientData, orgUser } = res.locals;
 
   try {
     const isReused = await isPasswordReusedShared(
       AppDataSource.manager,
       orgUser.id,
       newPassword,
-      orgData.config.encryptionAlgorithm,
-      orgData.config.pepperKey,
+      clientData.config.encryptionAlgorithm,
+      clientData.config.pepperKey,
       orgUser.password,
     );
     if (isReused) {
@@ -54,7 +54,7 @@ const updateOrgUserPassword = async (req: Request, res: Response) => {
       );
     }
 
-    orgUser.password = encryptForOrg(newPassword, orgData.config);
+    orgUser.password = encryptForClient(newPassword, clientData.config);
     orgUser.updatedBy = loggedInId;
     orgUser.refreshToken = null;
     orgUser.refreshTokenExpiresAt = null;

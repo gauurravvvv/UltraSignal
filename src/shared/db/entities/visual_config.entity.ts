@@ -13,7 +13,7 @@ import { Visual } from './visual.entity';
 @Entity()
 @Index(['visualId'])
 @Index(['analysisId'])
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class VisualConfig {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -31,10 +31,10 @@ export class VisualConfig {
   config: any;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

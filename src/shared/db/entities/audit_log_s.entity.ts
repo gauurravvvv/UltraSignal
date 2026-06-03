@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 @Entity('audit_log')
-@Index(['organisationId', 'module'])
+@Index(['clientId', 'module'])
 @Index(['userId'])
 @Index(['createdOn'])
 @Index(['action'])
@@ -20,7 +20,7 @@ export class AuditLogS extends BaseEntity {
   userId: string | null;
 
   @Column({ type: 'varchar', nullable: true })
-  organisationId: string | null;
+  clientId: string | null;
 
   @Column({ nullable: false })
   module: string;

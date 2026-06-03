@@ -23,7 +23,7 @@ import { Dashboard } from './dashboard.entity';
  */
 @Entity()
 @Index(['dashboardId'])
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class DashboardFilter {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -63,10 +63,10 @@ export class DashboardFilter {
   sequence: number;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

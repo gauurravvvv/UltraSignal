@@ -54,7 +54,7 @@ router.get(
 
 // Bulk create: validate-then-commit two-step flow.
 // Multer (inside the validate middleware) must run BEFORE
-// VerifyResource/Database so the orgId field from the multipart body
+// VerifyResource/Database so the clientId field from the multipart body
 // is parsed first.
 router.post(
   '/bulk/validate',

@@ -1,6 +1,6 @@
 /**
  * ListGroupValidation — validates pagination, filter, and multi-column sort for
- * the group list, plus enforces the required orgId scope.
+ * the group list, plus enforces the required clientId scope.
  *
  * Sort + pagination follow the standard list contract — see src/utility/listSort.ts.
  */

@@ -8,7 +8,7 @@
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
-import { SYSTEM_ORGANISATION, CODE } from '../../../../config/config';
+import { SYSTEM_CLIENT, CODE } from '../../../../config/config';
 import {
   GENERIC,
   SYSTEM_ADMIN as SYSTEM_ADMIN_MSG } from '../../../shared/constants/response.messages';
@@ -42,7 +42,7 @@ const AddSystemAdminValidation = async (
 
     // Duplicate checks
     const isAdminExistsByEmail = await User.findOne({
-      where: [{ email, organisationName: SYSTEM_ORGANISATION.NAME }] });
+      where: [{ email, clientName: SYSTEM_CLIENT.NAME }] });
 
     if (isAdminExistsByEmail) {
       return sendResponse(
@@ -54,7 +54,7 @@ const AddSystemAdminValidation = async (
     }
 
     const isAdminExistsByUsername = await User.findOne({
-      where: [{ username, organisationName: SYSTEM_ORGANISATION.NAME }] });
+      where: [{ username, clientName: SYSTEM_CLIENT.NAME }] });
 
     if (isAdminExistsByUsername) {
       return sendResponse(

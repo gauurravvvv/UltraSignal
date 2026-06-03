@@ -37,7 +37,7 @@
     "account_locked": "Compte verrouillé. Veuillez contacter votre administrateur",
     "role_inactive": "Le rôle qui vous a été attribué est inactif. Veuillez contacter votre administrateur"
   },
-  "org": {
+  "client": {
     "created": "Organisation créée avec succès",
     "updated": "Organisation mise à jour avec succès",
     "deleted": "Organisation supprimée avec succès",
@@ -67,7 +67,7 @@
     "account_not_locked": "Ce compte n'est pas verrouillé",
     "cannot_modify_default": "L'administrateur système par défaut ne peut pas être modifié"
   },
-  "org_admin": {
+  "client_admin": {
     "created": "Administrateur créé avec succès",
     "updated": "Administrateur mis à jour avec succès",
     "deleted": "Administrateur supprimé avec succès",
@@ -283,15 +283,15 @@
     "export_failed": "Échec de l'exportation des journaux d'audit",
     "no_logs_found": "Aucun journal d'audit trouvé pour les critères spécifiés",
     "invalid_export_format": "Format d'exportation invalide. Formats pris en charge : excel, pdf",
-    "org_required_for_export": "Veuillez sélectionner une organisation pour exporter",
-    "no_logs_for_org": "Aucun journal d'audit disponible pour cette organisation"
+    "client_required_for_export": "Veuillez sélectionner une organisation pour exporter",
+    "no_logs_for_client": "Aucun journal d'audit disponible pour cette organisation"
   },
   "login_activity": {
     "list_fetched": "Activité de connexion récupérée avec succès",
     "fetch_failed": "Échec de la récupération de l'activité de connexion",
     "export_failed": "Échec de l'exportation de l'activité de connexion",
     "no_activity_found": "Aucune activité de connexion trouvée pour les critères spécifiés",
-    "no_activity_for_org": "Aucune activité de connexion disponible pour cette organisation"
+    "no_activity_for_client": "Aucune activité de connexion disponible pour cette organisation"
   },
   "query": {
     "executed": "Requête exécutée avec succès",
@@ -347,7 +347,7 @@
     "welcome_subject": "Bienvenue dans {{organisation}}",
     "welcome_greeting": "Bienvenue, {{fullName}} !",
     "welcome_body": "Votre compte a été créé sur <strong>{{organisation}}</strong>. Cliquez sur le bouton ci-dessous pour définir votre mot de passe et activer votre compte.",
-    "label_organisation": "Organisation",
+    "label_client": "Organisation",
     "label_username": "Nom d'utilisateur",
     "set_password_btn": "Définir votre mot de passe",
     "expiry_notice": "Ce lien expirera dans {{setupTokenExpiryHours}} heures. Si vous n'attendiez pas cet e-mail, veuillez contacter votre administrateur.",

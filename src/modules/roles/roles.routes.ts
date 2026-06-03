@@ -47,7 +47,7 @@ router.get(
 );
 
 // /permissions registered BEFORE /:id so Express doesn't match
-// 'permissions' as a literal orgId value.
+// 'permissions' as a literal clientId value.
 router.get(
   '/permissions',
   AuthMiddleware,

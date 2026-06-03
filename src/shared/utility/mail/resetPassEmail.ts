@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
-import sendEmail, { OrgEmailConfig } from '.';
+import sendEmail, { ClientEmailConfig } from '.';
 import {
   EMAIL_CONFIG,
   FE_URL,
@@ -14,11 +14,11 @@ const resetPassEmail = async (
   emailTo: string,
   otp: string,
   userId: number | string,
-  orgId: number | string,
-  orgEmailConfig?: OrgEmailConfig,
+  clientId: number | string,
+  clientEmailConfig?: ClientEmailConfig,
   locale: string = 'en',
   requestContext?: RequestContext,
-  organisationName?: string,
+  clientName?: string,
 ): Promise<boolean> => {
   const filePath = resolveEmailTemplate('forgot-password.html');
   const source = fs.readFileSync(filePath, 'utf-8').toString();
@@ -30,9 +30,9 @@ const resetPassEmail = async (
 
   const replacements = {
     OTP: otp,
-    RESET_URL: `${FE_URL}/reset-password?id=${userId}&orgId=${orgId}&lang=${locale}`,
+    RESET_URL: `${FE_URL}/reset-password?id=${userId}&clientId=${clientId}&lang=${locale}`,
     year: new Date().getFullYear(),
-    senderName: organisationName || 'UltraSignal',
+    senderName: clientName || 'UltraSignal',
     subject,
     preheader: subject,
     heading: t('email.reset_otp_heading', locale),
@@ -66,8 +66,8 @@ const resetPassEmail = async (
   };
 
   const htmlToSend = template(replacements);
-  return sendEmail(emailTo, subject, htmlToSend, orgEmailConfig, {
-    senderName: organisationName || undefined,
+  return sendEmail(emailTo, subject, htmlToSend, clientEmailConfig, {
+    senderName: clientName || undefined,
     replyTo: supportEmail || undefined,
   });
 };

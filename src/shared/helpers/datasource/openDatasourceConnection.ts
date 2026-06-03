@@ -12,7 +12,7 @@
  *   Before this helper, every external-datasource call site (~25
  *   places across modules/datasources, datasets, dashboards, analyses,
  *   analysis-filters, prompts, queries) did the same dance: read the
- *   stored encrypted password, decryptForOrg, hand off to
+ *   stored encrypted password, decryptForClient, hand off to
  *   getDbConnection. None of them branched on dbType — they assumed
  *   TypeORM. With Snowflake added, every one of those sites would
  *   need its own if/else to route to the right helper. This wrapper
@@ -40,7 +40,7 @@ import {
   DB_TYPES,
   IS_MASTER_DB,
 } from '../../../../config/config';
-import { decryptForOrg } from '../../services/crypto.service';
+import { decryptForClient } from '../../services/crypto.service';
 import { getDbConnection, SupportedDbType } from './getDbConnection';
 import { connectToSnowflake } from './snowflakeConnection';
 
@@ -62,15 +62,15 @@ export interface DatasourceQueryConnection {
 }
 
 /**
- * The org-config shape required for password decryption. Kept minimal
- * so call sites can pass `orgData.config` straight through without
+ * The client-config shape required for password decryption. Kept minimal
+ * so call sites can pass `clientData.config` straight through without
  * worrying about the encryption-internal shape.
  */
 type OrgConfigShape = { encryptedDek?: string | null } & Record<string, any>;
 
 /**
  * Structural type covering both DatasourceConfigS (user-created
- * external datasource) and DatabaseConfig (an org's master DB record).
+ * external datasource) and DatabaseConfig (a client's master DB record).
  * Both expose the same connection fields, so a single helper can take
  * either. Snowflake-specific fields (account/warehouse/role/schemaName)
  * are optional and only consulted when dbType === 'snowflake'.
@@ -90,11 +90,11 @@ export interface DatasourceConfigLike {
 
 export const openDatasourceConnection = async (
   config: DatasourceConfigLike,
-  orgConfig: OrgConfigShape,
+  clientConfig: OrgConfigShape,
 ): Promise<DatasourceQueryConnection | null> => {
   // Password is decrypted here once. Caller never sees the plaintext —
   // that responsibility moves out of every consumer.
-  const password = decryptForOrg(config.password, orgConfig);
+  const password = decryptForClient(config.password, clientConfig);
 
   if (config.dbType === DB_TYPES.SNOWFLAKE) {
     // Snowflake path. The helper handles its own connection lifecycle;

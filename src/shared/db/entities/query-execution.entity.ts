@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-@Index(['organisationId', 'userId'])
+@Index(['clientId', 'userId'])
 @Index(['datasourceId'])
 @Index(['createdOn'])
 export class QueryExecution {
@@ -19,7 +19,7 @@ export class QueryExecution {
   userId: string;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
   datasourceId: string;

@@ -1,36 +1,36 @@
 /**
- * migrateOrgCrypto — converts an organisation from the legacy
+ * migrateClientCrypto — converts a client from the legacy
  * pepper-based scheme to envelope encryption.
  *
  * Legacy scheme:
- *   - Per-org `pepperKey` (admin-typed string) + `encryptionAlgorithm`
- *     stored on OrganisationConfig.
+ *   - Per-client `pepperKey` (admin-typed string) + `encryptionAlgorithm`
+ *     stored on ClientConfig.
  *   - SHA-256(pepper) was used as the AES key.
  *   - Inner secrets stored as `<iv>:<ct>` (CBC) or `<iv>:<tag>:<ct>` (GCM).
  *
  * New scheme:
- *   - Per-org 32-byte random DEK, wrapped under the platform master
+ *   - Per-client 32-byte random DEK, wrapped under the platform master
  *     key, stored as `encryptedDek` (v1:iv:tag:ct).
  *   - Secrets stored as `v1:iv:tag:ct` under the DEK.
  *
  * Migration steps (all in one transaction):
  *   1. Generate a new DEK and wrap it.
  *   2. Decrypt every legacy secret with the old pepper scheme.
- *   3. Re-encrypt each secret with `encryptForOrg` under the new DEK.
+ *   3. Re-encrypt each secret with `encryptForClient` under the new DEK.
  *   4. NULL out `pepperKey` and `encryptionAlgorithm`.
  *
- * Idempotency: if `encryptedDek` is already set, we treat the org as
+ * Idempotency: if `encryptedDek` is already set, we treat the client as
  * already migrated and do nothing. Safe to call on every request.
  *
  * Failure mode: any error rolls back the transaction. Legacy ciphertext
- * stays in place; next call retries. We never leave the org in a half-
+ * stays in place; next call retries. We never leave the client in a half-
  * migrated state.
  */
 import { EntityManager } from 'typeorm';
 import { AppDataSource } from '../../db';
-import { Organisation } from '../../db/entities/organisation.entity';
+import { Client } from '../../db/entities/client.entity';
 import {
-  encryptForOrg,
+  encryptForClient,
   generateDek,
   isV1Ciphertext,
   wrapDek,
@@ -58,96 +58,96 @@ function legacyDecryptIfNeeded(
 }
 
 /**
- * Migrate an org's crypto. Idempotent. Returns true if a migration
- * actually ran, false if the org was already on the new scheme.
+ * Migrate an client's crypto. Idempotent. Returns true if a migration
+ * actually ran, false if the client was already on the new scheme.
  */
-export async function migrateOrgCryptoIfNeeded(
-  orgId: string,
+export async function migrateClientCryptoIfNeeded(
+  clientId: string,
 ): Promise<boolean> {
   return AppDataSource.transaction(async (manager: EntityManager) => {
-    const org = await manager.getRepository(Organisation).findOne({
-      where: { id: orgId },
+    const client = await manager.getRepository(Client).findOne({
+      where: { id: clientId },
       relations: ['config'],
     });
-    if (!org) {
-      throw new Error(`migrateOrgCryptoIfNeeded: org ${orgId} not found`);
+    if (!client) {
+      throw new Error(`migrateClientCryptoIfNeeded: client ${clientId} not found`);
     }
-    if (org.config.encryptedDek) {
+    if (client.config.encryptedDek) {
       return false;
     }
-    if (!org.config.pepperKey || !org.config.encryptionAlgorithm) {
+    if (!client.config.pepperKey || !client.config.encryptionAlgorithm) {
       const dek = generateDek();
       try {
-        org.config.encryptedDek = wrapDek(dek);
+        client.config.encryptedDek = wrapDek(dek);
       } finally {
         dek.fill(0);
       }
-      await manager.save(org.config);
+      await manager.save(client.config);
       Logger.warn(
-        `Org ${orgId} had no encryptedDek and no legacy pepper. ` +
+        `Org ${clientId} had no encryptedDek and no legacy pepper. ` +
           'Stamped a fresh DEK. Any existing encrypted secrets are now unreadable.',
       );
       return true;
     }
 
-    const legacyAlg = org.config.encryptionAlgorithm;
-    const legacyPepper = org.config.pepperKey;
+    const legacyAlg = client.config.encryptionAlgorithm;
+    const legacyPepper = client.config.pepperKey;
 
     const decryptedSmtpUser = legacyDecryptIfNeeded(
-      org.config.smtpUser,
+      client.config.smtpUser,
       legacyAlg,
       legacyPepper,
     );
     const decryptedSmtpPassword = legacyDecryptIfNeeded(
-      org.config.smtpPassword,
+      client.config.smtpPassword,
       legacyAlg,
       legacyPepper,
     );
     const decryptedSesAccessKey = legacyDecryptIfNeeded(
-      org.config.sesAccessKeyId,
+      client.config.sesAccessKeyId,
       legacyAlg,
       legacyPepper,
     );
     const decryptedSesSecret = legacyDecryptIfNeeded(
-      org.config.sesSecretAccessKey,
+      client.config.sesSecretAccessKey,
       legacyAlg,
       legacyPepper,
     );
 
     const dek = generateDek();
     try {
-      org.config.encryptedDek = wrapDek(dek);
+      client.config.encryptedDek = wrapDek(dek);
     } finally {
       dek.fill(0);
     }
 
     if (decryptedSmtpUser !== null) {
-      org.config.smtpUser = encryptForOrg(decryptedSmtpUser, org.config);
+      client.config.smtpUser = encryptForClient(decryptedSmtpUser, client.config);
     }
     if (decryptedSmtpPassword !== null) {
-      org.config.smtpPassword = encryptForOrg(
+      client.config.smtpPassword = encryptForClient(
         decryptedSmtpPassword,
-        org.config,
+        client.config,
       );
     }
     if (decryptedSesAccessKey !== null) {
-      org.config.sesAccessKeyId = encryptForOrg(
+      client.config.sesAccessKeyId = encryptForClient(
         decryptedSesAccessKey,
-        org.config,
+        client.config,
       );
     }
     if (decryptedSesSecret !== null) {
-      org.config.sesSecretAccessKey = encryptForOrg(
+      client.config.sesSecretAccessKey = encryptForClient(
         decryptedSesSecret,
-        org.config,
+        client.config,
       );
     }
 
-    org.config.pepperKey = null;
-    org.config.encryptionAlgorithm = null;
-    await manager.save(org.config);
+    client.config.pepperKey = null;
+    client.config.encryptionAlgorithm = null;
+    await manager.save(client.config);
 
-    Logger.info(`Migrated org ${orgId} to envelope encryption`);
+    Logger.info(`Migrated client ${clientId} to envelope encryption`);
     return true;
   });
 }

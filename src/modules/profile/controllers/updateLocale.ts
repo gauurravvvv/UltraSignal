@@ -2,8 +2,8 @@
  * updateLocale — updates the UI locale preference for the logged-in user.
  *
  * Branches on role for the same reason as `changePassword` and `getProfile`: system
- * admins are stored in the master DB while org users are in the per-org shared DB.
- * The locale field is user-scoped so no org-level config or encryption is needed.
+ * admins are stored in the master DB while client users are in the per-client shared DB.
+ * The locale field is user-scoped so no client-level config or encryption is needed.
  */
 import { Request, Response } from 'express';
 import { CODE, ROLES } from '../../../../config/config';

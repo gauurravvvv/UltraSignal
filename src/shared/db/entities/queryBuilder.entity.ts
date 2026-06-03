@@ -15,7 +15,7 @@ import { DatasourceS } from './datasourceS.entity';
 import { QueryBuilderPrompts } from './queryBuilderPrompts.entity';
 
 @Entity()
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class QueryBuilder {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,10 +27,10 @@ export class QueryBuilder {
   description: string;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

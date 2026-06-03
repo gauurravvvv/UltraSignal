@@ -14,7 +14,7 @@ import { NextFunction, Request, Response } from 'express';
 import { CODE, VALIDATION_MESSAGES } from '../../../../config/config';
 import {
   GROUP,
-  ORGANISATION,
+  CLIENT,
 } from '../../../shared/constants/response.messages';
 import { Group } from '../../../shared/db/entities/group.entity';
 import { Role } from '../../../shared/db/entities/role.entity';
@@ -26,10 +26,10 @@ const GetGroupValidation = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { orgData } = res.locals;
+  const { clientData } = res.locals;
 
   const { id } = req.params;
-  const orgId = orgData?.id as string;
+  const clientId = clientData?.id as string;
 
   if (!id) {
     return sendResponse(
@@ -61,7 +61,7 @@ const GetGroupValidation = async (
         'datasource.deletedOn IS NULL',
       )
       .where('group.id = :id', { id })
-      .andWhere('group.organisationId = :orgId', { orgId })
+      .andWhere('group.clientId = :clientId', { clientId })
       .getOne();
 
     if (!group) {
@@ -77,7 +77,7 @@ const GetGroupValidation = async (
 
     res.locals.group = group;
   } catch (err) {
-    return sendResponse(res, false, CODE.BAD_REQUEST, ORGANISATION.INVALID_ID);
+    return sendResponse(res, false, CODE.BAD_REQUEST, CLIENT.INVALID_ID);
   }
 
   next();

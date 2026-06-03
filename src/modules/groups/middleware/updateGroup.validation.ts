@@ -13,7 +13,7 @@
  *      never in any non-default group. Concretely:
  *        - If the request targets the default group, the default admin
  *          MUST be in the incoming `users[]`. Removing them would orphan
- *          their only Administrator binding and brick the org.
+ *          their only Administrator binding and brick the client.
  *        - If the request targets a non-default group, the default admin
  *          MUST NOT be in `users[]`. Scattering them across custom groups
  *          creates cleanup churn if those groups are later deleted.
@@ -24,7 +24,7 @@
  *      in-place edit.
  *
  * User membership validation uses the same count-mismatch guard as addGroup
- * to prevent cross-org user probing.
+ * to prevent cross-client user probing.
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
@@ -62,8 +62,8 @@ const UpdateGroupValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const { orgData } = res.locals;
-    const orgId = orgData.id;
+    const { clientData } = res.locals;
+    const clientId = clientData.id;
 
     const { error, value } = validateSchema(schema, req.body);
     if (error) {
@@ -73,11 +73,11 @@ const UpdateGroupValidation = async (
 
     const { id } = value;
 
-    // Check if group exists. `orgId` is sourced from res.locals (set
+    // Check if group exists. `clientId` is sourced from res.locals (set
     // by AuthMiddleware via the JWT and VerifyResourceMiddleware) —
-    // never from req.body, which SanitizeOrgInputMiddleware strips.
+    // never from req.body, which SanitizeClientInputMiddleware strips.
     const group = await AppDataSource.getRepository(Group).findOne({
-      where: { id, organisationId: orgId },
+      where: { id, clientId: clientId },
     });
 
     if (!group) {
@@ -121,7 +121,7 @@ const UpdateGroupValidation = async (
           where: {
             id: Not(id),
             name: value.name,
-            organisationId: orgId,
+            clientId: clientId,
           },
         });
 
@@ -137,12 +137,12 @@ const UpdateGroupValidation = async (
 
     // Validate user membership rules.
     //
-    //   - All listed users must belong to this org (count-mismatch
+    //   - All listed users must belong to this client (count-mismatch
     //     guard — same as addGroup).
     //   - Default admin is pinned to the default group:
     //       * In a default group, the default admin MUST appear in
     //         users[]; removing them would orphan the only
-    //         Administrator binding the org has.
+    //         Administrator binding the client has.
     //       * In any non-default group, the default admin MUST NOT
     //         appear in users[].
     if (value.users?.length || group.isDefault === IS_DEFAULT.YES) {
@@ -150,7 +150,7 @@ const UpdateGroupValidation = async (
         ? await AppDataSource.getRepository(User).find({
             where: {
               id: In(value.users),
-              organisationId: orgId,
+              clientId: clientId,
             },
             select: ['id', 'isDefault'],
           })
@@ -161,7 +161,7 @@ const UpdateGroupValidation = async (
           res,
           false,
           CODE.BAD_REQUEST,
-          'One or more users not found in this organisation',
+          'One or more users not found in this client',
         );
       }
 
@@ -171,13 +171,13 @@ const UpdateGroupValidation = async (
 
       if (group.isDefault === IS_DEFAULT.YES) {
         // Default group → default admin must remain a member. Look up
-        // the org's default user(s) (typically one) and check that
+        // the client's default user(s) (typically one) and check that
         // every one is present in the incoming payload.
         const defaultUsers = await AppDataSource
           .getRepository(User)
           .find({
             where: {
-              organisationId: orgId,
+              clientId: clientId,
               isDefault: IS_DEFAULT.YES,
             },
             select: ['id'],

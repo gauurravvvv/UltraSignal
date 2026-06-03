@@ -12,7 +12,7 @@ import { VisualConfig } from './visual_config.entity';
 
 @Entity()
 @Index(['analysisId'])
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class Visual {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -33,10 +33,10 @@ export class Visual {
   yRatio: string;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

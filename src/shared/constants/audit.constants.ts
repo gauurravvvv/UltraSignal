@@ -1,8 +1,8 @@
 export const AUDIT_MODULES = {
   AUTH: 'auth',
-  ORGANISATION: 'organisation',
+  CLIENT: 'client',
   SYSTEM_ADMIN: 'system-admin',
-  ORG_ADMIN: 'org-admin',
+  CLIENT_ADMIN: 'client-admin',
   USER: 'user',
   DATASOURCE: 'datasource',
   GROUP: 'group',
@@ -61,7 +61,7 @@ export const LOGIN_EVENTS = {
 
 export const LOGIN_FAILURE_REASONS = {
   INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
-  ORG_NOT_FOUND: 'ORG_NOT_FOUND',
+  CLIENT_NOT_FOUND: 'CLIENT_NOT_FOUND',
   NO_DB_ACCESS: 'NO_DB_ACCESS',
   ACCOUNT_INACTIVE: 'ACCOUNT_INACTIVE',
   PASSWORD_NOT_SET: 'PASSWORD_NOT_SET',

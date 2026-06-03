@@ -1,8 +1,8 @@
 /**
  * changePassword — updates the logged-in user's password with reuse prevention.
  *
- * All users (system admin + org users) live in the single AppDataSource and use
- * the org-DEK encryption scheme. `refreshToken` is cleared on password change to
+ * All users (system admin + client users) live in the single AppDataSource and use
+ * the client-DEK encryption scheme. `refreshToken` is cleared on password change to
  * invalidate all existing sessions. Password history is enforced in a transaction
  * alongside the save so a failure rolls back the password change.
  */
@@ -14,15 +14,15 @@ import {
   GENERIC,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import {
-  decryptForOrg,
-  encryptForOrg,
+  decryptForClient,
+  encryptForClient,
 } from '../../../shared/services/crypto.service';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
-import { OrgEmailConfig } from '../../../shared/utility/mail';
+import { ClientEmailConfig } from '../../../shared/utility/mail';
 import passwordChangedSuccessEmail from '../../../shared/utility/mail/passwordChangedSuccessEmail';
 import { buildRequestContext } from '../../../shared/utility/mail/requestContext';
 import {
@@ -35,20 +35,20 @@ const changePassword = async (req: Request, res: Response) => {
   Logger.info('Change password from profile request');
 
   const { newPassword } = req.body;
-  const { loggedInId, organisationId } = res.locals;
+  const { loggedInId, clientId } = res.locals;
 
   try {
-    const org = await Organisation.findOne({
-      where: { id: organisationId },
+    const client = await Client.findOne({
+      where: { id: clientId },
       relations: ['config'],
     });
 
-    if (!org) {
-      return sendResponse(res, false, CODE.NOT_FOUND, 'Organisation not found');
+    if (!client) {
+      return sendResponse(res, false, CODE.NOT_FOUND, 'Client not found');
     }
 
     const user = await AppDataSource.getRepository(User).findOne({
-      where: { id: loggedInId, organisationId },
+      where: { id: loggedInId, clientId },
     });
 
     if (!user) {
@@ -59,7 +59,7 @@ const changePassword = async (req: Request, res: Response) => {
       AppDataSource.manager,
       user.id,
       newPassword,
-      org.config,
+      client.config,
       user.password ?? undefined,
     );
     if (isReused) {
@@ -71,7 +71,7 @@ const changePassword = async (req: Request, res: Response) => {
       );
     }
 
-    user.password = encryptForOrg(newPassword, org.config);
+    user.password = encryptForClient(newPassword, client.config);
     user.updatedBy = loggedInId;
     user.refreshToken = null;
     user.refreshTokenExpiresAt = null;
@@ -81,26 +81,26 @@ const changePassword = async (req: Request, res: Response) => {
       await savePasswordHistoryShared(manager, user.id, user.password!);
     });
 
-    const orgEmailConfig: OrgEmailConfig | undefined = org.config?.emailProvider
+    const clientEmailConfig: ClientEmailConfig | undefined = client.config?.emailProvider
       ? {
-          emailProvider: org.config.emailProvider,
-          smtpHost: org.config.smtpHost,
-          smtpPort: org.config.smtpPort,
-          smtpUser: org.config.smtpUser
-            ? decryptForOrg(org.config.smtpUser, org.config)
+          emailProvider: client.config.emailProvider,
+          smtpHost: client.config.smtpHost,
+          smtpPort: client.config.smtpPort,
+          smtpUser: client.config.smtpUser
+            ? decryptForClient(client.config.smtpUser, client.config)
             : null,
-          smtpPassword: org.config.smtpPassword
-            ? decryptForOrg(org.config.smtpPassword, org.config)
+          smtpPassword: client.config.smtpPassword
+            ? decryptForClient(client.config.smtpPassword, client.config)
             : null,
-          smtpFrom: org.config.smtpFrom,
-          sesRegion: org.config.sesRegion,
-          sesAccessKeyId: org.config.sesAccessKeyId
-            ? decryptForOrg(org.config.sesAccessKeyId, org.config)
+          smtpFrom: client.config.smtpFrom,
+          sesRegion: client.config.sesRegion,
+          sesAccessKeyId: client.config.sesAccessKeyId
+            ? decryptForClient(client.config.sesAccessKeyId, client.config)
             : null,
-          sesSecretAccessKey: org.config.sesSecretAccessKey
-            ? decryptForOrg(org.config.sesSecretAccessKey, org.config)
+          sesSecretAccessKey: client.config.sesSecretAccessKey
+            ? decryptForClient(client.config.sesSecretAccessKey, client.config)
             : null,
-          sesFrom: org.config.sesFrom,
+          sesFrom: client.config.sesFrom,
         }
       : undefined;
 
@@ -108,8 +108,8 @@ const changePassword = async (req: Request, res: Response) => {
       user.email,
       `${user.firstName} ${user.lastName}`.trim(),
       user.username,
-      org.name,
-      orgEmailConfig,
+      client.name,
+      clientEmailConfig,
       user.locale || 'en',
       buildRequestContext(req),
     );

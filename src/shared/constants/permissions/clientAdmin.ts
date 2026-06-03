@@ -1,14 +1,14 @@
 /**
- * Source-of-truth permission tree for the per-org `Administrator` role.
- * Seeded into the per-org shared-DB `Role` table during org onboarding
- * (see `src/modules/orgs/controllers/addOrg.ts`); after that the DB row
- * is authoritative. Editing this file affects only newly-onboarded orgs.
+ * Source-of-truth permission tree for the per-client `Administrator` role.
+ * Seeded into the per-client shared-DB `Role` table during client onboarding
+ * (see `src/modules/clients/controllers/addClient.ts`); after that the DB row
+ * is authoritative. Editing this file affects only newly-onboarded clients.
  *
  * Login resolves permissions from `Role.permissions` and stamps them
  * into the JWT; `VerifyPermissionMiddleware` gates routes on those
  * values — no role-name bypass.
  */
-export const ORG_ADMIN_PERMISSIONS = [
+export const CLIENT_ADMIN_PERMISSIONS = [
   {
     id: 1,
     parentId: '0',
@@ -21,7 +21,7 @@ export const ORG_ADMIN_PERMISSIONS = [
     id: 2,
     parentId: '0',
     label: 'User Management',
-    value: 'orgManagement',
+    value: 'clientManagement',
     status: true,
     icon: 'ci ci-site-map',
     subPermissions: [

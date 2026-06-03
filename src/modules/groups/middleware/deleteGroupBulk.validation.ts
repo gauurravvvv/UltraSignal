@@ -8,7 +8,7 @@
  * the admin unable to determine which groups failed.
  *
  * The count-mismatch guard (`groups.length !== ids.length`) detects IDs that don't
- * exist or belong to a different org, consistent with the single-delete pattern.
+ * exist or belong to a different client, consistent with the single-delete pattern.
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
@@ -40,7 +40,7 @@ const DeleteGroupBulkValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const orgId = res.locals.orgData?.id as string;
+    const clientId = res.locals.clientData?.id as string;
 
     const { error, value } = validateSchema(schema, req.body);
     if (error) {
@@ -51,7 +51,7 @@ const DeleteGroupBulkValidation = async (
     const { ids } = value;
 
     const groups = await AppDataSource.getRepository(Group).find({
-      where: { id: In(ids), organisationId: orgId },
+      where: { id: In(ids), clientId: clientId },
       relations: ['databaseAccess'],
     });
 

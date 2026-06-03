@@ -64,12 +64,12 @@ export interface ClonedAnalysisVersion {
 export const cloneAnalysisVersion = async (
   manager: EntityManager,
   sourceAnalysisId: string,
-  organisationId: string,
+  clientId: string,
   loggedInId: string,
 ): Promise<ClonedAnalysisVersion> => {
   // ── 1. Load the source analysis ──────────────────────────────────
   const source = await manager.getRepository(Analyses).findOne({
-    where: { id: sourceAnalysisId, organisationId },
+    where: { id: sourceAnalysisId, clientId },
   });
   if (!source) {
     throw new Error(
@@ -107,8 +107,8 @@ export const cloneAnalysisVersion = async (
       name: source.name,
       description: source.description,
       datasetId: source.datasetId,
-      organisationId: source.organisationId,
-      organisationName: source.organisationName,
+      clientId: source.clientId,
+      clientName: source.clientName,
       datasourceId: source.datasourceId,
       status: source.status,
       lineageId,
@@ -172,8 +172,8 @@ export const cloneAnalysisVersion = async (
       type: src.type,
       dataType: src.dataType,
       sequence: src.sequence,
-      organisationId: src.organisationId,
-      organisationName: src.organisationName,
+      clientId: src.clientId,
+      clientName: src.clientName,
       datasourceId: src.datasourceId,
       datasetId: src.datasetId,
       analysisId: newAnalysis.id,
@@ -236,8 +236,8 @@ export const cloneAnalysisVersion = async (
         heightRatio: sv.heightRatio,
         xRatio: sv.xRatio,
         yRatio: sv.yRatio,
-        organisationId: sv.organisationId,
-        organisationName: sv.organisationName,
+        clientId: sv.clientId,
+        clientName: sv.clientName,
         datasourceId: sv.datasourceId,
         datasetId: sv.datasetId,
         analysisId: newAnalysis.id,
@@ -268,8 +268,8 @@ export const cloneAnalysisVersion = async (
           // do NOT round-trip faithfully. The config schema is plain-
           // object today; if that changes, swap to structuredClone.
           config: sc.config ? JSON.parse(JSON.stringify(sc.config)) : sc.config,
-          organisationId: sc.organisationId,
-          organisationName: sc.organisationName,
+          clientId: sc.clientId,
+          clientName: sc.clientName,
           datasourceId: sc.datasourceId,
           datasetId: sc.datasetId,
           analysisId: newAnalysis.id,
@@ -306,8 +306,8 @@ export const cloneAnalysisVersion = async (
       isEnabled: sf.isEnabled,
       isMandatory: sf.isMandatory,
       sequence: sf.sequence,
-      organisationId: sf.organisationId,
-      organisationName: sf.organisationName,
+      clientId: sf.clientId,
+      clientName: sf.clientName,
       datasourceId: sf.datasourceId,
       datasetId: sf.datasetId,
       createdBy: loggedInId,
@@ -346,14 +346,14 @@ export const cloneAnalysisVersion = async (
  */
 export const backfillLineageIds = async (
   manager: EntityManager,
-  organisationId: string,
+  clientId: string,
 ): Promise<number> => {
   const result = await manager
     .getRepository(Analyses)
     .createQueryBuilder()
     .update()
     .set({ lineageId: () => '"id"' })
-    .where('organisationId = :organisationId', { organisationId })
+    .where('clientId = :clientId', { clientId })
     .andWhere('lineageId IS NULL')
     .execute();
   return result.affected ?? 0;

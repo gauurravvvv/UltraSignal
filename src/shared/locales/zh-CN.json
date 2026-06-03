@@ -37,7 +37,7 @@
     "account_locked": "账户已锁定，请联系管理员",
     "role_inactive": "您分配的角色已停用，请联系管理员"
   },
-  "org": {
+  "client": {
     "created": "组织创建成功",
     "updated": "组织更新成功",
     "deleted": "组织删除成功",
@@ -67,7 +67,7 @@
     "account_not_locked": "该账户未被锁定",
     "cannot_modify_default": "默认系统管理员无法修改"
   },
-  "org_admin": {
+  "client_admin": {
     "created": "管理员创建成功",
     "updated": "管理员更新成功",
     "deleted": "管理员删除成功",
@@ -283,15 +283,15 @@
     "export_failed": "审计日志导出失败",
     "no_logs_found": "未找到符合指定条件的审计日志",
     "invalid_export_format": "无效的导出格式，支持的格式：excel、pdf",
-    "org_required_for_export": "请选择要导出的组织",
-    "no_logs_for_org": "该组织没有可用的审计日志"
+    "client_required_for_export": "请选择要导出的组织",
+    "no_logs_for_client": "该组织没有可用的审计日志"
   },
   "login_activity": {
     "list_fetched": "登录活动获取成功",
     "fetch_failed": "登录活动获取失败",
     "export_failed": "登录活动导出失败",
     "no_activity_found": "未找到符合指定条件的登录活动",
-    "no_activity_for_org": "该组织没有可用的登录活动"
+    "no_activity_for_client": "该组织没有可用的登录活动"
   },
   "query": {
     "executed": "查询执行成功",
@@ -347,7 +347,7 @@
     "welcome_subject": "欢迎加入 {{organisation}}",
     "welcome_greeting": "欢迎，{{fullName}}！",
     "welcome_body": "您的账户已在 <strong>{{organisation}}</strong> 上创建。请点击下方按钮设置密码并激活您的账户。",
-    "label_organisation": "组织",
+    "label_client": "组织",
     "label_username": "用户名",
     "set_password_btn": "设置密码",
     "expiry_notice": "此链接将在 {{setupTokenExpiryHours}} 小时后过期。如果您未预期收到此邮件，请联系您的管理员。",

@@ -1,4 +1,4 @@
-import { ORG_ADMIN_PERMISSIONS } from '../constants/permissions/organisationAdmin';
+import { CLIENT_ADMIN_PERMISSIONS } from '../constants/permissions/clientAdmin';
 
 /**
  * Flatten all permission `value` strings from a permission tree.
@@ -18,7 +18,7 @@ function flattenValues(perms: any[]): Set<string> {
 
 /**
  * Build a permission tree keeping only nodes whose value is in `activeValues`
- * (or that have active children). Uses ORG_ADMIN_PERMISSIONS as the canonical structure.
+ * (or that have active children). Uses CLIENT_ADMIN_PERMISSIONS as the canonical structure.
  */
 function buildMergedTree(template: any[], activeValues: Set<string>): any[] {
   const result: any[] = [];
@@ -64,5 +64,5 @@ export function mergePermissions(rolePermissionJsons: string[]): any[] {
 
   if (allValues.size === 0) return [];
 
-  return buildMergedTree(ORG_ADMIN_PERMISSIONS, allValues);
+  return buildMergedTree(CLIENT_ADMIN_PERMISSIONS, allValues);
 }

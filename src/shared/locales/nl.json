@@ -37,7 +37,7 @@
     "account_locked": "Account geblokkeerd. Neem contact op met uw beheerder",
     "role_inactive": "Uw toegewezen rol is inactief. Neem contact op met uw beheerder"
   },
-  "org": {
+  "client": {
     "created": "Organisatie succesvol aangemaakt",
     "updated": "Organisatie succesvol bijgewerkt",
     "deleted": "Organisatie succesvol verwijderd",
@@ -67,7 +67,7 @@
     "account_not_locked": "Dit account is niet geblokkeerd",
     "cannot_modify_default": "De standaard systeembeheerder kan niet worden gewijzigd"
   },
-  "org_admin": {
+  "client_admin": {
     "created": "Beheerder succesvol aangemaakt",
     "updated": "Beheerder succesvol bijgewerkt",
     "deleted": "Beheerder succesvol verwijderd",
@@ -283,15 +283,15 @@
     "export_failed": "Exporteren auditlogboeken mislukt",
     "no_logs_found": "Geen auditlogboeken gevonden voor de opgegeven criteria",
     "invalid_export_format": "Ongeldig exportformaat. Ondersteunde formaten: excel, pdf",
-    "org_required_for_export": "Selecteer een organisatie om te exporteren",
-    "no_logs_for_org": "Geen auditlogboeken beschikbaar voor deze organisatie"
+    "client_required_for_export": "Selecteer een organisatie om te exporteren",
+    "no_logs_for_client": "Geen auditlogboeken beschikbaar voor deze organisatie"
   },
   "login_activity": {
     "list_fetched": "Inlogactiviteit succesvol opgehaald",
     "fetch_failed": "Ophalen inlogactiviteit mislukt",
     "export_failed": "Exporteren inlogactiviteit mislukt",
     "no_activity_found": "Geen inlogactiviteit gevonden voor de opgegeven criteria",
-    "no_activity_for_org": "Geen inlogactiviteit beschikbaar voor deze organisatie"
+    "no_activity_for_client": "Geen inlogactiviteit beschikbaar voor deze organisatie"
   },
   "query": {
     "executed": "Query succesvol uitgevoerd",
@@ -347,7 +347,7 @@
     "welcome_subject": "Welkom bij {{organisation}}",
     "welcome_greeting": "Welkom, {{fullName}}!",
     "welcome_body": "Je account is aangemaakt op <strong>{{organisation}}</strong>. Klik op de knop hieronder om je wachtwoord in te stellen en je account te activeren.",
-    "label_organisation": "Organisatie",
+    "label_client": "Organisatie",
     "label_username": "Gebruikersnaam",
     "set_password_btn": "Stel je wachtwoord in",
     "expiry_notice": "Deze link verloopt over {{setupTokenExpiryHours}} uur. Als je deze e-mail niet verwachtte, neem dan contact op met je beheerder.",

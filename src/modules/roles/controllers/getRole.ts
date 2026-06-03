@@ -1,7 +1,7 @@
 /**
  * getRole — returns a single role pre-fetched by GetRoleValidation middleware.
  *
- * The role is already validated (exists + belongs to org) before this controller
+ * The role is already validated (exists + belongs to client) before this controller
  * runs. The controller only needs to return it — all the DB work happened in the
  * middleware to keep the pre-load pattern consistent with other GET endpoints.
  */

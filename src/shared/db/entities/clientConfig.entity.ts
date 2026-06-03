@@ -9,27 +9,27 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { Organisation } from './organisation.entity';
+import { Client } from './client.entity';
 
 @Entity()
-export class OrganisationConfig extends BaseEntity {
+export class ClientConfig extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => Organisation, org => org.config)
-  organisation: Organisation;
+  @OneToOne(() => Client, client => client.config)
+  client: Client;
 
   /**
-   * Wrapped Data Encryption Key (DEK) for this org's secrets.
+   * Wrapped Data Encryption Key (DEK) for this client's secrets.
    *
    * Format: `v1:<iv_hex>:<authtag_hex>:<encrypted_hex>` — produced by
    * services/crypto.service.ts using AES-256-GCM under the platform
    * master key. The raw DEK is 32 random bytes generated server-side
-   * at org creation; only the wrapped form ever touches the database.
+   * at client creation; only the wrapped form ever touches the database.
    *
-   * Nullable for the migration window: legacy orgs still carry
+   * Nullable for the migration window: legacy clients still carry
    * `pepperKey` + `encryptionAlgorithm` and will be migrated on first
-   * use (helpers/organisation/migrateOrgCrypto.ts). After every org
+   * use (helpers/client/migrateClientCrypto.ts). After every client
    * has migrated, the two legacy columns can be dropped and this
    * column made non-null.
    */
@@ -38,16 +38,16 @@ export class OrganisationConfig extends BaseEntity {
 
   /**
    * @deprecated Legacy pepper key from the user-typed scheme. Kept
-   * nullable so existing orgs continue to read until they're
-   * migrated. New orgs leave this NULL.
+   * nullable so existing clients continue to read until they're
+   * migrated. New clients leave this NULL.
    */
   @Column({ type: 'varchar', nullable: true, default: null })
   pepperKey: string | null;
 
   /**
    * @deprecated Legacy algorithm picker. Always 'aes-256-gcm' on
-   * any newly-created org — the value comes from the crypto service,
-   * not from a per-org choice. Nullable for legacy rows.
+   * any newly-created client — the value comes from the crypto service,
+   * not from a per-client choice. Nullable for legacy rows.
    */
   @Column({ type: 'varchar', nullable: true, default: null })
   encryptionAlgorithm: string | null;

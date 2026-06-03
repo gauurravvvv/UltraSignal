@@ -2,12 +2,12 @@
  * DeleteRoleBulkValidation — validates the batch and enforces deletion preconditions.
  *
  * The count-mismatch guard (`roles.length !== ids.length`) detects IDs that don't
- * exist or belong to a different org. Without it, a crafted request could silently
+ * exist or belong to a different client. Without it, a crafted request could silently
  * match fewer roles than requested, giving the admin false confidence that all
  * targeted roles were deleted.
  *
  * If any role in the batch is default or has assignments, the entire batch is
- * rejected. Partial deletes would leave the org in an inconsistent state and force
+ * rejected. Partial deletes would leave the client in an inconsistent state and force
  * the admin to discover which roles failed through trial and error.
  *
  * Assignment counts are aggregated across all IDs in a single query (`In(ids)`) to
@@ -45,7 +45,7 @@ const DeleteRoleBulkValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const { orgData } = res.locals;
+    const { clientData } = res.locals;
 
     const { error, value } = validateSchema(schema, req.body);
     if (error) {
@@ -57,7 +57,7 @@ const DeleteRoleBulkValidation = async (
 
     const roles = await AppDataSource
       .getRepository(Role)
-      .find({ where: { id: In(ids), organisationId: orgData.id } });
+      .find({ where: { id: In(ids), clientId: clientData.id } });
 
     if (roles.length !== ids.length) {
       return sendResponse(res, false, CODE.NOT_FOUND, ROLE_MSG.NOT_FOUND);
@@ -78,7 +78,7 @@ const DeleteRoleBulkValidation = async (
       .createQueryBuilder('m')
       .innerJoin('m.group', 'g')
       .where('g.roleId IN (:...ids)', { ids })
-      .andWhere('g.organisationId = :orgId', { orgId: orgData.id })
+      .andWhere('g.clientId = :clientId', { clientId: clientData.id })
       .select('COUNT(DISTINCT m.userId)', 'count')
       .getRawOne()
       .then((r: { count: string } | undefined) => parseInt(r?.count ?? '0', 10));
@@ -93,7 +93,7 @@ const DeleteRoleBulkValidation = async (
 
     const groupCount = await AppDataSource
       .getRepository(Group)
-      .count({ where: { roleId: In(ids), organisationId: orgData.id } });
+      .count({ where: { roleId: In(ids), clientId: clientData.id } });
     if (groupCount > 0) {
       return sendResponse(
         res,

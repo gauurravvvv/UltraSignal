@@ -2,8 +2,8 @@
  * setPassword — completes first-time account setup from the welcome email link.
  *
  * The email link contains a 64-char hex setup token stored encrypted with the
- * org's DEK. Once the password is set the setup token is cleared so the link
- * becomes single-use. The password (also encrypted under the org DEK) and a
+ * client's DEK. Once the password is set the setup token is cleared so the link
+ * becomes single-use. The password (also encrypted under the client DEK) and a
  * password-history row commit in a single transaction.
  *
  * timingSafeEqual is used for token comparison to prevent timing-based attacks.
@@ -17,15 +17,15 @@ import {
   GENERIC,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import {
-  decryptForOrg,
-  encryptForOrg,
+  decryptForClient,
+  encryptForClient,
 } from '../../../shared/services/crypto.service';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
-import { OrgEmailConfig } from '../../../shared/utility/mail';
+import { ClientEmailConfig } from '../../../shared/utility/mail';
 import passwordSetSuccessEmail from '../../../shared/utility/mail/passwordSetSuccessEmail';
 import { buildRequestContext } from '../../../shared/utility/mail/requestContext';
 import { savePasswordHistoryShared } from '../../../shared/utility/passwordHistory';
@@ -34,17 +34,17 @@ import sendResponse from '../../../shared/utility/response';
 const setPassword = async (req: Request, res: Response) => {
   Logger.info(`Set password request`);
 
-  const { id, orgId, token, password } = req.body;
+  const { id, clientId, token, password } = req.body;
 
   try {
-    const org = await Organisation.findOne({
-      where: { id: orgId },
+    const client = await Client.findOne({
+      where: { id: clientId },
       relations: ['config'],
     });
 
-    if (!org) {
+    if (!client) {
       // Generic setup-token-invalid funnel: every pre-token-verified
-      // failure (missing org, missing user, expired, mismatched) maps
+      // failure (missing client, missing user, expired, mismatched) maps
       // to the same response so an attacker holding a setup-link URL
       // cannot infer state.
       return sendResponse(
@@ -61,7 +61,7 @@ const setPassword = async (req: Request, res: Response) => {
       .addSelect('user.setupTokenExpiresAt')
       .addSelect('user.password')
       .where('user.id = :id', { id })
-      .andWhere('user.organisationId = :orgId', { orgId })
+      .andWhere('user.clientId = :clientId', { clientId })
       .getOne();
 
     if (
@@ -90,7 +90,7 @@ const setPassword = async (req: Request, res: Response) => {
       );
     }
 
-    const decryptedToken = decryptForOrg(user.setupToken, org.config);
+    const decryptedToken = decryptForClient(user.setupToken, client.config);
     if (!timingSafeEqual(Buffer.from(token), Buffer.from(decryptedToken))) {
       return sendResponse(
         res,
@@ -100,12 +100,12 @@ const setPassword = async (req: Request, res: Response) => {
       );
     }
 
-    user.password = encryptForOrg(password, org.config);
+    user.password = encryptForClient(password, client.config);
     user.setupToken = null;
     user.setupTokenExpiresAt = null;
     user.updatedBy = id;
 
-    const passwordHistoryLimit = org.config?.passwordHistoryLimit || 5;
+    const passwordHistoryLimit = client.config?.passwordHistoryLimit || 5;
 
     await AppDataSource.transaction(async (manager: EntityManager) => {
       await manager.save(user);
@@ -117,26 +117,26 @@ const setPassword = async (req: Request, res: Response) => {
       );
     });
 
-    const orgEmailConfig: OrgEmailConfig | undefined = org.config?.emailProvider
+    const clientEmailConfig: ClientEmailConfig | undefined = client.config?.emailProvider
       ? {
-          emailProvider: org.config.emailProvider,
-          smtpHost: org.config.smtpHost,
-          smtpPort: org.config.smtpPort,
-          smtpUser: org.config.smtpUser
-            ? decryptForOrg(org.config.smtpUser, org.config)
+          emailProvider: client.config.emailProvider,
+          smtpHost: client.config.smtpHost,
+          smtpPort: client.config.smtpPort,
+          smtpUser: client.config.smtpUser
+            ? decryptForClient(client.config.smtpUser, client.config)
             : null,
-          smtpPassword: org.config.smtpPassword
-            ? decryptForOrg(org.config.smtpPassword, org.config)
+          smtpPassword: client.config.smtpPassword
+            ? decryptForClient(client.config.smtpPassword, client.config)
             : null,
-          smtpFrom: org.config.smtpFrom,
-          sesRegion: org.config.sesRegion,
-          sesAccessKeyId: org.config.sesAccessKeyId
-            ? decryptForOrg(org.config.sesAccessKeyId, org.config)
+          smtpFrom: client.config.smtpFrom,
+          sesRegion: client.config.sesRegion,
+          sesAccessKeyId: client.config.sesAccessKeyId
+            ? decryptForClient(client.config.sesAccessKeyId, client.config)
             : null,
-          sesSecretAccessKey: org.config.sesSecretAccessKey
-            ? decryptForOrg(org.config.sesSecretAccessKey, org.config)
+          sesSecretAccessKey: client.config.sesSecretAccessKey
+            ? decryptForClient(client.config.sesSecretAccessKey, client.config)
             : null,
-          sesFrom: org.config.sesFrom,
+          sesFrom: client.config.sesFrom,
         }
       : undefined;
 
@@ -144,8 +144,8 @@ const setPassword = async (req: Request, res: Response) => {
       user.email,
       `${user.firstName} ${user.lastName}`.trim(),
       user.username,
-      org.name,
-      orgEmailConfig,
+      client.name,
+      clientEmailConfig,
       user.locale || 'en',
       buildRequestContext(req),
     );

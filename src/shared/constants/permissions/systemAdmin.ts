@@ -3,7 +3,7 @@
  * rollback target — NOT active at runtime.
  *
  * The platform-level System Admin role is now seeded from `systemAdminV2.ts`
- * (a trimmed set covering org management + system admin housekeeping +
+ * (a trimmed set covering client management + system admin housekeeping +
  * audit + app settings) into the master-DB `Role` table on first boot.
  * Login reads `Role.permissions` and stamps it into the JWT;
  * `VerifyPermissionMiddleware` gates routes on those values, with no
@@ -41,8 +41,8 @@ export const SYSTEM_ADMIN_PERMISSIONS = [
       {
         id: 4,
         parentId: '2',
-        label: 'Organisations',
-        value: 'orgManagement',
+        label: 'Clients',
+        value: 'clientManagement',
         icon: 'ci ci-building',
         status: true,
       },

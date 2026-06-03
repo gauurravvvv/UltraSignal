@@ -2,7 +2,7 @@
  * addSystemAdmin — creates a new system administrator account.
  *
  * System admins are stored as User rows belonging to the seed System
- * Organisation. They inherit the System Admin permission set via the
+ * Client. They inherit the System Admin permission set via the
  * System Administrators group → System Admin Role chain seeded at first
  * boot (see `seedSystemAdminRole`).
  *
@@ -20,7 +20,7 @@ import {
   IS_DEFAULT,
   SETUP_TOKEN_EXPIRY_HOURS,
   STATUS,
-  SYSTEM_ORGANISATION,
+  SYSTEM_CLIENT,
 } from '../../../../config/config';
 import {
   GENERIC,
@@ -28,7 +28,7 @@ import {
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
 import { Group } from '../../../shared/db/entities/group.entity';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { Role } from '../../../shared/db/entities/role.entity';
 import { UserGroupMapping } from '../../../shared/db/entities/user-group-mapping.entity';
 import { User } from '../../../shared/db/entities/user.entity';
@@ -45,10 +45,10 @@ const addSystemAdmin = async (req: Request, res: Response) => {
   const { loggedInId } = res.locals;
 
   try {
-    // The seed System Organisation is the container for every system
+    // The seed System Client is the container for every system
     // admin. Without it the whole platform bootstrap is broken.
-    const seedOrg = await Organisation.findOne({
-      where: { name: SYSTEM_ORGANISATION.NAME, isDefault: IS_DEFAULT.YES },
+    const seedOrg = await Client.findOne({
+      where: { name: SYSTEM_CLIENT.NAME, isDefault: IS_DEFAULT.YES },
     });
 
     if (!seedOrg) {
@@ -56,14 +56,14 @@ const addSystemAdmin = async (req: Request, res: Response) => {
         res,
         false,
         CODE.BAD_REQUEST,
-        'System Admin organisation not found',
+        'System Admin client not found',
       );
     }
 
     // Find the seeded System Admin role + group so we can map the new
     // user into the group at creation time.
     const systemAdminRole = await AppDataSource.getRepository(Role).findOne({
-      where: { scope: 'SYSTEM', organisationId: seedOrg.id },
+      where: { scope: 'SYSTEM', clientId: seedOrg.id },
     });
 
     if (!systemAdminRole) {
@@ -76,7 +76,7 @@ const addSystemAdmin = async (req: Request, res: Response) => {
     }
 
     let systemAdminGroup = await AppDataSource.getRepository(Group).findOne({
-      where: { roleId: systemAdminRole.id, organisationId: seedOrg.id },
+      where: { roleId: systemAdminRole.id, clientId: seedOrg.id },
     });
 
     const setupToken = generateSetupToken();
@@ -89,8 +89,8 @@ const addSystemAdmin = async (req: Request, res: Response) => {
           const g = new Group();
           g.name = 'System Administrators';
           g.description = 'Platform operators';
-          g.organisationId = seedOrg.id;
-          g.organisationName = seedOrg.name;
+          g.clientId = seedOrg.id;
+          g.clientName = seedOrg.name;
           g.roleId = systemAdminRole.id;
           g.isDefault = IS_DEFAULT.YES;
           g.status = STATUS.ACTIVE;
@@ -103,8 +103,8 @@ const addSystemAdmin = async (req: Request, res: Response) => {
         systemAdmin.email = email;
         systemAdmin.username = username;
         systemAdmin.status = STATUS.ACTIVE;
-        systemAdmin.organisationId = seedOrg.id;
-        systemAdmin.organisationName = SYSTEM_ORGANISATION.NAME;
+        systemAdmin.clientId = seedOrg.id;
+        systemAdmin.clientName = SYSTEM_CLIENT.NAME;
         systemAdmin.createdBy = loggedInId;
         systemAdmin.setupToken = setupToken;
         systemAdmin.setupTokenExpiresAt = new Date(
@@ -126,7 +126,7 @@ const addSystemAdmin = async (req: Request, res: Response) => {
       email,
       fullName,
       username,
-      SYSTEM_ORGANISATION.NAME,
+      SYSTEM_CLIENT.NAME,
       created.id,
       seedOrg.id,
       setupToken,

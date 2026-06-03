@@ -16,7 +16,7 @@ import { DatasetField } from './datasetField.entity';
 import { DatasourceS } from './datasourceS.entity';
 
 @Entity()
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 @Index(['datasourceId', 'status'])
 export class Dataset {
   @PrimaryGeneratedColumn('uuid')
@@ -45,10 +45,10 @@ export class Dataset {
   promptConfig: string;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

@@ -37,7 +37,7 @@
     "account_locked": "Account bloccato. Contatta il tuo amministratore",
     "role_inactive": "Il tuo ruolo assegnato è inattivo. Contatta il tuo amministratore"
   },
-  "org": {
+  "client": {
     "created": "Organizzazione creata con successo",
     "updated": "Organizzazione aggiornata con successo",
     "deleted": "Organizzazione eliminata con successo",
@@ -67,7 +67,7 @@
     "account_not_locked": "Questo account non è bloccato",
     "cannot_modify_default": "L'amministratore di sistema predefinito non può essere modificato"
   },
-  "org_admin": {
+  "client_admin": {
     "created": "Amministratore creato con successo",
     "updated": "Amministratore aggiornato con successo",
     "deleted": "Amministratore eliminato con successo",
@@ -283,15 +283,15 @@
     "export_failed": "Esportazione log di controllo non riuscita",
     "no_logs_found": "Nessun log di controllo trovato per i criteri specificati",
     "invalid_export_format": "Formato di esportazione non valido. Formati supportati: excel, pdf",
-    "org_required_for_export": "Seleziona un'organizzazione per esportare",
-    "no_logs_for_org": "Nessun log di controllo disponibile per questa organizzazione"
+    "client_required_for_export": "Seleziona un'organizzazione per esportare",
+    "no_logs_for_client": "Nessun log di controllo disponibile per questa organizzazione"
   },
   "login_activity": {
     "list_fetched": "Attività di accesso recuperata con successo",
     "fetch_failed": "Recupero attività di accesso non riuscito",
     "export_failed": "Esportazione attività di accesso non riuscita",
     "no_activity_found": "Nessuna attività di accesso trovata per i criteri specificati",
-    "no_activity_for_org": "Nessuna attività di accesso disponibile per questa organizzazione"
+    "no_activity_for_client": "Nessuna attività di accesso disponibile per questa organizzazione"
   },
   "query": {
     "executed": "Query eseguita con successo",
@@ -347,7 +347,7 @@
     "welcome_subject": "Benvenuto in {{organisation}}",
     "welcome_greeting": "Benvenuto, {{fullName}}!",
     "welcome_body": "Il tuo account è stato creato su <strong>{{organisation}}</strong>. Clicca il pulsante qui sotto per impostare la tua password e attivare il tuo account.",
-    "label_organisation": "Organizzazione",
+    "label_client": "Organizzazione",
     "label_username": "Nome utente",
     "set_password_btn": "Imposta la tua password",
     "expiry_notice": "Questo link scadrà tra {{setupTokenExpiryHours}} ore. Se non ti aspettavi questa email, contatta il tuo amministratore.",

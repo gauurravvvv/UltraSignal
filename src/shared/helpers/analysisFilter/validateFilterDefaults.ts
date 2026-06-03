@@ -136,7 +136,7 @@ async function probeFilter(
 export async function validateFilterDefaults(
   masterDbConnection: DataSource,
   filters: AnalysisFilter[],
-  orgData: any,
+  clientData: any,
 ): Promise<StaleDefaultReport[]> {
   if (!filters.length) return [];
 
@@ -182,7 +182,7 @@ export async function validateFilterDefaults(
 
     let conn: DatasourceQueryConnection | null = null;
     try {
-      conn = await openDatasourceConnection(database.config, orgData.config);
+      conn = await openDatasourceConnection(database.config, clientData.config);
       if (!conn) {
         for (const f of group) {
           reports.push({

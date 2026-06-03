@@ -3,7 +3,7 @@
  *
  * Used in two distinct contexts and the caller has to tell us which:
  *
- *   1. **Master DB / per-org master DB.** The platform's own metadata
+ *   1. **Master DB / per-client master DB.** The platform's own metadata
  *      (datasources, datasets, analyses, audit logs, …) lives in a
  *      dedicated Postgres schema named ULTRASIGNAL_SCHEMA_NAME. We pin the
  *      schema at connection time so TypeORM's repository queries
@@ -25,7 +25,7 @@
  * responsible for `dataSource.destroy()` — each call creates a new
  * DataSource (not pooled) so connections would leak otherwise.
  *
- * `sync: false` by default. Callers that need schema sync (org
+ * `sync: false` by default. Callers that need schema sync (client
  * onboarding) pass `true` — and that case is always master-DB, so
  * isMasterDb is also true there.
  */
@@ -44,7 +44,7 @@ import Logger from '../../utility/logger/logger';
  * snowflakeConnection.ts instead. The keys listed here are the only
  * values getDbConnection() can accept as `dbType`.
  *
- * Master / per-org master DBs are always Postgres.
+ * Master / per-client master DBs are always Postgres.
  */
 export type SupportedDbType =
   | typeof DB_TYPES.POSTGRES

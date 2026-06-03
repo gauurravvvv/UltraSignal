@@ -10,7 +10,7 @@ import { CODE, FE_URL } from '../config/config';
 import authRoutes from './modules/auth/auth.routes';
 import groupRoutes from './modules/groups/groups.routes';
 import homeRoutes from './modules/home/home.routes';
-import orgRoutes from './modules/orgs/orgs.routes';
+import clientRoutes from './modules/clients/clients.routes';
 import profileRoutes from './modules/profile/profile.routes';
 import roleRoutes from './modules/roles/roles.routes';
 import systemAdminRoutes from './modules/system-admins/system-admins.routes';
@@ -19,7 +19,7 @@ import { GENERIC } from './shared/constants/response.messages';
 import Database from './shared/db';
 import LocaleMiddleware from './shared/middleware/locale.middleware';
 import RequestContextMiddleware from './shared/middleware/requestContext.middleware';
-import SanitizeOrgInputMiddleware from './shared/middleware/sanitizeOrgInput.middleware';
+import SanitizeClientInputMiddleware from './shared/middleware/sanitizeClientInput.middleware';
 import TrimMiddleware from './shared/middleware/trimBody.middleware';
 import { SUPPORTED_LOCALES, t } from './shared/utility/i18n';
 import sendResponse from './shared/utility/response';
@@ -90,14 +90,14 @@ class Server {
     // represent a collection. See ROUTING.md.
     this.app.use('/api/v1/auth', authRateLimiter, authRoutes);
 
-    // Sanitize FE-supplied org keys on every protected route below.
+    // Sanitize FE-supplied client keys on every protected route below.
     // Auth routes are mounted ABOVE this line so their pre-JWT
-    // `organisation` body field is preserved. See
-    // sanitizeOrgInput.middleware.ts for the rationale.
-    this.app.use(SanitizeOrgInputMiddleware);
+    // `client` body field is preserved. See
+    // sanitizeClientInput.middleware.ts for the rationale.
+    this.app.use(SanitizeClientInputMiddleware);
 
     this.app.use('/api/v1/system-admins', systemAdminRoutes);
-    this.app.use('/api/v1/orgs', orgRoutes);
+    this.app.use('/api/v1/clients', clientRoutes);
     this.app.use('/api/v1/users', userRoutes);
     this.app.use('/api/v1/home', homeRoutes);
     this.app.use('/api/v1/groups', groupRoutes);

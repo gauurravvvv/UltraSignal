@@ -21,7 +21,7 @@ const getGlobalTransporter = () => {
   return globalTransporter;
 };
 
-export interface OrgEmailConfig {
+export interface ClientEmailConfig {
   emailProvider: string | null;
   smtpHost?: string | null;
   smtpPort?: number | null;
@@ -34,8 +34,8 @@ export interface OrgEmailConfig {
   sesFrom?: string | null;
 }
 
-const createOrgTransporter = (
-  config: OrgEmailConfig,
+const createClientTransporter = (
+  config: ClientEmailConfig,
 ): nodemailer.Transporter | null => {
   try {
     if (config.emailProvider === 'SMTP' && config.smtpHost && config.smtpUser) {
@@ -66,7 +66,7 @@ const createOrgTransporter = (
     }
   } catch (err) {
     Logger.error(
-      `Failed to create org email transporter: ${getErrorMessage(err)}`,
+      `Failed to create client email transporter: ${getErrorMessage(err)}`,
     );
   }
   return null;
@@ -129,7 +129,7 @@ export interface SendEmailOptions {
   text?: string;
   /**
    * Display name for the From header. Defaults to "UltraSignal". Pass the
-   * org name (or any white-label brand) for multi-tenant deployments.
+   * client name (or any white-label brand) for multi-tenant deployments.
    */
   senderName?: string;
   /**
@@ -143,21 +143,21 @@ const sendEmail = async (
   emailTo: string,
   subject: string,
   content: string,
-  orgEmailConfig?: OrgEmailConfig,
+  clientEmailConfig?: ClientEmailConfig,
   options: SendEmailOptions = {},
 ): Promise<boolean> => {
   try {
     let transport: nodemailer.Transporter;
     let fromAddress: string;
 
-    if (orgEmailConfig?.emailProvider) {
-      const orgTransport = createOrgTransporter(orgEmailConfig);
-      if (orgTransport) {
-        transport = orgTransport;
+    if (clientEmailConfig?.emailProvider) {
+      const clientTransport = createClientTransporter(clientEmailConfig);
+      if (clientTransport) {
+        transport = clientTransport;
         fromAddress =
-          (orgEmailConfig.emailProvider === 'SES'
-            ? orgEmailConfig.sesFrom
-            : orgEmailConfig.smtpFrom) || EMAIL_CONFIG.from;
+          (clientEmailConfig.emailProvider === 'SES'
+            ? clientEmailConfig.sesFrom
+            : clientEmailConfig.smtpFrom) || EMAIL_CONFIG.from;
       } else {
         // Fallback to global
         transport = getGlobalTransporter();

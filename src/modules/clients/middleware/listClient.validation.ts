@@ -1,9 +1,9 @@
 /**
- * ListOrganisationValidation — validates pagination + multi-column sort
- * query params for the organisation list endpoint.
+ * ListClientValidation — validates pagination + multi-column sort
+ * query params for the client list endpoint.
  *
- * Authorisation is enforced upstream by `VerifyPermissionMiddleware('orgManagement')`
- * in the orgs router; this middleware is now payload-only.
+ * Authorisation is enforced upstream by `VerifyPermissionMiddleware('clientManagement')`
+ * in the clients router; this middleware is now payload-only.
  *
  * Sort + pagination follow the standard list contract — see src/utility/listSort.ts.
  * Each list endpoint declares its own column whitelist; only the per-module fields
@@ -17,9 +17,9 @@ import sendResponse from '../../../shared/utility/response';
 import { validateSchema } from '../../../shared/utility/validate.middleware';
 
 export const ORG_LIST_SORT_FIELDS = ['name', 'status', 'createdOn'] as const;
-export type OrgListSortField = (typeof ORG_LIST_SORT_FIELDS)[number];
+export type ClientListSortField = (typeof ORG_LIST_SORT_FIELDS)[number];
 
-const ListOrganisationValidation = (
+const ListClientValidation = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -38,4 +38,4 @@ const ListOrganisationValidation = (
   next();
 };
 
-export default ListOrganisationValidation;
+export default ListClientValidation;

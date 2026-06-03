@@ -1,6 +1,6 @@
 /**
  * GetOtpValidation — validates POST /auth/generateOTP body.
- * Also does a DB existence check on the organisation here (rather than
+ * Also does a DB existence check on the client here (rather than
  * in the controller) so we can return a clean 400 before doing any
  * heavier password-flow work.
  */
@@ -9,9 +9,9 @@ import Joi from 'joi';
 import { CODE } from '../../../../config/config';
 import {
   GENERIC,
-  ORGANISATION,
+  CLIENT,
 } from '../../../shared/constants/response.messages';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import { fields } from '../../../shared/utility/joi.schemas';
 import Logger from '../../../shared/utility/logger/logger';
@@ -27,9 +27,9 @@ const GetOtpValidation = async (
     const schema = Joi.object({
       username: fields.username.required(),
       email: fields.email.required(),
-      organisation: Joi.string().trim().required().messages({
-        'string.empty': 'Organisation is required',
-        'any.required': 'Organisation is required',
+      client: Joi.string().trim().required().messages({
+        'string.empty': 'Client is required',
+        'any.required': 'Client is required',
       }),
     });
 
@@ -38,12 +38,12 @@ const GetOtpValidation = async (
 
     req.body = value;
 
-    const isOrgExists = await Organisation.findOne({
-      where: { name: value.organisation },
+    const isClientExists = await Client.findOne({
+      where: { name: value.client },
     });
 
-    if (!isOrgExists) {
-      return sendResponse(res, false, CODE.BAD_REQUEST, ORGANISATION.NOT_FOUND);
+    if (!isClientExists) {
+      return sendResponse(res, false, CODE.BAD_REQUEST, CLIENT.NOT_FOUND);
     }
 
     next();

@@ -14,7 +14,7 @@ import { DatasetFieldRelation } from './datasetFieldRelation.entity';
 @Entity()
 @Index(['datasetId'])
 @Index(['analysisId'])
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class DatasetField {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -49,10 +49,10 @@ export class DatasetField {
   sequence: number;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

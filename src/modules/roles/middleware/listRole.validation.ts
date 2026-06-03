@@ -1,8 +1,8 @@
 /**
  * ListRoleValidation — validates pagination + filter for the role list.
  *
- * The caller's org is sourced from the JWT via `res.locals.orgData.id`
- * inside the controller; no orgId query param is accepted.
+ * The caller's client is sourced from the JWT via `res.locals.clientData.id`
+ * inside the controller; no clientId query param is accepted.
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';

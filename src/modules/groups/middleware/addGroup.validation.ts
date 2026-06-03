@@ -1,11 +1,11 @@
 /**
  * AddGroupValidation — validates the payload and guards against duplicate names
- * and cross-org user references.
+ * and cross-client user references.
  *
  * User membership validation (`foundUsers.length !== value.users.length`) uses a
  * count-mismatch pattern to detect IDs that don't exist or belong to a different
- * org without exposing which IDs failed. This prevents an admin from probing for
- * valid user UUIDs across org boundaries.
+ * client without exposing which IDs failed. This prevents an admin from probing for
+ * valid user UUIDs across client boundaries.
  *
  * `users` defaults to an empty array so the controller doesn't need a null check
  * before iterating over members — a group with no members at creation is valid.
@@ -41,8 +41,8 @@ const AddGroupValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const { orgData } = res.locals;
-    const orgId = orgData.id;
+    const { clientData } = res.locals;
+    const clientId = clientData.id;
 
     const { error, value } = validateSchema(schema, req.body);
     if (error) {
@@ -50,13 +50,13 @@ const AddGroupValidation = async (
     }
     req.body = value;
 
-    // Check if group with same name already exists in the organisation.
-    // `orgId` is sourced from res.locals — req.body has been stripped of
-    // any client-supplied organisation key by SanitizeOrgInputMiddleware.
+    // Check if group with same name already exists in the client.
+    // `clientId` is sourced from res.locals — req.body has been stripped of
+    // any client-supplied client key by SanitizeClientInputMiddleware.
     const ifExistsByName = await AppDataSource
       .getRepository(Group)
       .findOne({
-        where: { name: value.name, organisationId: orgId },
+        where: { name: value.name, clientId: clientId },
       });
     if (ifExistsByName) {
       return sendResponse(
@@ -67,7 +67,7 @@ const AddGroupValidation = async (
       );
     }
 
-    // Validate all users exist in the organisation. Also pull
+    // Validate all users exist in the client. Also pull
     // `isDefault` so we can reject any attempt to seed a brand-new
     // group with the bootstrap admin (isDefault=1) — the default user
     // belongs only to its seeded default group; see
@@ -76,7 +76,7 @@ const AddGroupValidation = async (
       const foundUsers = await AppDataSource.getRepository(User).find({
         where: {
           id: In(value.users),
-          organisationId: orgId,
+          clientId: clientId,
         },
         select: ['id', 'isDefault'],
       });
@@ -86,7 +86,7 @@ const AddGroupValidation = async (
           res,
           false,
           CODE.BAD_REQUEST,
-          'One or more users not found in this organisation',
+          'One or more users not found in this client',
         );
       }
 

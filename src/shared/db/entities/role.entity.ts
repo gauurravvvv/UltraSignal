@@ -11,8 +11,8 @@ import {
 } from 'typeorm';
 
 @Entity()
-@Index(['organisationId', 'status'])
-@Index(['name', 'organisationId'], { unique: true })
+@Index(['clientId', 'status'])
+@Index(['name', 'clientId'], { unique: true })
 export class Role extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,16 +27,16 @@ export class Role extends BaseEntity {
   description: string;
 
   @Column({ nullable: true })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: true })
-  organisationName: string;
+  clientName: string;
 
   /**
    * Scope of this role. SYSTEM = platform-level role (seeded System
-   * Admin); ORG = per-organisation role. SYSTEM rows still carry
-   * an organisationId pointing at the seed System Organisation so
-   * that org-scoped queries (filtered by organisationId) stay
+   * Admin); ORG = per-client role. SYSTEM rows still carry
+   * a clientId pointing at the seed System Client so
+   * that client-scoped queries (filtered by clientId) stay
    * consistent.
    */
   @Column({

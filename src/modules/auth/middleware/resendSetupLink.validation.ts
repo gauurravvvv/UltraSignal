@@ -1,6 +1,6 @@
 /**
  * ResendSetupLinkValidation — validates POST /auth/resend-setup-link body.
- * Only user ID and org ID are needed; the controller re-generates the
+ * Only user ID and client ID are needed; the controller re-generates the
  * token and re-sends the welcome email internally.
  */
 import { NextFunction, Request, Response } from 'express';
@@ -19,8 +19,8 @@ const ResendSetupLinkValidation = async (
     id: fields.id.required().messages({
       'any.required': 'User ID is required',
     }),
-    orgId: fields.id.required().messages({
-      'any.required': 'Organisation ID is required',
+    clientId: fields.id.required().messages({
+      'any.required': 'Client ID is required',
     }),
   });
 

@@ -59,8 +59,8 @@ export const AUDIT_FIELDS = {
     'prompt_sql',
     'prompt_values_sql',
   ],
-  ORGANISATION: ['name', 'description', 'status', 'isDefault'],
-  ROLE: ['id', 'name', 'description', 'isDefault', 'status', 'organisationId'],
+  CLIENT: ['name', 'description', 'status', 'isDefault'],
+  ROLE: ['id', 'name', 'description', 'isDefault', 'status', 'clientId'],
 } as const;
 
 // ── Human-readable display labels ──

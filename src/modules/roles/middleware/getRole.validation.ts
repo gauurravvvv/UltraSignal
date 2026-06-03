@@ -1,8 +1,8 @@
 /**
- * GetRoleValidation — resolves and org-scopes the role before the controller runs.
+ * GetRoleValidation — resolves and client-scopes the role before the controller runs.
  *
- * The lookup uses both `id` and `organisationId` to prevent an admin from reading
- * a role from a different org by guessing a valid UUID. The pre-fetched `role` is
+ * The lookup uses both `id` and `clientId` to prevent an admin from reading
+ * a role from a different client by guessing a valid UUID. The pre-fetched `role` is
  * placed in `res.locals` to avoid a duplicate DB query in the controller.
  */
 import { NextFunction, Request, Response } from 'express';
@@ -24,10 +24,10 @@ const GetRoleValidation = async (
 ) => {
   try {
     const { id } = req.params;
-    const orgId = res.locals.orgData?.id as string;
+    const clientId = res.locals.clientData?.id as string;
 
     const role = await AppDataSource.getRepository(Role).findOne({
-      where: { id, organisationId: orgId },
+      where: { id, clientId: clientId },
     });
 
     if (!role) {

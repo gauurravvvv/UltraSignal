@@ -37,7 +37,7 @@
     "account_locked": "Konto gesperrt. Bitte kontaktieren Sie Ihren Administrator",
     "role_inactive": "Ihre zugewiesene Rolle ist inaktiv. Bitte kontaktieren Sie Ihren Administrator"
   },
-  "org": {
+  "client": {
     "created": "Organisation erfolgreich erstellt",
     "updated": "Organisation erfolgreich aktualisiert",
     "deleted": "Organisation erfolgreich gelöscht",
@@ -67,7 +67,7 @@
     "account_not_locked": "Dieses Konto ist nicht gesperrt",
     "cannot_modify_default": "Der Standard-Systemadministrator kann nicht geändert werden"
   },
-  "org_admin": {
+  "client_admin": {
     "created": "Administrator erfolgreich erstellt",
     "updated": "Administrator erfolgreich aktualisiert",
     "deleted": "Administrator erfolgreich gelöscht",
@@ -283,15 +283,15 @@
     "export_failed": "Audit-Protokolle konnten nicht exportiert werden",
     "no_logs_found": "Keine Audit-Protokolle für die angegebenen Kriterien gefunden",
     "invalid_export_format": "Ungültiges Exportformat. Unterstützte Formate: excel, pdf",
-    "org_required_for_export": "Bitte wählen Sie eine Organisation zum Exportieren",
-    "no_logs_for_org": "Keine Audit-Protokolle für diese Organisation verfügbar"
+    "client_required_for_export": "Bitte wählen Sie eine Organisation zum Exportieren",
+    "no_logs_for_client": "Keine Audit-Protokolle für diese Organisation verfügbar"
   },
   "login_activity": {
     "list_fetched": "Anmeldeaktivität erfolgreich abgerufen",
     "fetch_failed": "Anmeldeaktivität konnte nicht abgerufen werden",
     "export_failed": "Anmeldeaktivität konnte nicht exportiert werden",
     "no_activity_found": "Keine Anmeldeaktivität für die angegebenen Kriterien gefunden",
-    "no_activity_for_org": "Keine Anmeldeaktivität für diese Organisation verfügbar"
+    "no_activity_for_client": "Keine Anmeldeaktivität für diese Organisation verfügbar"
   },
   "query": {
     "executed": "Abfrage erfolgreich ausgeführt",
@@ -347,7 +347,7 @@
     "welcome_subject": "Willkommen bei {{organisation}}",
     "welcome_greeting": "Willkommen, {{fullName}}!",
     "welcome_body": "Ihr Konto wurde auf <strong>{{organisation}}</strong> erstellt. Klicken Sie auf die Schaltfläche unten, um Ihr Passwort festzulegen und Ihr Konto zu aktivieren.",
-    "label_organisation": "Organisation",
+    "label_client": "Organisation",
     "label_username": "Benutzername",
     "set_password_btn": "Passwort festlegen",
     "expiry_notice": "Dieser Link läuft in {{setupTokenExpiryHours}} Stunden ab. Falls Sie diese E-Mail nicht erwartet haben, wenden Sie sich bitte an Ihren Administrator.",

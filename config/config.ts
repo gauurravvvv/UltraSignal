@@ -24,9 +24,9 @@ export const DEFAULT_SYSTEM_ADMIN_CREDS = {
   PASSWORD: process.env.SYSTEM_ADMIN_PASSWORD || '',
 };
 
-export const SYSTEM_ORGANISATION = {
-  NAME: process.env.SYSTEM_ORGANISATION_NAME || '',
-  DESCRIPTION: process.env.SYSTEM_ORGANISATION_DESC || '',
+export const SYSTEM_CLIENT = {
+  NAME: process.env.SUPER_CLIENT_NAME || '',
+  DESCRIPTION: process.env.SUPER_CLIENT_DESC || '',
 };
 
 export const WEB_URL = process.env.WEB_URL || 'http://localhost:4201';
@@ -41,11 +41,11 @@ export const VALIDATION = {
 
 export const ROLES = {
   SYSTEM_ADMIN: 'SYSTEM-ADMIN',
-  ORG_ADMIN: 'ORG-ADMIN',
-  ORG_USER: 'ORG-USER',
+  CLIENT_ADMIN: 'CLIENT-ADMIN',
+  CLIENT_USER: 'CLIENT-USER',
 };
 
-export const ORGAINISATION_TYPE = {
+export const CLIENT_TYPE = {
   DEFAULT: 1,
   CUSTOM: 0,
 };
@@ -102,7 +102,7 @@ export const MAX_LENGTH = {
   USERNAME: 30,
   PASSWORD: 128,
   EMAIL: 254,
-  ORG_NAME: 64,
+  CLIENT_NAME: 64,
   DESCRIPTION: 500,
   CONNECTION_NAME: 64,
   GROUP_NAME: 64,
@@ -125,7 +125,7 @@ export const MIN_LENGTH = {
   LAST_NAME: 2,
   USERNAME: 6,
   PASSWORD: 8,
-  ORG_NAME: 2,
+  CLIENT_NAME: 2,
   DESCRIPTION: 2,
   PEPPER_KEY: 32,
   CONNECTION_NAME: 2,
@@ -158,7 +158,7 @@ export const STATUS = {
 };
 
 /**
- * Enum-style values for the `isDefault` column on User / Organisation /
+ * Enum-style values for the `isDefault` column on User / Client /
  * Role / Group entities. The DB stores 0 or 1 (typeorm `enum: [0, 1]`)
  * — use these constants instead of literals to make the intent at the
  * call site obvious and to localise any future widening (e.g. to a
@@ -180,7 +180,7 @@ export const ULTRASIGNAL_SCHEMA_NAME = 'dbexec_master';
  * through getDbConnection(). SNOWFLAKE has no TypeORM driver and
  * routes through connectToSnowflake() in snowflakeConnection.ts.
  *
- * Master / per-org master DBs are always POSTGRES.
+ * Master / per-client master DBs are always POSTGRES.
  *
  * Branch with `dbType === DB_TYPES.SNOWFLAKE` whenever you need to
  * pick between the two paths.
@@ -197,7 +197,7 @@ export const DB_TYPES = {
 /**
  * Boolean flag pair for the `isMasterDb` argument of getDbConnection().
  * `MASTER` pins the ULTRASIGNAL_SCHEMA_NAME schema (used for the platform
- * master DB and per-org master DBs). `EXTERNAL` leaves the schema
+ * master DB and per-client master DBs). `EXTERNAL` leaves the schema
  * unset so user-owned external datasources resolve tables out of
  * their own default schema (`public` on Postgres). Picking the wrong
  * one routes queries to a non-existent schema and surfaces as
@@ -211,7 +211,7 @@ export const IS_MASTER_DB = {
 /**
  * Boolean flag pair for the `sync` argument of getDbConnection().
  * Schema sync is destructive-ish (auto-DDL) and is only used during
- * org onboarding. Every other caller must pass OFF.
+ * client onboarding. Every other caller must pass OFF.
  */
 export const DB_SYNC = {
   ON: true,

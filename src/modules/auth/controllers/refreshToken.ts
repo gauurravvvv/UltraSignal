@@ -13,7 +13,7 @@ import {
   GENERIC,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import { createToken } from '../../../shared/utility/jwt';
 import Logger from '../../../shared/utility/logger/logger';
@@ -23,19 +23,19 @@ import sendResponse from '../../../shared/utility/response';
 const refreshToken = async (req: Request, res: Response) => {
   Logger.info(`Refresh token request`);
 
-  const { refreshToken: clientRefreshToken, organisation } = req.body;
+  const { refreshToken: refreshTokenInput, client: clientNameInput } = req.body;
 
-  if (!clientRefreshToken || !organisation) {
+  if (!refreshTokenInput || !clientNameInput) {
     return sendResponse(res, false, CODE.BAD_REQUEST, GENERIC.BAD_REQUEST);
   }
 
   try {
-    const org = await Organisation.findOne({
-      where: { name: organisation },
+    const client = await Client.findOne({
+      where: { name: clientNameInput },
       relations: ['config'],
     });
 
-    if (!org) {
+    if (!client) {
       return sendResponse(
         res,
         false,
@@ -48,8 +48,8 @@ const refreshToken = async (req: Request, res: Response) => {
       .createQueryBuilder('user')
       .addSelect('user.refreshToken')
       .addSelect('user.refreshTokenExpiresAt')
-      .where('user.refreshToken = :token', { token: clientRefreshToken })
-      .andWhere('user.organisationName = :org', { org: organisation })
+      .where('user.refreshToken = :token', { token: refreshTokenInput })
+      .andWhere('user.clientName = :client', { client: clientNameInput })
       .getOne();
 
     if (!user) {
@@ -93,8 +93,8 @@ const refreshToken = async (req: Request, res: Response) => {
       username: user.username,
       isFirstLogin: user.isFirstLogin,
       role: tokenRole,
-      organisationId: user.organisationId,
-      organisation: user.organisationName,
+      clientId: user.clientId,
+      clientName: user.clientName,
       permissions,
       locale: user.locale || 'en',
     };

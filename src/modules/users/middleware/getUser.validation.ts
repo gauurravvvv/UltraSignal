@@ -12,7 +12,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { CODE, VALIDATION_MESSAGES } from '../../../../config/config';
 import {
-  ORGANISATION,
+  CLIENT,
   USER as USER_MSG,
 } from '../../../shared/constants/response.messages';
 import { UserGroupMapping } from '../../../shared/db/entities/user-group-mapping.entity';
@@ -25,7 +25,7 @@ const GetUserValidation = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { orgData } = res.locals;
+  const { clientData } = res.locals;
   const { id } = req.params;
 
   if (!id) {
@@ -40,7 +40,7 @@ const GetUserValidation = async (
   // User existence check
   try {
     const orgUser = await AppDataSource.getRepository(User).findOne({
-      where: { id, organisationId: orgData.id },
+      where: { id, clientId: clientData.id },
     });
 
     if (!orgUser) {
@@ -63,7 +63,7 @@ const GetUserValidation = async (
       groupNames: userGroupNames,
     };
   } catch (err) {
-    return sendResponse(res, false, CODE.BAD_REQUEST, ORGANISATION.INVALID_ID);
+    return sendResponse(res, false, CODE.BAD_REQUEST, CLIENT.INVALID_ID);
   }
 
   next();

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
-import sendEmail, { OrgEmailConfig } from '.';
+import sendEmail, { ClientEmailConfig } from '.';
 import {
   EMAIL_CONFIG,
   FE_URL,
@@ -21,11 +21,11 @@ const welcomeEmailToUser = async (
   emailTo: string,
   fullName: string,
   username: string,
-  organisation: string,
+  clientName: string,
   userId: string,
-  orgId: string,
+  clientId: string,
   setupToken: string,
-  orgEmailConfig?: OrgEmailConfig,
+  clientEmailConfig?: ClientEmailConfig,
   locale: string = 'en',
 ): Promise<boolean> => {
   const filePath = resolveEmailTemplate('welcome-user.html');
@@ -38,16 +38,16 @@ const welcomeEmailToUser = async (
 
   const welcomeSubject = t('email.welcome_subject', locale).replace(
     '{{organisation}}',
-    organisation,
+    clientName,
   );
 
   const replacements = {
     fullName,
     username,
-    organisation,
-    SET_PASSWORD_URL: `${FE_URL}/set-password?token=${setupToken}&id=${userId}&orgId=${orgId}&lang=${locale}`,
+    organisation: clientName,
+    SET_PASSWORD_URL: `${FE_URL}/set-password?token=${setupToken}&id=${userId}&clientId=${clientId}&lang=${locale}`,
     year: new Date().getFullYear(),
-    senderName: organisation || 'UltraSignal',
+    senderName: clientName || 'UltraSignal',
     welcomeSubject,
     preheader: welcomeSubject,
     // Translated strings
@@ -57,9 +57,9 @@ const welcomeEmailToUser = async (
     ),
     body: t('email.welcome_body', locale).replace(
       '{{organisation}}',
-      `<strong>${organisation}</strong>`,
+      `<strong>${clientName}</strong>`,
     ),
-    labelOrganisation: t('email.label_organisation', locale),
+    labelOrganisation: t('email.label_client', locale),
     labelUsername: t('email.label_username', locale),
     setPasswordBtn: t('email.set_password_btn', locale),
     expiryNotice: t('email.expiry_notice', locale).replace(
@@ -84,8 +84,8 @@ const welcomeEmailToUser = async (
 
   const htmlToSend = template(replacements);
 
-  return sendEmail(emailTo, welcomeSubject, htmlToSend, orgEmailConfig, {
-    senderName: organisation || undefined,
+  return sendEmail(emailTo, welcomeSubject, htmlToSend, clientEmailConfig, {
+    senderName: clientName || undefined,
     replyTo: supportEmail || undefined,
   });
 };

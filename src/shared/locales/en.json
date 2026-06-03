@@ -37,7 +37,7 @@
     "account_locked": "Account locked. Please contact your administrator",
     "role_inactive": "Your assigned role is inactive. Please contact your administrator"
   },
-  "org": {
+  "client": {
     "created": "Organisation created successfully",
     "updated": "Organisation updated successfully",
     "deleted": "Organisation deleted successfully",
@@ -67,7 +67,7 @@
     "account_not_locked": "This account is not locked",
     "cannot_modify_default": "Default system admin cannot be modified"
   },
-  "org_admin": {
+  "client_admin": {
     "created": "Admin created successfully",
     "updated": "Admin updated successfully",
     "deleted": "Admin deleted successfully",
@@ -283,15 +283,15 @@
     "export_failed": "Failed to export audit logs",
     "no_logs_found": "No audit logs found for the specified criteria",
     "invalid_export_format": "Invalid export format. Supported formats: excel, pdf",
-    "org_required_for_export": "Please select an organisation to export",
-    "no_logs_for_org": "No audit logs available for this organisation"
+    "client_required_for_export": "Please select an organisation to export",
+    "no_logs_for_client": "No audit logs available for this organisation"
   },
   "login_activity": {
     "list_fetched": "Login activity fetched successfully",
     "fetch_failed": "Failed to fetch login activity",
     "export_failed": "Failed to export login activity",
     "no_activity_found": "No login activity found for the specified criteria",
-    "no_activity_for_org": "No login activity available for this organisation"
+    "no_activity_for_client": "No login activity available for this organisation"
   },
   "query": {
     "executed": "Query executed successfully",
@@ -347,7 +347,7 @@
     "welcome_subject": "Welcome to {{organisation}}",
     "welcome_greeting": "Welcome, {{fullName}}!",
     "welcome_body": "Your account has been created on <strong>{{organisation}}</strong>. Click the button below to set your password and activate your account.",
-    "label_organisation": "Organisation",
+    "label_client": "Organisation",
     "label_username": "Username",
     "set_password_btn": "Set Your Password",
     "expiry_notice": "This link will expire in {{setupTokenExpiryHours}} hours. If you did not expect this email, please contact your administrator.",

@@ -12,7 +12,7 @@ import { Group } from './group.entity';
 import { User } from './user.entity';
 
 @Entity()
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 @Index(['userId'])
 @Index(['groupId'])
 @Index(['connectionId'])
@@ -24,10 +24,10 @@ export class DatasourceAccess extends BaseEntity {
   connectionId: string;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

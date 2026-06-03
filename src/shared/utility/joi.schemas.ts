@@ -7,8 +7,8 @@ const NAME_PATTERN = /^[\p{L}][\p{L}'\- ]*$/u;
 // Username pattern: starts with letter, alphanumeric + . _ -
 const USERNAME_PATTERN = /^[A-Za-z][A-Za-z0-9._-]*$/;
 
-// Organisation name: starts with letter/number, allows letters, numbers, spaces, dots, underscores, hyphens
-const ORG_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9 ._-]*$/;
+// Client name: starts with letter/number, allows letters, numbers, spaces, dots, underscores, hyphens
+const CLIENT_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9 ._-]*$/;
 
 // Valid encryption algorithms
 const ENCRYPTION_ALGORITHMS = [
@@ -127,27 +127,27 @@ export const fields = {
     'string.empty': 'ID is required',
   }),
 
-  organisation: Joi.string().trim().messages({
-    'any.required': 'Organisation is required',
-    'string.empty': 'Organisation is required',
+  client: Joi.string().trim().messages({
+    'any.required': 'Client is required',
+    'string.empty': 'Client is required',
   }),
 
   status: Joi.number().valid(0, 1).messages({
     'any.only': 'Status must be either 0 or 1',
   }),
 
-  orgName: Joi.string()
+  clientName: Joi.string()
     .trim()
-    .min(MIN_LENGTH.ORG_NAME)
-    .max(MAX_LENGTH.ORG_NAME)
-    .pattern(ORG_NAME_PATTERN)
+    .min(MIN_LENGTH.CLIENT_NAME)
+    .max(MAX_LENGTH.CLIENT_NAME)
+    .pattern(CLIENT_NAME_PATTERN)
     .messages({
-      'string.empty': 'Organisation name is required',
-      'string.min': `Organisation name must be at least ${MIN_LENGTH.ORG_NAME} characters`,
-      'string.max': `Organisation name must not exceed ${MAX_LENGTH.ORG_NAME} characters`,
+      'string.empty': 'Client name is required',
+      'string.min': `Client name must be at least ${MIN_LENGTH.CLIENT_NAME} characters`,
+      'string.max': `Client name must not exceed ${MAX_LENGTH.CLIENT_NAME} characters`,
       'string.pattern.base':
-        'Organisation name must start with a letter or number and can only contain letters, numbers, spaces, dots, underscores and hyphens',
-      'any.required': 'Organisation name is required',
+        'Client name must start with a letter or number and can only contain letters, numbers, spaces, dots, underscores and hyphens',
+      'any.required': 'Client name is required',
     }),
 
   description: Joi.string()
@@ -263,7 +263,7 @@ export const fields = {
     .trim()
     .min(MIN_LENGTH.CONNECTION_NAME)
     .max(MAX_LENGTH.CONNECTION_NAME)
-    .pattern(ORG_NAME_PATTERN)
+    .pattern(CLIENT_NAME_PATTERN)
     .messages({
       'string.empty': 'Connection name is required',
       'string.min': `Connection name must be at least ${MIN_LENGTH.CONNECTION_NAME} characters`,
@@ -277,7 +277,7 @@ export const fields = {
     .trim()
     .min(MIN_LENGTH.GROUP_NAME)
     .max(MAX_LENGTH.GROUP_NAME)
-    .pattern(ORG_NAME_PATTERN)
+    .pattern(CLIENT_NAME_PATTERN)
     .messages({
       'string.empty': 'Group name is required',
       'string.min': `Group name must be at least ${MIN_LENGTH.GROUP_NAME} characters`,
@@ -321,7 +321,7 @@ export const fields = {
     .trim()
     .min(MIN_LENGTH.TAB_NAME)
     .max(MAX_LENGTH.TAB_NAME)
-    .pattern(ORG_NAME_PATTERN)
+    .pattern(CLIENT_NAME_PATTERN)
     .messages({
       'string.empty': 'Tab name is required',
       'string.min': `Tab name must be at least ${MIN_LENGTH.TAB_NAME} characters`,
@@ -335,7 +335,7 @@ export const fields = {
     .trim()
     .min(MIN_LENGTH.SECTION_NAME)
     .max(MAX_LENGTH.SECTION_NAME)
-    .pattern(ORG_NAME_PATTERN)
+    .pattern(CLIENT_NAME_PATTERN)
     .messages({
       'string.empty': 'Section name is required',
       'string.min': `Section name must be at least ${MIN_LENGTH.SECTION_NAME} characters`,
@@ -349,7 +349,7 @@ export const fields = {
     .trim()
     .min(MIN_LENGTH.PROMPT_NAME)
     .max(MAX_LENGTH.PROMPT_NAME)
-    .pattern(ORG_NAME_PATTERN)
+    .pattern(CLIENT_NAME_PATTERN)
     .messages({
       'string.empty': 'Prompt name is required',
       'string.min': `Prompt name must be at least ${MIN_LENGTH.PROMPT_NAME} characters`,
@@ -363,7 +363,7 @@ export const fields = {
     .trim()
     .min(MIN_LENGTH.QUERY_BUILDER_NAME)
     .max(MAX_LENGTH.QUERY_BUILDER_NAME)
-    .pattern(ORG_NAME_PATTERN)
+    .pattern(CLIENT_NAME_PATTERN)
     .messages({
       'string.empty': 'Query Builder name is required',
       'string.min': `Query Builder name must be at least ${MIN_LENGTH.QUERY_BUILDER_NAME} characters`,
@@ -407,7 +407,7 @@ export const fields = {
     .trim()
     .min(MIN_LENGTH.DATASET_NAME)
     .max(MAX_LENGTH.DATASET_NAME)
-    .pattern(ORG_NAME_PATTERN)
+    .pattern(CLIENT_NAME_PATTERN)
     .messages({
       'string.empty': 'Dataset name is required',
       'string.min': `Dataset name must be at least ${MIN_LENGTH.DATASET_NAME} characters`,
@@ -421,7 +421,7 @@ export const fields = {
     .trim()
     .min(MIN_LENGTH.ANALYSIS_NAME)
     .max(MAX_LENGTH.ANALYSIS_NAME)
-    .pattern(ORG_NAME_PATTERN)
+    .pattern(CLIENT_NAME_PATTERN)
     .messages({
       'string.empty': 'Analysis name is required',
       'string.min': `Analysis name must be at least ${MIN_LENGTH.ANALYSIS_NAME} characters`,
@@ -478,7 +478,7 @@ export const fields = {
     .trim()
     .min(MIN_LENGTH.DB_DISPLAY_NAME)
     .max(MAX_LENGTH.DB_DISPLAY_NAME)
-    .pattern(ORG_NAME_PATTERN)
+    .pattern(CLIENT_NAME_PATTERN)
     .messages({
       'string.empty': 'Database name is required',
       'string.min': `Database name must be at least ${MIN_LENGTH.DB_DISPLAY_NAME} characters`,

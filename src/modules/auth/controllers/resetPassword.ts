@@ -3,7 +3,7 @@
  *
  * The user must have requested an OTP via /auth/generateOTP first.
  * After a successful reset:
- *  - The new password is saved (encrypted under the org DEK).
+ *  - The new password is saved (encrypted under the client DEK).
  *  - Both OTP fields and the refresh token are cleared, forcing a new login.
  *  - Password history is updated so the same password can't be reused.
  *  - A confirmation email is sent to the user (fire-and-forget).
@@ -16,15 +16,15 @@ import {
   GENERIC,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import {
-  decryptForOrg,
-  encryptForOrg,
+  decryptForClient,
+  encryptForClient,
 } from '../../../shared/services/crypto.service';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
-import { OrgEmailConfig } from '../../../shared/utility/mail';
+import { ClientEmailConfig } from '../../../shared/utility/mail';
 import passwordResetSuccessEmail from '../../../shared/utility/mail/passwordResetSuccessEmail';
 import { buildRequestContext } from '../../../shared/utility/mail/requestContext';
 import {
@@ -36,24 +36,24 @@ import sendResponse from '../../../shared/utility/response';
 const resetPassword = async (req: Request, res: Response) => {
   Logger.info(`Reset password request`);
 
-  const { id, orgId, otp, password } = req.body;
+  const { id, clientId, otp, password } = req.body;
 
   try {
-    const org = await Organisation.findOne({
-      where: { id: orgId },
+    const client = await Client.findOne({
+      where: { id: clientId },
       relations: ['config'],
     });
 
-    if (!org) {
+    if (!client) {
       // Generic OTP-invalid funnel — every pre-OTP-verified failure
-      // returns the same response so an attacker cannot probe orgs /
+      // returns the same response so an attacker cannot probe clients /
       // users / lock state via this endpoint.
       sendResponse(res, false, CODE.BAD_REQUEST, AUTH_MSG.OTP_INVALID);
       return;
     }
 
     const user = await AppDataSource.getRepository(User).findOne({
-      where: { organisationId: orgId, id },
+      where: { clientId: clientId, id },
     });
 
     if (
@@ -85,12 +85,12 @@ const resetPassword = async (req: Request, res: Response) => {
     // Check password history. Post-OTP, PASSWORD_REUSED is intentionally
     // distinct from OTP_INVALID — the OTP did succeed, the new password is
     // simply not acceptable.
-    const passwordHistoryLimit = org.config?.passwordHistoryLimit || 5;
+    const passwordHistoryLimit = client.config?.passwordHistoryLimit || 5;
     const isReused = await isPasswordReusedShared(
       AppDataSource.manager,
       user.id,
       password,
-      org.config,
+      client.config,
       user.password,
       passwordHistoryLimit,
     );
@@ -98,7 +98,7 @@ const resetPassword = async (req: Request, res: Response) => {
       return sendResponse(res, false, CODE.BAD_REQUEST, AUTH_MSG.PASSWORD_REUSED);
     }
 
-    user.password = encryptForOrg(password, org.config);
+    user.password = encryptForClient(password, client.config);
     user.otp = null;
     user.otpExpiresAt = null;
     user.updatedBy = id;
@@ -117,26 +117,26 @@ const resetPassword = async (req: Request, res: Response) => {
 
     const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
 
-    const orgEmailConfig: OrgEmailConfig | undefined = org.config?.emailProvider
+    const clientEmailConfig: ClientEmailConfig | undefined = client.config?.emailProvider
       ? {
-          emailProvider: org.config.emailProvider,
-          smtpHost: org.config.smtpHost,
-          smtpPort: org.config.smtpPort,
-          smtpUser: org.config.smtpUser
-            ? decryptForOrg(org.config.smtpUser, org.config)
+          emailProvider: client.config.emailProvider,
+          smtpHost: client.config.smtpHost,
+          smtpPort: client.config.smtpPort,
+          smtpUser: client.config.smtpUser
+            ? decryptForClient(client.config.smtpUser, client.config)
             : null,
-          smtpPassword: org.config.smtpPassword
-            ? decryptForOrg(org.config.smtpPassword, org.config)
+          smtpPassword: client.config.smtpPassword
+            ? decryptForClient(client.config.smtpPassword, client.config)
             : null,
-          smtpFrom: org.config.smtpFrom,
-          sesRegion: org.config.sesRegion,
-          sesAccessKeyId: org.config.sesAccessKeyId
-            ? decryptForOrg(org.config.sesAccessKeyId, org.config)
+          smtpFrom: client.config.smtpFrom,
+          sesRegion: client.config.sesRegion,
+          sesAccessKeyId: client.config.sesAccessKeyId
+            ? decryptForClient(client.config.sesAccessKeyId, client.config)
             : null,
-          sesSecretAccessKey: org.config.sesSecretAccessKey
-            ? decryptForOrg(org.config.sesSecretAccessKey, org.config)
+          sesSecretAccessKey: client.config.sesSecretAccessKey
+            ? decryptForClient(client.config.sesSecretAccessKey, client.config)
             : null,
-          sesFrom: org.config.sesFrom,
+          sesFrom: client.config.sesFrom,
         }
       : undefined;
 
@@ -144,8 +144,8 @@ const resetPassword = async (req: Request, res: Response) => {
       user.email,
       fullName,
       user.username,
-      org.name,
-      orgEmailConfig,
+      client.name,
+      clientEmailConfig,
       user.locale || res.locals.locale || 'en',
       buildRequestContext(req),
     );

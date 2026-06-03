@@ -1,48 +1,35 @@
 /**
- * AddOrganisationValidation — validates new organisation creation and enforces the global
- * name uniqueness constraint before the controller writes to the master DB.
+ * UpdateClientValidation — validates a partial client update.
  *
- * Authorisation is no longer enforced here — the orgs router runs
- * `VerifyPermissionMiddleware('orgManagement')` upstream, which only lets the
- * platform-level "System Admin" role through. This middleware is now payload-only:
- * shape, defaults, and the duplicate-name check that would break tenant isolation
- * downstream.
+ * Authorisation is enforced upstream by `VerifyPermissionMiddleware('clientManagement')`
+ * in the clients router; this middleware is now payload-only.
  *
- * Security and email config fields are optional: if omitted, the entity applies its own
- * defaults (maxLoginAttempts, accountLockDurationHours, etc.) and the mailer falls back to
- * global .env values for SMTP/SES.
+ * Client name is intentionally excluded from the schema — names are set at
+ * creation time and cannot be changed because they are used as tenant identifiers.
+ *
+ * Both `client` and `clientConfig` are pre-fetched into `res.locals` so the controller can
+ * merge fields and save without re-querying.
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
 import { CODE } from '../../../../config/config';
 import {
   GENERIC,
-  ORGANISATION as ORGANISATION_MSG,
+  CLIENT as CLIENT_MSG,
 } from '../../../shared/constants/response.messages';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
+import { ClientConfig } from '../../../shared/db/entities/clientConfig.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
-import { SUPPORTED_LOCALES } from '../../../shared/utility/i18n';
 import { fields } from '../../../shared/utility/joi.schemas';
 import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
 import { validateSchema } from '../../../shared/utility/validate.middleware';
 
 const schema = Joi.object({
-  name: fields.orgName.required(),
-  description: fields.description.required(),
-  // encryptionAlgorithm + pepperKey are no longer accepted from the
-  // client. The server generates a per-org DEK at creation time and
-  // wraps it under the platform master key. See addOrg.ts.
-  // dbHost/dbPort/dbName/dbUsername/dbPassword removed — the platform
-  // runs against a single DB from .env; orgs no longer carry their
-  // own DB pointer.
-  adminEmail: fields.email.required(),
-  adminLocale: Joi.string()
-    .valid(...SUPPORTED_LOCALES)
-    .default('en')
-    .messages({
-      'any.only': `Admin locale must be one of: ${SUPPORTED_LOCALES.join(', ')}`,
-    }),
+  id: fields.id.required(),
+  description: fields.description.optional(),
+  status: fields.status.optional(),
+  justification: fields.justification.optional(),
   maxLoginAttempts: fields.maxLoginAttempts.optional(),
   accountLockDurationHours: fields.accountLockDurationHours.optional(),
   passwordHistoryLimit: fields.passwordHistoryLimit.optional(),
@@ -59,7 +46,7 @@ const schema = Joi.object({
   sesFrom: fields.sesFrom.optional().allow('', null),
 });
 
-const AddOrganisationValidation = async (
+const UpdateClientValidation = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -71,18 +58,34 @@ const AddOrganisationValidation = async (
     }
     req.body = value;
 
-    const isOrgExists = await Organisation.findOne({
-      where: { name: value.name },
-    });
+    const { id } = req.body;
 
-    if (isOrgExists) {
+    const client = await Client.findOne({ where: { id } });
+
+    if (!client) {
       return sendResponse(
         res,
         false,
-        CODE.ALREADY_EXISTS,
-        ORGANISATION_MSG.ALREADY_EXISTS,
+        CODE.NOT_FOUND,
+        CLIENT_MSG.NOT_FOUND,
       );
     }
+
+    const clientConfig = await ClientConfig.findOne({
+      where: { id: client.configId },
+    });
+
+    if (!clientConfig) {
+      return sendResponse(
+        res,
+        false,
+        CODE.NOT_FOUND,
+        CLIENT_MSG.NOT_FOUND,
+      );
+    }
+
+    res.locals.client = client;
+    res.locals.clientConfig = clientConfig;
 
     next();
   } catch (error) {
@@ -91,4 +94,4 @@ const AddOrganisationValidation = async (
   }
 };
 
-export default AddOrganisationValidation;
+export default UpdateClientValidation;

@@ -2,10 +2,10 @@
  * seedSystemAdminRole — ensures the `Role` row that holds the System
  * Admin permission set exists, and returns its id.
  *
- * Called once in the first-boot transaction (between `onboardOrg` and
+ * Called once in the first-boot transaction (between `onboardClient` and
  * `onboardDB`). The seeded row carries `scope: 'SYSTEM'` so it can be
- * distinguished from per-org roles, but still carries the seed
- * organisation's id so org-scoped queries stay consistent.
+ * distinguished from per-client roles, but still carries the seed
+ * client's id so client-scoped queries stay consistent.
  *
  * Idempotent — if the row already exists, just returns the existing id
  * without rewriting permissions.
@@ -24,7 +24,7 @@ const SYSTEM_ADMIN_ROLE_NAME = 'System Admin';
 
 const seedSystemAdminRole = async (
   manager: EntityManager,
-  orgId: string,
+  clientId: string,
 ): Promise<string> => {
   const existing = await manager.getRepository(Role).findOne({
     where: { name: SYSTEM_ADMIN_ROLE_NAME, scope: 'SYSTEM' },
@@ -36,12 +36,12 @@ const seedSystemAdminRole = async (
   const role = new Role();
   role.name = SYSTEM_ADMIN_ROLE_NAME;
   role.description =
-    'Operates the platform: onboards organisations, manages other ' +
-    'system admins, ships announcements, reviews cross-org audit. ' +
-    'No access to per-organisation data.';
+    'Operates the platform: onboards clients, manages other ' +
+    'system admins, ships announcements, reviews cross-client audit. ' +
+    'No access to per-client data.';
   role.permissions = JSON.stringify(SYSTEM_ADMIN_PERMISSIONS_V2);
   role.scope = 'SYSTEM';
-  role.organisationId = orgId;
+  role.clientId = clientId;
   role.isDefault = IS_DEFAULT.YES;
   role.status = STATUS.ACTIVE;
 

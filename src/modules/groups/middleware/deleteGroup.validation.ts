@@ -16,7 +16,7 @@ import { NextFunction, Request, Response } from 'express';
 import { CODE, IS_DEFAULT, VALIDATION_MESSAGES } from '../../../../config/config';
 import {
   GROUP,
-  ORGANISATION,
+  CLIENT,
 } from '../../../shared/constants/response.messages';
 import { Group } from '../../../shared/db/entities/group.entity';
 import sendResponse from '../../../shared/utility/response';
@@ -28,7 +28,7 @@ const DeleteGroupValidation = async (
   next: NextFunction,
 ) => {
   const { id } = req.params;
-  const orgId = res.locals.orgData?.id as string;
+  const clientId = res.locals.clientData?.id as string;
 
   if (!id) {
     return sendResponse(
@@ -39,19 +39,19 @@ const DeleteGroupValidation = async (
     );
   }
 
-  if (!orgId) {
+  if (!clientId) {
     return sendResponse(
       res,
       false,
       CODE.BAD_REQUEST,
-      VALIDATION_MESSAGES.ID.REQUIRED + ' for organisation',
+      VALIDATION_MESSAGES.ID.REQUIRED + ' for client',
     );
   }
 
   // Check if group exists
   try {
     const group = await AppDataSource.getRepository(Group).findOne({
-      where: { id, organisationId: orgId },
+      where: { id, clientId: clientId },
       relations: ['databaseAccess'],
     });
 
@@ -81,7 +81,7 @@ const DeleteGroupValidation = async (
 
     res.locals.group = group;
   } catch (err) {
-    return sendResponse(res, false, CODE.BAD_REQUEST, ORGANISATION.INVALID_ID);
+    return sendResponse(res, false, CODE.BAD_REQUEST, CLIENT.INVALID_ID);
   }
 
   next();

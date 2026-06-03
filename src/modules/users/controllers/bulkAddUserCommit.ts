@@ -10,7 +10,7 @@
  * The validate step already screened these rows, so the only failures expected
  * here come from the race window between validate and commit:
  *   - Another admin creates a user with the same email/username in the same
- *     org during that gap.
+ *     client during that gap.
  *   - A group is deleted in the same gap.
  * Both are re-checked up-front in a single batch query each (cheap) so the
  * common case avoids per-row DB conflicts.
@@ -33,13 +33,13 @@ import { Group } from '../../../shared/db/entities/group.entity';
 import { UserGroupMapping } from '../../../shared/db/entities/user-group-mapping.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import {
-  decryptForOrg,
-  encryptForOrg,
+  decryptForClient,
+  encryptForClient,
 } from '../../../shared/services/crypto.service';
 import { generateSetupToken } from '../../../shared/utility/generateSetupToken';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
-import { OrgEmailConfig } from '../../../shared/utility/mail';
+import { ClientEmailConfig } from '../../../shared/utility/mail';
 import welcomeEmailToUser from '../../../shared/utility/mail/welcomeEmailToUser';
 import sendResponse from '../../../shared/utility/response';
 import { AppDataSource } from '../../../shared/db';
@@ -77,7 +77,7 @@ const bulkAddUserCommit = async (req: Request, res: Response) => {
   Logger.info('Bulk add user — commit request');
 
   const { users } = req.body as { users: IncomingUser[] };
-  const { loggedInId, orgData } = res.locals;
+  const { loggedInId, clientData } = res.locals;
 
   const failed: FailedRow[] = [];
   const successful: SuccessfulRow[] = [];
@@ -91,7 +91,7 @@ const bulkAddUserCommit = async (req: Request, res: Response) => {
       .getRepository(User)
       .createQueryBuilder('user')
       .select(['user.email'])
-      .where('user.organisationId = :orgId', { orgId: orgData.id })
+      .where('user.clientId = :clientId', { clientId: clientData.id })
       .andWhere('user.email IN (:...emails)', { emails })
       .getMany();
     const collidingEmails = new Set(existingByEmail.map(u => u.email));
@@ -100,7 +100,7 @@ const bulkAddUserCommit = async (req: Request, res: Response) => {
       .getRepository(User)
       .createQueryBuilder('user')
       .select(['user.username'])
-      .where('user.organisationId = :orgId', { orgId: orgData.id })
+      .where('user.clientId = :clientId', { clientId: clientData.id })
       .andWhere('user.username IN (:...usernames)', { usernames })
       .getMany();
     const collidingUsernames = new Set(existingByUsername.map(u => u.username));
@@ -113,7 +113,7 @@ const bulkAddUserCommit = async (req: Request, res: Response) => {
             .getRepository(Group)
             .createQueryBuilder('g')
             .select(['g.id'])
-            .where('g.organisationId = :orgId', { orgId: orgData.id })
+            .where('g.clientId = :clientId', { clientId: clientData.id })
             .andWhere('g.status = :status', { status: '1' })
             .andWhere('g.id IN (:...ids)', { ids: allGroupIds })
             .getMany()
@@ -127,7 +127,7 @@ const bulkAddUserCommit = async (req: Request, res: Response) => {
         failed.push({
           row: u.row,
           email: u.email,
-          reason: 'Email already exists in this organisation',
+          reason: 'Email already exists in this client',
         });
         continue;
       }
@@ -135,7 +135,7 @@ const bulkAddUserCommit = async (req: Request, res: Response) => {
         failed.push({
           row: u.row,
           email: u.email,
-          reason: 'Username already exists in this organisation',
+          reason: 'Username already exists in this client',
         });
         continue;
       }
@@ -151,29 +151,29 @@ const bulkAddUserCommit = async (req: Request, res: Response) => {
       ready.push(u);
     }
 
-    // 3. Build email config once — the org's SMTP/SES creds are shared across
+    // 3. Build email config once — the client's SMTP/SES creds are shared across
     //    all rows.
-    const orgEmailConfig: OrgEmailConfig | undefined = orgData.config
+    const clientEmailConfig: ClientEmailConfig | undefined = clientData.config
       ?.emailProvider
       ? {
-          emailProvider: orgData.config.emailProvider,
-          smtpHost: orgData.config.smtpHost,
-          smtpPort: orgData.config.smtpPort,
-          smtpUser: orgData.config.smtpUser
-            ? decryptForOrg(orgData.config.smtpUser, orgData.config)
+          emailProvider: clientData.config.emailProvider,
+          smtpHost: clientData.config.smtpHost,
+          smtpPort: clientData.config.smtpPort,
+          smtpUser: clientData.config.smtpUser
+            ? decryptForClient(clientData.config.smtpUser, clientData.config)
             : null,
-          smtpPassword: orgData.config.smtpPassword
-            ? decryptForOrg(orgData.config.smtpPassword, orgData.config)
+          smtpPassword: clientData.config.smtpPassword
+            ? decryptForClient(clientData.config.smtpPassword, clientData.config)
             : null,
-          smtpFrom: orgData.config.smtpFrom,
-          sesRegion: orgData.config.sesRegion,
-          sesAccessKeyId: orgData.config.sesAccessKeyId
-            ? decryptForOrg(orgData.config.sesAccessKeyId, orgData.config)
+          smtpFrom: clientData.config.smtpFrom,
+          sesRegion: clientData.config.sesRegion,
+          sesAccessKeyId: clientData.config.sesAccessKeyId
+            ? decryptForClient(clientData.config.sesAccessKeyId, clientData.config)
             : null,
-          sesSecretAccessKey: orgData.config.sesSecretAccessKey
-            ? decryptForOrg(orgData.config.sesSecretAccessKey, orgData.config)
+          sesSecretAccessKey: clientData.config.sesSecretAccessKey
+            ? decryptForClient(clientData.config.sesSecretAccessKey, clientData.config)
             : null,
-          sesFrom: orgData.config.sesFrom,
+          sesFrom: clientData.config.sesFrom,
         }
       : undefined;
 
@@ -191,7 +191,7 @@ const bulkAddUserCommit = async (req: Request, res: Response) => {
     for (const u of ready) {
       try {
         const setupToken = generateSetupToken();
-        const encryptedToken = encryptForOrg(setupToken, orgData.config);
+        const encryptedToken = encryptForClient(setupToken, clientData.config);
         const expiresAt = new Date(
           Date.now() + SETUP_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
         );
@@ -206,8 +206,8 @@ const bulkAddUserCommit = async (req: Request, res: Response) => {
             user.email = u.email;
             user.username = u.username;
             user.status = STATUS.ACTIVE;
-            user.organisationName = orgData.name;
-            user.organisationId = orgData.id;
+            user.clientName = clientData.name;
+            user.clientId = clientData.id;
             user.createdBy = loggedInId;
             user.locale = u.locale;
             user.setupToken = encryptedToken;
@@ -280,11 +280,11 @@ const bulkAddUserCommit = async (req: Request, res: Response) => {
               p.email,
               p.fullName,
               p.username,
-              orgData.name,
+              clientData.name,
               p.userId,
-              orgData.id,
+              clientData.id,
               p.setupToken,
-              orgEmailConfig,
+              clientEmailConfig,
               p.locale,
             ),
           ),

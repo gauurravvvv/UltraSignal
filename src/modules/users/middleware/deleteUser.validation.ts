@@ -4,8 +4,8 @@
  *
  * Both rules apply to every caller who reaches this route. The previous
  * SYSTEM-ADMIN bypass existed so the platform admin could nuke a default
- * user during org decommissioning; that path now lives under
- * `DELETE /orgs/:id` (which cascades) — system admins can no longer reach
+ * user during client decommissioning; that path now lives under
+ * `DELETE /clients/:id` (which cascades) — system admins can no longer reach
  * this route at all (no userManagement permission in the V2 set), so the
  * bypass became dead code and is removed for consistency.
  */
@@ -16,7 +16,7 @@ import {
   VALIDATION_MESSAGES,
 } from '../../../../config/config';
 import {
-  ORGANISATION,
+  CLIENT,
   USER as USER_MSG,
 } from '../../../shared/constants/response.messages';
 import { User } from '../../../shared/db/entities/user.entity';
@@ -28,7 +28,7 @@ const DeleteUserValidation = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { loggedInId, orgData } = res.locals;
+  const { loggedInId, clientData } = res.locals;
   const { id } = req.params;
 
   if (!id) {
@@ -51,7 +51,7 @@ const DeleteUserValidation = async (
 
   try {
     const orgUser = await AppDataSource.getRepository(User).findOne({
-      where: { id, organisationId: orgData.id },
+      where: { id, clientId: clientData.id },
     });
 
     if (!orgUser) {
@@ -69,7 +69,7 @@ const DeleteUserValidation = async (
 
     res.locals.orgUser = orgUser;
   } catch (err) {
-    return sendResponse(res, false, CODE.BAD_REQUEST, ORGANISATION.INVALID_ID);
+    return sendResponse(res, false, CODE.BAD_REQUEST, CLIENT.INVALID_ID);
   }
 
   next();

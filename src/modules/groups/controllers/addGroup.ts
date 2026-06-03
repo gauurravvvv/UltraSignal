@@ -27,14 +27,14 @@ const addGroup = async (req: Request, res: Response) => {
   Logger.info(`Add Group request`);
 
   const { name, description, status, roleId, users } = req.body;
-  const { loggedInId, orgData } = res.locals;
+  const { loggedInId, clientData } = res.locals;
   try {
     // Create environment in the specific database
     const orgGroup = new Group();
     orgGroup.name = name;
     orgGroup.description = description;
-    orgGroup.organisationId = orgData.id;
-    orgGroup.organisationName = orgData.name;
+    orgGroup.clientId = clientData.id;
+    orgGroup.clientName = clientData.name;
     orgGroup.roleId = roleId;
     orgGroup.status = status ?? 1;
     orgGroup.createdBy = loggedInId;

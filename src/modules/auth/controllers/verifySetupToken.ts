@@ -16,9 +16,9 @@ import {
   GENERIC,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
-import { decryptForOrg } from '../../../shared/services/crypto.service';
+import { decryptForClient } from '../../../shared/services/crypto.service';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
@@ -31,15 +31,15 @@ const respondInvalid = (res: Response) =>
 const verifySetupToken = async (req: Request, res: Response) => {
   Logger.info(`Verify setup token request`);
 
-  const { id, orgId, token } = req.body;
+  const { id, clientId, token } = req.body;
 
   try {
-    const org = await Organisation.findOne({
-      where: { id: orgId },
+    const client = await Client.findOne({
+      where: { id: clientId },
       relations: ['config'],
     });
 
-    if (!org) {
+    if (!client) {
       return respondInvalid(res);
     }
 
@@ -49,7 +49,7 @@ const verifySetupToken = async (req: Request, res: Response) => {
       .addSelect('user.setupTokenExpiresAt')
       .addSelect('user.password')
       .where('user.id = :id', { id })
-      .andWhere('user.organisationId = :orgId', { orgId })
+      .andWhere('user.clientId = :clientId', { clientId })
       .getOne();
 
     if (
@@ -68,7 +68,7 @@ const verifySetupToken = async (req: Request, res: Response) => {
       return respondInvalid(res);
     }
 
-    const decryptedToken = decryptForOrg(user.setupToken, org.config);
+    const decryptedToken = decryptForClient(user.setupToken, client.config);
     if (!timingSafeEqual(Buffer.from(token), Buffer.from(decryptedToken))) {
       return respondInvalid(res);
     }

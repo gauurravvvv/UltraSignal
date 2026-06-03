@@ -6,7 +6,7 @@
  * password — that's intentional for helpdesk/recovery scenarios.
  *
  * After a successful reset:
- *  - The new password is bcrypt-hashed (system admins always use bcrypt, not org pepper).
+ *  - The new password is bcrypt-hashed (system admins always use bcrypt, not client pepper).
  *  - The refresh token is nulled, forcing the affected admin to log in again. This
  *    ensures the password change takes effect immediately even if they have an active
  *    session.
@@ -15,7 +15,7 @@
  *    change, or vice versa.
  *
  * Note: the password history limit is hardcoded to 5 here. It should ideally read
- * from org.config.passwordHistoryLimit for consistency with the OTP reset flow.
+ * from client.config.passwordHistoryLimit for consistency with the OTP reset flow.
  */
 import { Request, Response } from 'express';
 import { EntityManager } from 'typeorm';

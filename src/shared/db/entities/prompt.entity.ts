@@ -35,7 +35,7 @@ enum PromptType {
 
 @Entity()
 @Index(['sectionId'])
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class Prompt {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -61,10 +61,10 @@ export class Prompt {
   section: Section;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

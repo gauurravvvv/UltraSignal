@@ -1,6 +1,6 @@
 /**
  * Group routes — mounted at /api/v1/groups. All endpoints require the
- * `groupManagement` permission (matches the seeded organisationAdmin
+ * `groupManagement` permission (matches the seeded clientAdmin
  * permission tree value).
  *
  *  POST   /                       create

@@ -8,9 +8,9 @@
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
-import { SYSTEM_ORGANISATION, CODE } from '../../../../config/config';
+import { SYSTEM_CLIENT, CODE } from '../../../../config/config';
 import {
-  ORGANISATION,
+  CLIENT,
   SYSTEM_ADMIN as SYSTEM_ADMIN_MSG } from '../../../shared/constants/response.messages';
 import { User } from '../../../shared/db/entities/user.entity';
 import { fields } from '../../../shared/utility/joi.schemas';
@@ -39,7 +39,7 @@ const UpdatePasswordValidation = async (
   // Check if super admin exists
   try {
     const systemAdmin = await User.findOne({
-      where: { id, organisationName: SYSTEM_ORGANISATION.NAME } });
+      where: { id, clientName: SYSTEM_CLIENT.NAME } });
 
     if (!systemAdmin) {
       return sendResponse(
@@ -52,7 +52,7 @@ const UpdatePasswordValidation = async (
 
     res.locals.systemAdmin = systemAdmin;
   } catch (err) {
-    return sendResponse(res, false, CODE.BAD_REQUEST, ORGANISATION.INVALID_ID);
+    return sendResponse(res, false, CODE.BAD_REQUEST, CLIENT.INVALID_ID);
   }
 
   next();

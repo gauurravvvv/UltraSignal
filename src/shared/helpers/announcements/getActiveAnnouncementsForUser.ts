@@ -1,6 +1,6 @@
 /**
  * getActiveAnnouncementsForUser — pure helper that returns the
- * announcements visible to a given user in the connected org DB.
+ * announcements visible to a given user in the connected client DB.
  *
  * Originally lived inline in `getAnnouncement` (the GET /announcements/
  * current controller). Lifted here so login can return the same list
@@ -35,7 +35,7 @@ export interface VisibleAnnouncement {
 
 export const getActiveAnnouncementsForUser = async (
   connection: DataSource,
-  orgId: string,
+  clientId: string,
   userId: string,
 ): Promise<VisibleAnnouncement[]> => {
   const userGroups = await connection
@@ -57,7 +57,7 @@ export const getActiveAnnouncementsForUser = async (
     .getRepository(Announcement)
     .createQueryBuilder('a')
     .leftJoinAndSelect('a.targetGroup', 'g')
-    .where('a.organisationId = :orgId', { orgId })
+    .where('a.clientId = :clientId', { clientId })
     .andWhere('a.status = :status', { status: 1 })
     .andWhere('a.targetGroupId IN (:...groupIds)', { groupIds })
     .andWhere('(a.startTime IS NULL OR a.startTime <= :currentDate)', {

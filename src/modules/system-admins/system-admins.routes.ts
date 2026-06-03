@@ -1,7 +1,7 @@
 /**
  * System Admin routes — mounted at /api/v1/system-admins. Every endpoint
  * requires the `systemAdmin` permission, which today is held only by the
- * seeded platform System Admin role (master DB). Org admins and org
+ * seeded platform System Admin role (master DB). Client admins and client
  * users have no `systemAdmin` permission on their roles, so they get a
  * clean 401 from VerifyPermissionMiddleware before the validation layer
  * runs.

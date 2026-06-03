@@ -16,7 +16,7 @@ import { Group } from './group.entity';
 import { UserGroupMapping } from './user-group-mapping.entity';
 
 @Entity()
-@Index(['organisationId', 'status'])
+@Index(['clientId', 'status'])
 @Index(['email'])
 @Index(['username'])
 export class User extends BaseEntity {
@@ -37,10 +37,10 @@ export class User extends BaseEntity {
   email: string;
 
   @Column({ nullable: true })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column()
   username: string;

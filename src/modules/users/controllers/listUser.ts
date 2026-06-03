@@ -1,5 +1,5 @@
 /**
- * listUsers — paginates org users with inline group counts and names.
+ * listUsers — paginates client users with inline group counts and names.
  *
  * Group membership is loaded in a second query rather than via a TypeORM
  * relation join because UserGroupMapping is a hard-deleted junction table —
@@ -62,13 +62,13 @@ const listUsers = async (req: Request, res: Response) => {
       sort?: string;
     };
 
-    const { orgData } = res.locals;
-    const orgId = orgData.id;
+    const { clientData } = res.locals;
+    const clientId = clientData.id;
 
     const query = AppDataSource
       .getRepository(User)
       .createQueryBuilder('user')
-      .where('user.organisationId = :orgId', { orgId });
+      .where('user.clientId = :clientId', { clientId });
 
     if (groupId) {
       query.innerJoin('user.userGroups', 'ugm', 'ugm.groupId = :groupId', {

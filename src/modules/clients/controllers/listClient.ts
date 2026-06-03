@@ -1,9 +1,9 @@
 /**
- * listOrganisation — returns paginated, filterable, sortable list of tenant
- * organisations.
+ * listClient — returns paginated, filterable, sortable list of tenant
+ * clients.
  *
- * Only non-default organisations are listed (isDefault=0) — the root "super"
- * organisation is intentionally excluded since system admins should never see or
+ * Only non-default clients are listed (isDefault=0) — the root "super"
+ * client is intentionally excluded since system admins should never see or
  * manage it through this endpoint.
  *
  * Filters are JSON-encoded in the ?filter= query param (same pattern as system
@@ -23,25 +23,25 @@ import {
 } from '../../../../config/config';
 import {
   GENERIC,
-  ORGANISATION as ORGANISATION_MSG,
+  CLIENT as CLIENT_MSG,
 } from '../../../shared/constants/response.messages';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import { applySort } from '../../../shared/utility/listSort';
 import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
-import { OrgListSortField } from '../middleware/listOrganisation.validation';
+import { ClientListSortField } from '../middleware/listClient.validation';
 
 // Client-facing sort field → TypeORM column reference.
 // Kept in this file (not the entity) because it's a UI contract concern.
-const SORT_COLUMN_MAP: Record<OrgListSortField, string> = {
-  name: 'org.name',
-  status: 'org.status',
-  createdOn: 'org.createdOn',
+const SORT_COLUMN_MAP: Record<ClientListSortField, string> = {
+  name: 'client.name',
+  status: 'client.status',
+  createdOn: 'client.createdOn',
 };
 
-const listOrganisation = async (req: Request, res: Response) => {
-  Logger.info(`List Organisations request`);
+const listClient = async (req: Request, res: Response) => {
+  Logger.info(`List Clients request`);
 
   try {
     const {
@@ -56,30 +56,30 @@ const listOrganisation = async (req: Request, res: Response) => {
       sort?: string;
     };
 
-    const query = Organisation.createQueryBuilder('org')
-      .leftJoinAndSelect('org.config', 'config', 'config.deletedOn IS NULL')
-      .where('org.isDefault = :isDefault', { isDefault: IS_DEFAULT.NO });
+    const query = Client.createQueryBuilder('client')
+      .leftJoinAndSelect('client.config', 'config', 'config.deletedOn IS NULL')
+      .where('client.isDefault = :isDefault', { isDefault: IS_DEFAULT.NO });
 
     if (filter) {
       try {
         const parsedFilter = JSON.parse(filter);
         if (parsedFilter.name) {
-          query.andWhere('org.name ILIKE :name', {
+          query.andWhere('client.name ILIKE :name', {
             name: `%${parsedFilter.name}%`,
           });
         }
         if (parsedFilter.description) {
-          query.andWhere('org.description ILIKE :description', {
+          query.andWhere('client.description ILIKE :description', {
             description: `%${parsedFilter.description}%`,
           });
         }
         if (parsedFilter.createdDateFrom) {
-          query.andWhere('org.createdOn >= :createdFrom', {
+          query.andWhere('client.createdOn >= :createdFrom', {
             createdFrom: parsedFilter.createdDateFrom,
           });
         }
         if (parsedFilter.createdDateTo) {
-          query.andWhere('org.createdOn <= :createdTo', {
+          query.andWhere('client.createdOn <= :createdTo', {
             createdTo: parsedFilter.createdDateTo,
           });
         }
@@ -88,7 +88,7 @@ const listOrganisation = async (req: Request, res: Response) => {
           parsedFilter.status !== null &&
           parsedFilter.status !== ''
         ) {
-          query.andWhere('org.status = :status', {
+          query.andWhere('client.status = :status', {
             status: Number(parsedFilter.status),
           });
         }
@@ -97,23 +97,23 @@ const listOrganisation = async (req: Request, res: Response) => {
       }
     }
 
-    applySort(query, sort, SORT_COLUMN_MAP, 'org.createdOn', 'DESC');
+    applySort(query, sort, SORT_COLUMN_MAP, 'client.createdOn', 'DESC');
 
-    const [orgs, count] = await query
+    const [clients, count] = await query
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();
 
-    sendResponse(res, true, CODE.SUCCESS, ORGANISATION_MSG.LIST_FETCHED, {
+    sendResponse(res, true, CODE.SUCCESS, CLIENT_MSG.LIST_FETCHED, {
       count,
-      orgs,
+      clients,
     });
   } catch (error) {
     Logger.error(
-      `Error while listing Organisations: ${getErrorMessage(error)}`,
+      `Error while listing Clients: ${getErrorMessage(error)}`,
     );
     return sendResponse(res, false, CODE.SERVER_ERROR, GENERIC.SERVER_ERROR);
   }
 };
 
-export default listOrganisation;
+export default listClient;

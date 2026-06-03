@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 import { AppDataSource } from '../db';
 import { PasswordHistory as PasswordHistoryMaster } from '../db/entities/passwordHistory.entity';
 import { PasswordHistory as PasswordHistoryShared } from '../db/entities/passwordHistory.entity';
-import { decryptForOrg } from '../services/crypto.service';
+import { decryptForClient } from '../services/crypto.service';
 import { verifyPassword } from './hashPassword';
 
 // ── System Admin (bcrypt, env DB) ──
@@ -63,23 +63,23 @@ export async function savePasswordHistoryMaster(
   }
 }
 
-// ── Org Admin / User (AES peppered, org master DB) ──
+// ── Client Admin / User (AES peppered, client master DB) ──
 
 export async function isPasswordReusedShared(
   manager: EntityManager,
   userId: string,
   newPassword: string,
-  orgConfig: { encryptedDek?: string | null },
+  clientConfig: { encryptedDek?: string | null },
   currentEncryptedPassword?: string,
   limit: number = 5,
 ): Promise<boolean> {
   // Check against current password (covers pre-deployment passwords
-  // not yet in history). decryptForOrg throws on bad keys / corrupt
+  // not yet in history). decryptForClient throws on bad keys / corrupt
   // ciphertext; we swallow that and treat as "no reuse" so a single
   // corrupt history row doesn't lock the user out.
   if (currentEncryptedPassword) {
     try {
-      const decrypted = decryptForOrg(currentEncryptedPassword, orgConfig);
+      const decrypted = decryptForClient(currentEncryptedPassword, clientConfig);
       if (decrypted === newPassword) {
         return true;
       }
@@ -98,7 +98,7 @@ export async function isPasswordReusedShared(
 
   return history.some(entry => {
     try {
-      const decrypted = decryptForOrg(entry.password, orgConfig);
+      const decrypted = decryptForClient(entry.password, clientConfig);
       return decrypted === newPassword;
     } catch {
       return false;

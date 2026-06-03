@@ -20,8 +20,8 @@ import { DatasourceAccess } from './datasource_access.entity';
 import { Group } from './group.entity';
 import { LoginActivity } from './login_activity.entity';
 import { LoginActivityS } from './login_activity_s.entity';
-import { Organisation } from './organisation.entity';
-import { OrganisationConfig } from './organisationConfig.entity';
+import { Client } from './client.entity';
+import { ClientConfig } from './clientConfig.entity';
 import { PasswordHistory } from './passwordHistory.entity';
 import { Prompt } from './prompt.entity';
 import { PromptConfig } from './promptConfig.entity';
@@ -61,8 +61,8 @@ export const ALL_ENTITIES = [
   Group,
   LoginActivity,
   LoginActivityS,
-  Organisation,
-  OrganisationConfig,
+  Client,
+  ClientConfig,
   PasswordHistory,
   Prompt,
   PromptConfig,

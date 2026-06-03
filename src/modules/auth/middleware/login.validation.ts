@@ -15,9 +15,9 @@ const LoginValidation = async (
   next: NextFunction,
 ) => {
   const schema = Joi.object({
-    organisation: Joi.string().trim().required().messages({
-      'string.empty': 'Organisation is required',
-      'any.required': 'Organisation is required',
+    client: Joi.string().trim().required().messages({
+      'string.empty': 'Client is required',
+      'any.required': 'Client is required',
     }),
     username: fields.username.required(),
     password: Joi.string().required().messages({

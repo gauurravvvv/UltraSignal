@@ -15,17 +15,17 @@ import { CODE, RESET_PASS_EXPIRE_TIME } from '../../../../config/config';
 import {
   AUTH as AUTH_MSG,
   GENERIC,
-  ORGANISATION as ORGANISATION_MSG,
+  CLIENT as CLIENT_MSG,
   USER as USER_MSG,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
-import { decryptForOrg } from '../../../shared/services/crypto.service';
+import { decryptForClient } from '../../../shared/services/crypto.service';
 import { GENERATE_OTP } from '../../../shared/utility/generateOTP';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
-import { OrgEmailConfig } from '../../../shared/utility/mail';
+import { ClientEmailConfig } from '../../../shared/utility/mail';
 import { buildRequestContext } from '../../../shared/utility/mail/requestContext';
 import resetPassEmail from '../../../shared/utility/mail/resetPassEmail';
 import sendResponse from '../../../shared/utility/response';
@@ -33,21 +33,21 @@ import sendResponse from '../../../shared/utility/response';
 const generateOTP = async (req: Request, res: Response) => {
   Logger.info(`OTP request`);
 
-  const { organisation, username, email } = req.body;
+  const { client: clientNameInput, username, email } = req.body;
 
   try {
-    const org = await Organisation.findOne({
-      where: { name: organisation },
+    const client = await Client.findOne({
+      where: { name: clientNameInput },
       relations: ['config'],
     });
 
-    if (!org) {
-      sendResponse(res, false, CODE.NOT_FOUND, ORGANISATION_MSG.NOT_FOUND);
+    if (!client) {
+      sendResponse(res, false, CODE.NOT_FOUND, CLIENT_MSG.NOT_FOUND);
       return;
     }
 
     const user = await AppDataSource.getRepository(User).findOne({
-      where: { organisationName: organisation, username, email },
+      where: { clientName: clientNameInput, username, email },
     });
 
     if (!user) {
@@ -87,26 +87,26 @@ const generateOTP = async (req: Request, res: Response) => {
     );
     await AppDataSource.getRepository(User).save(user);
 
-    const orgEmailConfig: OrgEmailConfig | undefined = org.config?.emailProvider
+    const clientEmailConfig: ClientEmailConfig | undefined = client.config?.emailProvider
       ? {
-          emailProvider: org.config.emailProvider,
-          smtpHost: org.config.smtpHost,
-          smtpPort: org.config.smtpPort,
-          smtpUser: org.config.smtpUser
-            ? decryptForOrg(org.config.smtpUser, org.config)
+          emailProvider: client.config.emailProvider,
+          smtpHost: client.config.smtpHost,
+          smtpPort: client.config.smtpPort,
+          smtpUser: client.config.smtpUser
+            ? decryptForClient(client.config.smtpUser, client.config)
             : null,
-          smtpPassword: org.config.smtpPassword
-            ? decryptForOrg(org.config.smtpPassword, org.config)
+          smtpPassword: client.config.smtpPassword
+            ? decryptForClient(client.config.smtpPassword, client.config)
             : null,
-          smtpFrom: org.config.smtpFrom,
-          sesRegion: org.config.sesRegion,
-          sesAccessKeyId: org.config.sesAccessKeyId
-            ? decryptForOrg(org.config.sesAccessKeyId, org.config)
+          smtpFrom: client.config.smtpFrom,
+          sesRegion: client.config.sesRegion,
+          sesAccessKeyId: client.config.sesAccessKeyId
+            ? decryptForClient(client.config.sesAccessKeyId, client.config)
             : null,
-          sesSecretAccessKey: org.config.sesSecretAccessKey
-            ? decryptForOrg(org.config.sesSecretAccessKey, org.config)
+          sesSecretAccessKey: client.config.sesSecretAccessKey
+            ? decryptForClient(client.config.sesSecretAccessKey, client.config)
             : null,
-          sesFrom: org.config.sesFrom,
+          sesFrom: client.config.sesFrom,
         }
       : undefined;
 
@@ -114,11 +114,11 @@ const generateOTP = async (req: Request, res: Response) => {
       user.email,
       String(user.otp),
       user.id,
-      org.id,
-      orgEmailConfig,
+      client.id,
+      clientEmailConfig,
       user.locale || res.locals.locale || 'en',
       buildRequestContext(req),
-      org.name,
+      client.name,
     );
     if (!emailSent) {
       Logger.warn(`OTP generated but email delivery failed for ${user.email}`);

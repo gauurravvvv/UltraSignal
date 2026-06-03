@@ -17,7 +17,7 @@ import { Tab } from './tab.entity';
 
 @Entity()
 @Index(['queryBuilderId'])
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class QueryBuilderPrompts {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -51,10 +51,10 @@ export class QueryBuilderPrompts {
   section: Section;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

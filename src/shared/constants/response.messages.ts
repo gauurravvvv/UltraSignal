@@ -46,20 +46,20 @@ export const AUTH = {
   ROLE_INACTIVE: 'auth.role_inactive',
 };
 
-// Organisation
-export const ORGANISATION = {
-  CREATED: 'org.created',
-  UPDATED: 'org.updated',
-  DELETED: 'org.deleted',
-  BULK_DELETED: 'org.bulk_deleted',
-  FETCHED: 'org.fetched',
-  LIST_FETCHED: 'org.list_fetched',
-  NOT_FOUND: 'org.not_found',
-  ALREADY_EXISTS: 'org.already_exists',
-  ID_REQUIRED: 'org.id_required',
-  INVALID_ID: 'org.invalid_id',
-  DB_CONNECTION_FAILED: 'org.db_connection_failed',
-  MASTER_DB_REFRESHED: 'org.master_db_refreshed',
+// Client
+export const CLIENT = {
+  CREATED: 'client.created',
+  UPDATED: 'client.updated',
+  DELETED: 'client.deleted',
+  BULK_DELETED: 'client.bulk_deleted',
+  FETCHED: 'client.fetched',
+  LIST_FETCHED: 'client.list_fetched',
+  NOT_FOUND: 'client.not_found',
+  ALREADY_EXISTS: 'client.already_exists',
+  ID_REQUIRED: 'client.id_required',
+  INVALID_ID: 'client.invalid_id',
+  DB_CONNECTION_FAILED: 'client.db_connection_failed',
+  MASTER_DB_REFRESHED: 'client.master_db_refreshed',
 };
 
 // System Admin
@@ -80,20 +80,20 @@ export const SYSTEM_ADMIN = {
   ACCOUNT_NOT_LOCKED: 'system_admin.account_not_locked',
 };
 
-// Org Admin
-export const ORG_ADMIN = {
-  CREATED: 'org_admin.created',
-  UPDATED: 'org_admin.updated',
-  DELETED: 'org_admin.deleted',
-  FETCHED: 'org_admin.fetched',
-  LIST_FETCHED: 'org_admin.list_fetched',
-  NOT_FOUND: 'org_admin.not_found',
-  ALREADY_EXISTS_EMAIL: 'org_admin.already_exists_email',
-  ALREADY_EXISTS_USERNAME: 'org_admin.already_exists_username',
-  PASSWORD_UPDATED: 'org_admin.password_updated',
-  CANNOT_DELETE_DEFAULT: 'org_admin.cannot_delete_default',
-  ACCOUNT_UNLOCKED: 'org_admin.account_unlocked',
-  ACCOUNT_NOT_LOCKED: 'org_admin.account_not_locked',
+// Client Admin
+export const CLIENT_ADMIN = {
+  CREATED: 'client_admin.created',
+  UPDATED: 'client_admin.updated',
+  DELETED: 'client_admin.deleted',
+  FETCHED: 'client_admin.fetched',
+  LIST_FETCHED: 'client_admin.list_fetched',
+  NOT_FOUND: 'client_admin.not_found',
+  ALREADY_EXISTS_EMAIL: 'client_admin.already_exists_email',
+  ALREADY_EXISTS_USERNAME: 'client_admin.already_exists_username',
+  PASSWORD_UPDATED: 'client_admin.password_updated',
+  CANNOT_DELETE_DEFAULT: 'client_admin.cannot_delete_default',
+  ACCOUNT_UNLOCKED: 'client_admin.account_unlocked',
+  ACCOUNT_NOT_LOCKED: 'client_admin.account_not_locked',
 };
 
 // User
@@ -331,8 +331,8 @@ export const AUDIT_LOG = {
   EXPORT_FAILED: 'audit_log.export_failed',
   NO_LOGS_FOUND: 'audit_log.no_logs_found',
   INVALID_EXPORT_FORMAT: 'audit_log.invalid_export_format',
-  ORG_REQUIRED_FOR_EXPORT: 'audit_log.org_required_for_export',
-  NO_LOGS_FOR_ORG: 'audit_log.no_logs_for_org',
+  CLIENT_REQUIRED_FOR_EXPORT: 'audit_log.client_required_for_export',
+  NO_LOGS_FOR_CLIENT: 'audit_log.no_logs_for_client',
 };
 
 // Login Activity
@@ -341,7 +341,7 @@ export const LOGIN_ACTIVITY = {
   FETCH_FAILED: 'login_activity.fetch_failed',
   EXPORT_FAILED: 'login_activity.export_failed',
   NO_ACTIVITY_FOUND: 'login_activity.no_activity_found',
-  NO_ACTIVITY_FOR_ORG: 'login_activity.no_activity_for_org',
+  NO_ACTIVITY_FOR_CLIENT: 'login_activity.no_activity_for_client',
 };
 
 // Query

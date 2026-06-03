@@ -7,7 +7,7 @@
  * be rejected.
  *
  * The count-mismatch guard (`users.length !== ids.length`) detects IDs that
- * don't exist or belong to a different org, consistent with the single-delete
+ * don't exist or belong to a different client, consistent with the single-delete
  * pattern.
  *
  * Both protections apply to every caller. The previous SYSTEM-ADMIN bypass
@@ -43,7 +43,7 @@ const DeleteUserBulkValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const { loggedInId, orgData } = res.locals;
+    const { loggedInId, clientData } = res.locals;
 
     const { error, value } = validateSchema(schema, req.body);
     if (error) {
@@ -64,7 +64,7 @@ const DeleteUserBulkValidation = async (
 
     const users = await AppDataSource
       .getRepository(User)
-      .find({ where: { id: In(ids), organisationId: orgData.id } });
+      .find({ where: { id: In(ids), clientId: clientData.id } });
 
     if (users.length !== ids.length) {
       return sendResponse(res, false, CODE.NOT_FOUND, USER_MSG.NOT_FOUND);

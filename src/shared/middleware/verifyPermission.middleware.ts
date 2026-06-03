@@ -5,7 +5,7 @@
  * Every role (including SYSTEM-ADMIN) must carry the required
  * permission in their JWT's permission tree. The previous version
  * short-circuited for SYSTEM-ADMIN, giving them implicit full
- * access across every organisation's data — that was a security
+ * access across every client's data — that was a security
  * footgun for a platform that ships to vendors who run their own
  * tenants end-to-end. The bypass is gone; system admins now have
  * exactly the permissions enumerated in their master-DB Role row

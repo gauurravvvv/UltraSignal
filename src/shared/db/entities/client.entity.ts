@@ -10,17 +10,20 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { OrganisationConfig } from './organisationConfig.entity';
+import { ClientConfig } from './clientConfig.entity';
 
-// Table: Organisation
+// Table: Client
 
 @Entity()
-export class Organisation extends BaseEntity {
+export class Client extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: true })
   name!: string;
+
+  @Column({ type: 'varchar', length: 4, nullable: true })
+  clientCode: string | null;
 
   @Column({ nullable: true })
   description!: string;
@@ -28,9 +31,9 @@ export class Organisation extends BaseEntity {
   @Column({ nullable: true })
   configId: string;
 
-  @OneToOne(() => OrganisationConfig, config => config.organisation)
+  @OneToOne(() => ClientConfig, config => config.client)
   @JoinColumn({ name: 'configId' })
-  config: OrganisationConfig;
+  config: ClientConfig;
 
   @Column({
     type: 'enum',

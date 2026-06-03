@@ -20,7 +20,7 @@ import { DashboardVisual } from './dashboardVisual.entity';
 @Entity()
 @Index(['dashboardVisualId'])
 @Index(['dashboardId'])
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class DashboardVisualConfig {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -50,10 +50,10 @@ export class DashboardVisualConfig {
   config: any;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

@@ -55,7 +55,7 @@ const AddUserValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const { orgData } = res.locals;
+    const { clientData } = res.locals;
 
     const { error, value } = validateSchema(schema, req.body);
     if (error) {
@@ -68,7 +68,7 @@ const AddUserValidation = async (
     const ifExistByEmail = await AppDataSource
       .getRepository(User)
       .findOne({
-        where: { email, organisationId: orgData.id },
+        where: { email, clientId: clientData.id },
       });
 
     if (ifExistByEmail) {
@@ -83,7 +83,7 @@ const AddUserValidation = async (
     const ifExistByUsername = await AppDataSource
       .getRepository(User)
       .findOne({
-        where: { username, organisationId: orgData.id },
+        where: { username, clientId: clientData.id },
       });
 
     if (ifExistByUsername) {
@@ -100,7 +100,7 @@ const AddUserValidation = async (
       .getRepository(Group)
       .createQueryBuilder('g')
       .where('g.id IN (:...ids)', { ids: groupIds })
-      .andWhere('g.organisationId = :orgId', { orgId: orgData.id })
+      .andWhere('g.clientId = :clientId', { clientId: clientData.id })
       .andWhere('g.status = :activeStatus', { activeStatus: '1' })
       .getMany();
 

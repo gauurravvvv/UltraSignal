@@ -163,7 +163,7 @@ export function clearDatasetColumnsCache(datasetId?: string): void {
 
 /**
  * Execute the value-fetch query for a single filter. Caller provides
- * an open DataSource pointing at the org's external source DB.
+ * an open DataSource pointing at the client's external source DB.
  */
 export async function fetchFilterValues(
   conn: DatasourceQueryConnection,

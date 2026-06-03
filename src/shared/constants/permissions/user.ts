@@ -1,14 +1,14 @@
 /**
- * Source-of-truth permission tree for the per-org `Member` role. Seeded
- * into the per-org shared-DB `Role` table during org onboarding (see
- * `src/modules/orgs/controllers/addOrg.ts`); after that the DB row is
- * authoritative. Editing this file affects only newly-onboarded orgs.
+ * Source-of-truth permission tree for the per-client `Member` role. Seeded
+ * into the per-client shared-DB `Role` table during client onboarding (see
+ * `src/modules/clients/controllers/addClient.ts`); after that the DB row is
+ * authoritative. Editing this file affects only newly-onboarded clients.
  *
  * Login resolves permissions from `Role.permissions` and stamps them
  * into the JWT; `VerifyPermissionMiddleware` gates routes on those
  * values — no role-name bypass.
  */
-export const ORG_USER_PERMISSIONS = [
+export const CLIENT_USER_PERMISSIONS = [
   {
     id: 1,
     parentId: '0',

@@ -37,7 +37,7 @@
     "account_locked": "Cuenta bloqueada. Por favor, contacte a su administrador",
     "role_inactive": "El rol asignado está inactivo. Por favor, contacte a su administrador"
   },
-  "org": {
+  "client": {
     "created": "Organización creada correctamente",
     "updated": "Organización actualizada correctamente",
     "deleted": "Organización eliminada correctamente",
@@ -67,7 +67,7 @@
     "account_not_locked": "Esta cuenta no está bloqueada",
     "cannot_modify_default": "No se puede modificar el administrador del sistema predeterminado"
   },
-  "org_admin": {
+  "client_admin": {
     "created": "Administrador creado correctamente",
     "updated": "Administrador actualizado correctamente",
     "deleted": "Administrador eliminado correctamente",
@@ -283,15 +283,15 @@
     "export_failed": "Error al exportar los registros de auditoría",
     "no_logs_found": "No se encontraron registros de auditoría para los criterios especificados",
     "invalid_export_format": "Formato de exportación inválido. Formatos admitidos: excel, pdf",
-    "org_required_for_export": "Por favor, seleccione una organización para exportar",
-    "no_logs_for_org": "No hay registros de auditoría disponibles para esta organización"
+    "client_required_for_export": "Por favor, seleccione una organización para exportar",
+    "no_logs_for_client": "No hay registros de auditoría disponibles para esta organización"
   },
   "login_activity": {
     "list_fetched": "Actividad de inicio de sesión obtenida correctamente",
     "fetch_failed": "Error al obtener la actividad de inicio de sesión",
     "export_failed": "Error al exportar la actividad de inicio de sesión",
     "no_activity_found": "No se encontró actividad de inicio de sesión para los criterios especificados",
-    "no_activity_for_org": "No hay actividad de inicio de sesión disponible para esta organización"
+    "no_activity_for_client": "No hay actividad de inicio de sesión disponible para esta organización"
   },
   "query": {
     "executed": "Consulta ejecutada correctamente",
@@ -347,7 +347,7 @@
     "welcome_subject": "Bienvenido a {{organisation}}",
     "welcome_greeting": "¡Bienvenido, {{fullName}}!",
     "welcome_body": "Tu cuenta ha sido creada en <strong>{{organisation}}</strong>. Haz clic en el botón de abajo para establecer tu contraseña y activar tu cuenta.",
-    "label_organisation": "Organización",
+    "label_client": "Organización",
     "label_username": "Nombre de usuario",
     "set_password_btn": "Establece tu contraseña",
     "expiry_notice": "Este enlace expirará en {{setupTokenExpiryHours}} horas. Si no esperabas este correo electrónico, por favor contacta a tu administrador.",

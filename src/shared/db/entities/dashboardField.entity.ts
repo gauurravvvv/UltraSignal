@@ -34,7 +34,7 @@ import { DashboardFieldRelation } from './dashboardFieldRelation.entity';
  */
 @Entity()
 @Index(['dashboardId'])
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class DashboardField {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -76,10 +76,10 @@ export class DashboardField {
   sequence: number;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

@@ -12,8 +12,8 @@
  *   3. Joi schema per field (email, username, names, locale)
  *   4. groupNames non-empty
  *   5. Intra-file duplicate email or username
- *   6. DB: email already exists in this org
- *   7. DB: username already exists in this org
+ *   6. DB: email already exists in this client
+ *   7. DB: username already exists in this client
  *   8. DB: every groupName resolves to an active group
  *
  * Valid rows come back with groupNames resolved to groupIds so the commit
@@ -84,7 +84,7 @@ interface ValidRow {
 const bulkAddUserValidate = async (req: Request, res: Response) => {
   Logger.info('Bulk add user — validate request');
 
-  const { orgData } = res.locals;
+  const { clientData } = res.locals;
   const file = req.file as Express.Multer.File | undefined;
 
   if (!file) {
@@ -229,7 +229,7 @@ const bulkAddUserValidate = async (req: Request, res: Response) => {
   }
 
   // 5. DB uniqueness — one query each for email and username collisions.
-  //    Org-scoped because email/username uniqueness is per-organisation here.
+  //    Client-scoped because email/username uniqueness is per-client here.
   const allEmails = intraDedup.map(r => r.email);
   const allUsernames = intraDedup.map(r => r.username);
 
@@ -237,7 +237,7 @@ const bulkAddUserValidate = async (req: Request, res: Response) => {
     .getRepository(User)
     .createQueryBuilder('user')
     .select(['user.email'])
-    .where('user.organisationId = :orgId', { orgId: orgData.id })
+    .where('user.clientId = :clientId', { clientId: clientData.id })
     .andWhere('user.email IN (:...emails)', { emails: allEmails })
     .getMany();
   const collidingEmails = new Set(existingByEmail.map((u: any) => u.email));
@@ -246,7 +246,7 @@ const bulkAddUserValidate = async (req: Request, res: Response) => {
     .getRepository(User)
     .createQueryBuilder('user')
     .select(['user.username'])
-    .where('user.organisationId = :orgId', { orgId: orgData.id })
+    .where('user.clientId = :clientId', { clientId: clientData.id })
     .andWhere('user.username IN (:...usernames)', { usernames: allUsernames })
     .getMany();
   const collidingUsernames = new Set(
@@ -259,7 +259,7 @@ const bulkAddUserValidate = async (req: Request, res: Response) => {
       invalid.push({
         row: r.row,
         email: r.email,
-        reason: 'Email already exists in this organisation',
+        reason: 'Email already exists in this client',
       });
       dbConflictFlagged.add(r.row);
       continue;
@@ -268,7 +268,7 @@ const bulkAddUserValidate = async (req: Request, res: Response) => {
       invalid.push({
         row: r.row,
         email: r.email,
-        reason: 'Username already exists in this organisation',
+        reason: 'Username already exists in this client',
       });
       dbConflictFlagged.add(r.row);
     }
@@ -286,7 +286,7 @@ const bulkAddUserValidate = async (req: Request, res: Response) => {
           .getRepository(Group)
           .createQueryBuilder('g')
           .select(['g.id', 'g.name'])
-          .where('g.organisationId = :orgId', { orgId: orgData.id })
+          .where('g.clientId = :clientId', { clientId: clientData.id })
           .andWhere('g.status = :status', { status: '1' })
           .andWhere('g.name IN (:...names)', { names: allGroupNames })
           .getMany()

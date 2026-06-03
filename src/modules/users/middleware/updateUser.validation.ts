@@ -46,7 +46,7 @@ const UpdateUserValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const { orgData } = res.locals;
+    const { clientData } = res.locals;
 
     const { error, value } = validateSchema(schema, req.body);
     if (error) {
@@ -57,17 +57,17 @@ const UpdateUserValidation = async (
     const { id, email, username } = value;
 
     const orgUser = await AppDataSource.getRepository(User).findOne({
-      where: { id, organisationId: orgData.id },
+      where: { id, clientId: clientData.id },
     });
 
     if (!orgUser) {
       return sendResponse(res, false, CODE.NOT_FOUND, USER_MSG.NOT_FOUND);
     }
 
-    // Default user (created during org onboarding, `username: master_admin`)
+    // Default user (created during client onboarding, `username: master_admin`)
     // is fully immutable through this endpoint. No field can be changed —
     // not the name, not the email, and especially not groupIds (which
-    // would silently strip Administrator permissions and lock the org out
+    // would silently strip Administrator permissions and lock the client out
     // of its own recovery account). Recovery / break-glass scenarios go
     // through DB migrations, not the API.
     if (orgUser.isDefault === IS_DEFAULT.YES) {
@@ -85,7 +85,7 @@ const UpdateUserValidation = async (
         where: {
           id: Not(id),
           email,
-          organisationId: orgData.id,
+          clientId: clientData.id,
         },
       });
 
@@ -104,7 +104,7 @@ const UpdateUserValidation = async (
         where: {
           id: Not(id),
           username,
-          organisationId: orgData.id,
+          clientId: clientData.id,
         },
       });
 
@@ -123,7 +123,7 @@ const UpdateUserValidation = async (
         .getRepository(Group)
         .createQueryBuilder('g')
         .where('g.id IN (:...ids)', { ids: groupIds })
-        .andWhere('g.organisationId = :orgId', { orgId: orgData.id })
+        .andWhere('g.clientId = :clientId', { clientId: clientData.id })
         .andWhere('g.status = :activeStatus', { activeStatus: '1' })
         .getMany();
 

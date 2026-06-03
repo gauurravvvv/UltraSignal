@@ -7,7 +7,7 @@
  */
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
-import sendEmail, { OrgEmailConfig } from '.';
+import sendEmail, { ClientEmailConfig } from '.';
 import { EMAIL_CONFIG, FE_URL } from '../../../../config/config';
 import { t } from '../i18n';
 import { formatRequestTimestamp, RequestContext } from './requestContext';
@@ -17,8 +17,8 @@ const passwordSetSuccessEmail = async (
   emailTo: string,
   fullName: string,
   username: string,
-  organisation: string,
-  orgEmailConfig?: OrgEmailConfig,
+  clientName: string,
+  clientEmailConfig?: ClientEmailConfig,
   locale: string = 'en',
   requestContext?: RequestContext,
 ): Promise<boolean> => {
@@ -33,10 +33,10 @@ const passwordSetSuccessEmail = async (
   const replacements = {
     fullName,
     username,
-    organisation,
+    organisation: clientName,
     LOGIN_URL: `${FE_URL}/login?lang=${locale}`,
     year: new Date().getFullYear(),
-    senderName: organisation || 'UltraSignal',
+    senderName: clientName || 'UltraSignal',
     subject,
     preheader: subject,
     heading: t('email.password_set_heading', locale),
@@ -48,7 +48,7 @@ const passwordSetSuccessEmail = async (
     // Security signals
     requestDetailsHeading: t('email.request_details_heading', locale),
     labelUsername: t('email.label_username', locale),
-    labelOrganisation: t('email.label_organisation', locale),
+    labelOrganisation: t('email.label_client', locale),
     labelIp: t('email.label_ip_address', locale),
     labelDevice: t('email.label_device', locale),
     labelTimestamp: t('email.label_set_at', locale),
@@ -71,8 +71,8 @@ const passwordSetSuccessEmail = async (
   };
 
   const htmlToSend = template(replacements);
-  return sendEmail(emailTo, subject, htmlToSend, orgEmailConfig, {
-    senderName: organisation || undefined,
+  return sendEmail(emailTo, subject, htmlToSend, clientEmailConfig, {
+    senderName: clientName || undefined,
     replyTo: supportEmail || undefined,
   });
 };

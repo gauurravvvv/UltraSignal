@@ -12,7 +12,7 @@ import { Analyses } from './analyses.entity';
 
 @Entity()
 @Index(['analysisId'])
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class AnalysisFilter {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -83,10 +83,10 @@ export class AnalysisFilter {
   // ── Denormalized fields (match Visual/VisualConfig pattern) ──
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

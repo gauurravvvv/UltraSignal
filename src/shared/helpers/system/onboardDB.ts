@@ -20,7 +20,7 @@ import {
   IS_DEFAULT,
   SETUP_TOKEN_EXPIRY_HOURS,
   STATUS,
-  SYSTEM_ORGANISATION,
+  SYSTEM_CLIENT,
 } from '../../../../config/config';
 import { Group } from '../../db/entities/group.entity';
 import { UserGroupMapping } from '../../db/entities/user-group-mapping.entity';
@@ -36,7 +36,7 @@ const onboardDB = async (
   email: string,
   firstName: string,
   lastName: string,
-  orgId: string,
+  clientId: string,
   roleId: string,
   manager: EntityManager,
 ) => {
@@ -47,8 +47,8 @@ const onboardDB = async (
   user.username = username;
   user.isDefault = IS_DEFAULT.YES;
   user.status = STATUS.ACTIVE;
-  user.organisationName = SYSTEM_ORGANISATION.NAME;
-  user.organisationId = orgId;
+  user.clientName = SYSTEM_CLIENT.NAME;
+  user.clientId = clientId;
 
   const setupToken = generateSetupToken();
   user.setupToken = setupToken;
@@ -64,8 +64,8 @@ const onboardDB = async (
   const adminGroup = new Group();
   adminGroup.name = SYSTEM_ADMIN_GROUP_NAME;
   adminGroup.description = 'Platform operators (auto-seeded).';
-  adminGroup.organisationId = orgId;
-  adminGroup.organisationName = SYSTEM_ORGANISATION.NAME;
+  adminGroup.clientId = clientId;
+  adminGroup.clientName = SYSTEM_CLIENT.NAME;
   adminGroup.roleId = roleId;
   adminGroup.isDefault = IS_DEFAULT.YES;
   adminGroup.status = STATUS.ACTIVE;
@@ -89,7 +89,7 @@ export const sendOnboardEmail = (
   email: string,
   fullName: string,
   username: string,
-  orgId: string,
+  clientId: string,
   userId: string,
   setupToken: string,
 ) => {
@@ -97,9 +97,9 @@ export const sendOnboardEmail = (
     email,
     fullName,
     username,
-    SYSTEM_ORGANISATION.NAME,
+    SYSTEM_CLIENT.NAME,
     userId,
-    orgId,
+    clientId,
     setupToken,
   );
   Logger.info(`Setup email sent to ${email}`);

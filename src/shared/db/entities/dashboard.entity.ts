@@ -38,7 +38,7 @@ import { DashboardVisual } from './dashboardVisual.entity';
  *     the published dashboard.
  *
  * Read paths:
- *   - GET /dashboard/render/:orgId/:id   reads ONLY from the snapshot
+ *   - GET /dashboard/render/:clientId/:id   reads ONLY from the snapshot
  *     tables. Never touches Analyses, Visual, DatasetField, or
  *     AnalysisFilter.
  *   - POST /dashboard/run                runs dataset_sql + enriches
@@ -50,13 +50,13 @@ import { DashboardVisual } from './dashboardVisual.entity';
  * there's no migration. Pre-prod only; document for the team.
  */
 @Entity()
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 @Index(['sourceAnalysisId'])
-// Unique (org, name) — enforced at the DB level so two concurrent
+// Unique (client, name) — enforced at the DB level so two concurrent
 // publishes with the same name can't both succeed. The validation
 // middleware does an early friendly-error check, but Postgres is
 // the actual source of truth.
-@Index(['organisationId', 'name'], { unique: true })
+@Index(['clientId', 'name'], { unique: true })
 export class Dashboard extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -102,10 +102,10 @@ export class Dashboard extends BaseEntity {
   datasourceId: string;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ type: 'enum', enum: [0, 1], default: 1 })
   status!: number;

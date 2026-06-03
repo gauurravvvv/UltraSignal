@@ -1,7 +1,7 @@
 /**
  * masterKey — single source of the platform-wide master encryption key.
  *
- * The master key wraps every per-org Data Encryption Key (DEK). A DB
+ * The master key wraps every per-client Data Encryption Key (DEK). A DB
  * dump alone is useless to an attacker without this key.
  *
  * Source: the `ULTRASIGNAL_MASTER_KEY` environment variable. We treat it

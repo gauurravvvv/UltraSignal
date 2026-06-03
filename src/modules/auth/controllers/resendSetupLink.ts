@@ -7,7 +7,7 @@
  * password yet (user.password is null) can receive a new link — accounts
  * with a password already set must use the OTP password-reset flow.
  *
- * Setup tokens are encrypted with the org's DEK before storage.
+ * Setup tokens are encrypted with the client's DEK before storage.
  */
 import { Request, Response } from 'express';
 import {
@@ -18,40 +18,40 @@ import {
 import {
   AUTH as AUTH_MSG,
   GENERIC,
-  ORGANISATION as ORGANISATION_MSG,
+  CLIENT as CLIENT_MSG,
   USER as USER_MSG,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import {
-  decryptForOrg,
-  encryptForOrg,
+  decryptForClient,
+  encryptForClient,
 } from '../../../shared/services/crypto.service';
 import { generateSetupToken } from '../../../shared/utility/generateSetupToken';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
-import { OrgEmailConfig } from '../../../shared/utility/mail';
+import { ClientEmailConfig } from '../../../shared/utility/mail';
 import welcomeEmailToUser from '../../../shared/utility/mail/welcomeEmailToUser';
 import sendResponse from '../../../shared/utility/response';
 
 const resendSetupLink = async (req: Request, res: Response) => {
   Logger.info(`Resend setup link request`);
 
-  const { id, orgId } = req.body;
+  const { id, clientId } = req.body;
 
   try {
-    const org = await Organisation.findOne({
-      where: { id: orgId },
+    const client = await Client.findOne({
+      where: { id: clientId },
       relations: ['config'],
     });
 
-    if (!org) {
+    if (!client) {
       return sendResponse(
         res,
         false,
         CODE.NOT_FOUND,
-        ORGANISATION_MSG.NOT_FOUND,
+        CLIENT_MSG.NOT_FOUND,
       );
     }
 
@@ -59,7 +59,7 @@ const resendSetupLink = async (req: Request, res: Response) => {
       .createQueryBuilder('user')
       .addSelect('user.password')
       .where('user.id = :id', { id })
-      .andWhere('user.organisationId = :orgId', { orgId })
+      .andWhere('user.clientId = :clientId', { clientId })
       .getOne();
 
     if (!user) {
@@ -85,7 +85,7 @@ const resendSetupLink = async (req: Request, res: Response) => {
     }
 
     const setupToken = generateSetupToken();
-    user.setupToken = encryptForOrg(setupToken, org.config);
+    user.setupToken = encryptForClient(setupToken, client.config);
     user.setupTokenExpiresAt = new Date(
       Date.now() + SETUP_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
     );
@@ -94,26 +94,26 @@ const resendSetupLink = async (req: Request, res: Response) => {
 
     const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
 
-    const orgEmailConfig: OrgEmailConfig | undefined = org.config?.emailProvider
+    const clientEmailConfig: ClientEmailConfig | undefined = client.config?.emailProvider
       ? {
-          emailProvider: org.config.emailProvider,
-          smtpHost: org.config.smtpHost,
-          smtpPort: org.config.smtpPort,
-          smtpUser: org.config.smtpUser
-            ? decryptForOrg(org.config.smtpUser, org.config)
+          emailProvider: client.config.emailProvider,
+          smtpHost: client.config.smtpHost,
+          smtpPort: client.config.smtpPort,
+          smtpUser: client.config.smtpUser
+            ? decryptForClient(client.config.smtpUser, client.config)
             : null,
-          smtpPassword: org.config.smtpPassword
-            ? decryptForOrg(org.config.smtpPassword, org.config)
+          smtpPassword: client.config.smtpPassword
+            ? decryptForClient(client.config.smtpPassword, client.config)
             : null,
-          smtpFrom: org.config.smtpFrom,
-          sesRegion: org.config.sesRegion,
-          sesAccessKeyId: org.config.sesAccessKeyId
-            ? decryptForOrg(org.config.sesAccessKeyId, org.config)
+          smtpFrom: client.config.smtpFrom,
+          sesRegion: client.config.sesRegion,
+          sesAccessKeyId: client.config.sesAccessKeyId
+            ? decryptForClient(client.config.sesAccessKeyId, client.config)
             : null,
-          sesSecretAccessKey: org.config.sesSecretAccessKey
-            ? decryptForOrg(org.config.sesSecretAccessKey, org.config)
+          sesSecretAccessKey: client.config.sesSecretAccessKey
+            ? decryptForClient(client.config.sesSecretAccessKey, client.config)
             : null,
-          sesFrom: org.config.sesFrom,
+          sesFrom: client.config.sesFrom,
         }
       : undefined;
 
@@ -121,11 +121,11 @@ const resendSetupLink = async (req: Request, res: Response) => {
       user.email,
       fullName,
       user.username,
-      org.name,
+      client.name,
       user.id,
-      org.id,
+      client.id,
       setupToken,
-      orgEmailConfig,
+      clientEmailConfig,
       user.locale || 'en',
     );
 

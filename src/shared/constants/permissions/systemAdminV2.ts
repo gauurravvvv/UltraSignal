@@ -14,21 +14,21 @@
  *   - dbExecStudio (queryBuilderTab/Section/Prompt/Screen)
  *   - visualizations (datasetManager, analyses, dashboard, rlsRules)
  *
- * Those all live INSIDE an organisation. The system admin is a
- * platform operator, not a member of any organisation's data
+ * Those all live INSIDE a client. The system admin is a
+ * platform operator, not a member of any client's data
  * plane, so they have no business CRUD'ing those resources.
  *
  * What stays:
  *   - home                  — landing page
  *   - systemManagement      — section header for the two below
  *   - systemAdmin           — manage other system admin users
- *   - orgManagement         — onboard / list / edit / delete orgs
+ *   - clientManagement      — onboard / list / edit / delete clients
  *   - auditActivity         — section header
- *   - auditLogs             — cross-org audit (already attribution-
+ *   - auditLogs             — cross-client audit (already attribution-
  *                             masked via SYSTEM_ADMIN_SENTINEL_ID)
- *   - loginActivity         — cross-org login history
+ *   - loginActivity         — cross-client login history
  *   - appSettings           — section header
- *   - announcementManagement — cross-org announcements
+ *   - announcementManagement — cross-client announcements
  *
  * IDs are preserved from V1 where the permission survives so any
  * FE that keyed off `id` stays compatible. The dropped IDs (5-21,
@@ -68,8 +68,8 @@ export const SYSTEM_ADMIN_PERMISSIONS_V2 = [
       {
         id: 4,
         parentId: '2',
-        label: 'Organisations',
-        value: 'orgManagement',
+        label: 'Clients',
+        value: 'clientManagement',
         icon: 'ci ci-building',
         status: true,
       },

@@ -48,8 +48,8 @@ const listGroup = async (req: Request, res: Response) => {
     sort?: string;
   };
 
-  const { orgData } = res.locals;
-  const orgId = orgData.id;
+  const { clientData } = res.locals;
+  const clientId = clientData.id;
 
   try {
     // UserGroupMapping records are hard-deleted when users are removed,
@@ -58,7 +58,7 @@ const listGroup = async (req: Request, res: Response) => {
       .getRepository(Group)
       .createQueryBuilder('group')
       .leftJoinAndSelect('group.userGroups', 'userGroups')
-      .where('group.organisationId = :orgId', { orgId });
+      .where('group.clientId = :clientId', { clientId });
 
     if (roleId) {
       qb.andWhere('group.roleId = :roleId', { roleId });

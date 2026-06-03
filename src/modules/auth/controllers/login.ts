@@ -1,14 +1,14 @@
 /**
  * login — authenticates a user and issues JWT access + refresh tokens.
  *
- * Single DB model: all users (system admins and org users alike) live in
+ * Single DB model: all users (system admins and client users alike) live in
  * the global AppDataSource. Permissions resolve via UserGroupMapping →
  * Group → Role for everyone; there is no longer a separate
- * "default org / system admin" code path.
+ * "default client / system admin" code path.
  *
  * Security model:
  *  - Failed attempts are counted and the account locks after maxLoginAttempts.
- *  - Locks auto-expire after accountLockDurationHours (org config).
+ *  - Locks auto-expire after accountLockDurationHours (client config).
  *  - On success, a new opaque refresh token is written to DB (overwrites the
  *    previous one), enforcing single-session per user.
  *  - Sensitive fields are stripped from the user object before sending it back.
@@ -26,10 +26,10 @@ import {
   GENERIC,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import { getActiveAnnouncementsForUser } from '../../../shared/helpers/announcements/getActiveAnnouncementsForUser';
-import { decryptForOrg } from '../../../shared/services/crypto.service';
+import { decryptForClient } from '../../../shared/services/crypto.service';
 import { generateSecureSessionID } from '../../../shared/utility/generateSessionId';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import { createToken } from '../../../shared/utility/jwt';
@@ -40,30 +40,30 @@ import sendResponse from '../../../shared/utility/response';
 const login = async (req: Request, res: Response) => {
   Logger.info(`Login request`);
 
-  const { organisation, username, password } = req.body;
+  const { client: clientNameInput, username, password } = req.body;
 
   try {
-    const org = await Organisation.findOne({
-      where: { name: organisation },
+    const client = await Client.findOne({
+      where: { name: clientNameInput },
       relations: ['config'],
     });
 
-    if (!org) {
-      // Generic message + 401: returning "org not found" with 404
-      // would let an unauthenticated attacker enumerate valid org
+    if (!client) {
+      // Generic message + 401: returning "client not found" with 404
+      // would let an unauthenticated attacker enumerate valid client
       // names by probing the login form.
       sendResponse(res, false, CODE.UNAUTHORIZED, AUTH_MSG.LOGIN_FAILED);
       return;
     }
 
     const maxAttempts =
-      org.config?.maxLoginAttempts || MAX_FAILED_LOGIN_ATTEMPTS;
+      client.config?.maxLoginAttempts || MAX_FAILED_LOGIN_ATTEMPTS;
 
     const user = await AppDataSource.getRepository(User).findOne({
       where: {
         username: username,
-        organisationId: org.id,
-        organisationName: organisation,
+        clientId: client.id,
+        clientName: clientNameInput,
       },
     });
 
@@ -77,7 +77,7 @@ const login = async (req: Request, res: Response) => {
 
     // Account-lock check (auto-unlock if lock duration elapsed)
     if (user.accountLockedAt) {
-      const lockDurationHours = org.config?.accountLockDurationHours ?? 1;
+      const lockDurationHours = client.config?.accountLockDurationHours ?? 1;
       if (lockDurationHours > 0) {
         const lockExpiry = new Date(
           user.accountLockedAt.getTime() + lockDurationHours * 60 * 60 * 1000,
@@ -93,7 +93,7 @@ const login = async (req: Request, res: Response) => {
       }
     }
 
-    if (password != decryptForOrg(user.password, org.config)) {
+    if (password != decryptForClient(user.password, client.config)) {
       user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
       if (user.failedLoginAttempts >= maxAttempts) {
         user.accountLockedAt = new Date();
@@ -132,8 +132,8 @@ const login = async (req: Request, res: Response) => {
       username: user.username,
       isFirstLogin: true,
       role: tokenRole,
-      organisationId: user.organisationId,
-      organisation: user.organisationName,
+      clientId: user.clientId,
+      clientName: user.clientName,
       permissions,
       locale: user.locale || 'en',
     };
@@ -175,7 +175,7 @@ const login = async (req: Request, res: Response) => {
     try {
       announcements = await getActiveAnnouncementsForUser(
         AppDataSource,
-        org.id,
+        client.id,
         user.id,
       );
     } catch (err) {
@@ -188,7 +188,7 @@ const login = async (req: Request, res: Response) => {
       user: safeUser,
       accessToken,
       refreshToken,
-      sessionInactivityTimeout: org.config?.sessionInactivityTimeout || 30,
+      sessionInactivityTimeout: client.config?.sessionInactivityTimeout || 30,
       announcements,
     });
   } catch (error) {

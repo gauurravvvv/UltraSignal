@@ -1,7 +1,7 @@
 /**
- * addRole — creates a new custom permission role for an organisation.
+ * addRole — creates a new custom permission role for a client.
  *
- * `isDefault` is always set to 0 on creation — default roles are seeded at org
+ * `isDefault` is always set to 0 on creation — default roles are seeded at client
  * onboarding and cannot be created through this endpoint. Protecting this field
  * prevents an admin from creating a role that would then be immune to modification.
  *
@@ -26,15 +26,15 @@ const addRole = async (req: Request, res: Response) => {
   Logger.info('Add Role request');
 
   const { name, description, selectedPermissions } = req.body;
-  const { loggedInId, orgData } = res.locals;
+  const { loggedInId, clientData } = res.locals;
 
   try {
     const role = new Role();
     role.name = name;
     role.description = description || null;
     role.permissions = JSON.stringify(selectedPermissions);
-    role.organisationId = orgData.id;
-    role.organisationName = orgData.name;
+    role.clientId = clientData.id;
+    role.clientName = clientData.name;
     role.isDefault = IS_DEFAULT.NO;
     role.status = 1;
     role.createdBy = loggedInId;

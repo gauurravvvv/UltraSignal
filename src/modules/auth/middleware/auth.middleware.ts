@@ -6,12 +6,12 @@
  * downstream controllers don't need to re-decode the token themselves:
  *
  *   res.locals.loggedInId       — the authenticated user's UUID
- *   res.locals.loggedInRole     — SYSTEM_ADMIN | ORG_ADMIN | ORG_USER
+ *   res.locals.loggedInRole     — SYSTEM_ADMIN | CLIENT_ADMIN | CLIENT_USER
  *   res.locals.loggedInUsername — for audit logging
  *   res.locals.loggedInName     — display name
  *   res.locals.permissions      — permission tree from token
- *   res.locals.organisation     — org name string
- *   res.locals.organisationId   — org UUID
+ *   res.locals.clientName       — client name string
+ *   res.locals.clientId         — client UUID
  *   res.locals.locale           — user's saved language preference (skipped
  *                                  when ?lang= query param is present so
  *                                  per-request overrides still work)
@@ -40,8 +40,8 @@ const AuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
       const {
         role,
         id,
-        organisation,
-        organisationId,
+        clientName,
+        clientId,
         permissions,
         username,
         name,
@@ -53,8 +53,8 @@ const AuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
       res.locals.loggedInUsername = username;
       res.locals.loggedInName = name;
       res.locals.permissions = permissions;
-      res.locals.organisation = organisation;
-      res.locals.organisationId = organisationId;
+      res.locals.clientName = clientName;
+      res.locals.clientId = clientId;
 
       // Apply user's saved locale from token unless caller explicitly set ?lang=
       if (locale && !req.query.lang) {
@@ -62,7 +62,7 @@ const AuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
       }
 
       Logger.debug(
-        `AuthMiddleware: authenticated user=${username} role=${role} org=${organisation}`,
+        `AuthMiddleware: authenticated user=${username} role=${role} client=${clientName}`,
       );
       next();
     } catch (error) {

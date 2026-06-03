@@ -19,7 +19,7 @@ import { UserGroupMapping } from './user-group-mapping.entity';
 import { User } from './user.entity';
 
 @Entity()
-@Index(['organisationId', 'status'])
+@Index(['clientId', 'status'])
 export class Group extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -31,10 +31,10 @@ export class Group extends BaseEntity {
   description?: string;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: true })
   roleId?: string;

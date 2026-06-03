@@ -5,8 +5,8 @@
  * no permissions is effectively a dead role — the user could create it but it would
  * grant nothing, leading to confusing UX and orphaned records.
  *
- * Name uniqueness is checked by (name + organisationId) to allow the same role name
- * across different orgs in a multi-tenant setup.
+ * Name uniqueness is checked by (name + clientId) to allow the same role name
+ * across different clients in a multi-tenant setup.
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
@@ -38,7 +38,7 @@ const AddRoleValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const { orgData } = res.locals;
+    const { clientData } = res.locals;
 
     const { error, value } = validateSchema(schema, req.body);
     if (error) {
@@ -49,7 +49,7 @@ const AddRoleValidation = async (
     const { name } = value;
 
     const existing = await AppDataSource.getRepository(Role).findOne({
-      where: { name, organisationId: orgData.id },
+      where: { name, clientId: clientData.id },
     });
     if (existing) {
       return sendResponse(

@@ -3,10 +3,10 @@ import {
   DB_CONFIG,
   DB_TYPES,
   DEFAULT_SYSTEM_ADMIN_CREDS,
-  SYSTEM_ORGANISATION,
+  SYSTEM_CLIENT,
 } from '../../../config/config';
 import onboardDB, { sendOnboardEmail } from '../helpers/system/onboardDB';
-import onboardOrg from '../helpers/system/onboardOrg';
+import onboardClient from '../helpers/system/onboardClient';
 import seedSystemAdminRole from '../helpers/system/seedSystemAdminRole';
 import Logger from '../utility/logger/logger';
 import CustomLogger from '../utility/logger/typeORMLogger';
@@ -43,35 +43,35 @@ class Database {
       `SELECT 1 FROM "user" LIMIT 1`,
     );
     if (!user.length) {
-      const { orgId, userId, setupToken, fullName } =
+      const { clientId, userId, setupToken, fullName } =
         await connection.manager.transaction(async manager => {
-          const orgId = await onboardOrg(
-            SYSTEM_ORGANISATION.NAME,
-            SYSTEM_ORGANISATION.DESCRIPTION,
+          const clientId = await onboardClient(
+            SYSTEM_CLIENT.NAME,
+            SYSTEM_CLIENT.DESCRIPTION,
             manager,
           );
           // Seed the System Admin Role row BEFORE the user so we can
           // hang its id off the user-group mapping. Both rows commit
           // in the same transaction so a failure mid-seed leaves the
           // DB in a clean (empty) state for the next boot to retry.
-          const roleId = await seedSystemAdminRole(manager, orgId);
+          const roleId = await seedSystemAdminRole(manager, clientId);
           const result = await onboardDB(
             DEFAULT_SYSTEM_ADMIN_CREDS.USER_NAME,
             DEFAULT_SYSTEM_ADMIN_CREDS.EMAIL,
             DEFAULT_SYSTEM_ADMIN_CREDS.FIRST_NAME,
             DEFAULT_SYSTEM_ADMIN_CREDS.LAST_NAME,
-            orgId,
+            clientId,
             roleId,
             manager,
           );
-          return { orgId, ...result };
+          return { clientId, ...result };
         });
 
       sendOnboardEmail(
         DEFAULT_SYSTEM_ADMIN_CREDS.EMAIL,
         fullName,
         DEFAULT_SYSTEM_ADMIN_CREDS.USER_NAME,
-        orgId,
+        clientId,
         userId,
         setupToken,
       );

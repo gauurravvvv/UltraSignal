@@ -2,7 +2,7 @@
  * deleteRoleBulk — soft-deletes multiple roles in a single transaction.
  *
  * All roles are deleted in one transaction so the operation is all-or-nothing —
- * a partial delete would leave the org in an inconsistent state that's hard to
+ * a partial delete would leave the client in an inconsistent state that's hard to
  * diagnose (some roles gone, some not, with no clear boundary).
  *
  * The middleware validates that no role in the batch is default or has active

@@ -20,7 +20,7 @@ import {
   IS_DEFAULT,
   MAX_ROW,
   ROLES,
-  SYSTEM_ORGANISATION,
+  SYSTEM_CLIENT,
 } from '../../../../config/config';
 import {
   GENERIC,
@@ -60,8 +60,8 @@ const listSystemAdmin = async (req: Request, res: Response) => {
     };
 
     const query = User.createQueryBuilder('user')
-      .where('user.organisationName = :orgName', {
-        orgName: SYSTEM_ORGANISATION.NAME,
+      .where('user.clientName = :orgName', {
+        orgName: SYSTEM_CLIENT.NAME,
       })
       .andWhere('user.role = :role', { role: ROLES.SYSTEM_ADMIN });
 

@@ -11,11 +11,11 @@
  * Pre-loads res.locals.systemAdmin for the controller.
  */
 import { NextFunction, Request, Response } from 'express';
-import { SYSTEM_ORGANISATION, CODE,
+import { SYSTEM_CLIENT, CODE,
   IS_DEFAULT,
   VALIDATION_MESSAGES } from '../../../../config/config';
 import {
-  ORGANISATION,
+  CLIENT,
   SYSTEM_ADMIN as SYSTEM_ADMIN_MSG } from '../../../shared/constants/response.messages';
 import { User } from '../../../shared/db/entities/user.entity';
 import sendResponse from '../../../shared/utility/response';
@@ -51,7 +51,7 @@ const DeleteSystemAdminValidation = async (
   // Check if super admin exists
   try {
     const systemAdmin = await User.findOne({
-      where: { id, organisationName: SYSTEM_ORGANISATION.NAME } });
+      where: { id, clientName: SYSTEM_CLIENT.NAME } });
 
     if (!systemAdmin) {
       return sendResponse(
@@ -73,7 +73,7 @@ const DeleteSystemAdminValidation = async (
 
     res.locals.systemAdmin = systemAdmin;
   } catch (err) {
-    return sendResponse(res, false, CODE.BAD_REQUEST, ORGANISATION.INVALID_ID);
+    return sendResponse(res, false, CODE.BAD_REQUEST, CLIENT.INVALID_ID);
   }
 
   next();

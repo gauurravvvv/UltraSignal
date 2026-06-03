@@ -16,7 +16,7 @@ import { DatasourceConnection } from './connections.entity';
 import { DatasourceConfigS } from './datasourceConfigS.entity';
 
 @Entity()
-@Index(['organisationId', 'status'])
+@Index(['clientId', 'status'])
 export class DatasourceS extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -28,10 +28,10 @@ export class DatasourceS extends BaseEntity {
   description!: string;
 
   @Column({ nullable: false, default: '' })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: true })
   configId: string;

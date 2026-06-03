@@ -2,7 +2,7 @@
  * UpdateRoleValidation — resolves the role and enforces default-role immutability
  * before the controller runs.
  *
- * Default roles (isDefault === 1) are seeded by org onboarding and are immune to
+ * Default roles (isDefault === 1) are seeded by client onboarding and are immune to
  * modification via this endpoint. Blocking in middleware (not the controller) means
  * this invariant is enforced even if the controller changes.
  *
@@ -44,7 +44,7 @@ const UpdateRoleValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const { orgData } = res.locals;
+    const { clientData } = res.locals;
 
     const { error, value } = validateSchema(schema, req.body);
     if (error) {
@@ -55,7 +55,7 @@ const UpdateRoleValidation = async (
     const { id, name } = value;
 
     const role = await AppDataSource.getRepository(Role).findOne({
-      where: { id, organisationId: orgData.id },
+      where: { id, clientId: clientData.id },
     });
     if (!role) {
       return sendResponse(res, false, CODE.NOT_FOUND, ROLE_MSG.NOT_FOUND);
@@ -71,7 +71,7 @@ const UpdateRoleValidation = async (
 
     // Duplicate name check (excluding current role)
     const existing = await AppDataSource.getRepository(Role).findOne({
-      where: { id: Not(id), name, organisationId: orgData.id },
+      where: { id: Not(id), name, clientId: clientData.id },
     });
     if (existing) {
       return sendResponse(

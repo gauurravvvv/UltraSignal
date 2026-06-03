@@ -3,7 +3,7 @@
  * the password-update endpoint.
  *
  * The actual password-history check and credential hashing happen in the
- * controller, not here, because they require org encryption config that is
+ * controller, not here, because they require client encryption config that is
  * cleanest to access in the controller layer after res.locals is fully
  * populated.
  */
@@ -36,7 +36,7 @@ const UpdatePasswordValidation = async (
   next: NextFunction,
 ) => {
   try {
-    const { orgData } = res.locals;
+    const { clientData } = res.locals;
 
     const { error, value } = validateSchema(schema, req.body);
     if (error) {
@@ -47,7 +47,7 @@ const UpdatePasswordValidation = async (
     const { id } = value;
 
     const orgUser = await AppDataSource.getRepository(User).findOne({
-      where: { id, organisationId: orgData.id },
+      where: { id, clientId: clientData.id },
     });
 
     if (!orgUser) {

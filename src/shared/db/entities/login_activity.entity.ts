@@ -9,7 +9,7 @@ import {
 
 @Entity('login_activity')
 @Index(['userId'])
-@Index(['organisationId', 'eventType'])
+@Index(['clientId', 'eventType'])
 @Index(['createdOn'])
 @Index(['eventType'])
 export class LoginActivity extends BaseEntity {
@@ -23,10 +23,10 @@ export class LoginActivity extends BaseEntity {
   username: string;
 
   @Column({ type: 'varchar', nullable: true })
-  organisationId: string | null;
+  clientId: string | null;
 
   @Column({ type: 'varchar', nullable: true })
-  organisationName: string | null;
+  clientName: string | null;
 
   @Column({ nullable: false })
   eventType: string;

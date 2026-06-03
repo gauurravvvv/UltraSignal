@@ -11,7 +11,7 @@ import {
 import { Group } from './group.entity';
 
 @Entity()
-@Index(['organisationId', 'targetGroupId', 'status'])
+@Index(['clientId', 'targetGroupId', 'status'])
 export class Announcement {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -23,10 +23,10 @@ export class Announcement {
   description: string;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   // Group this announcement is targeted to. Users in this group will see it.
   @Column({ nullable: false })

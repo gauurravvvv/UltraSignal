@@ -17,7 +17,7 @@ import { DatasourceS } from './datasourceS.entity';
 import { Visual } from './visual.entity';
 
 @Entity()
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 @Index(['datasetId'])
 @Index(['lineageId'])
 // Race-safety for concurrent edits on the same lineage. Two
@@ -82,10 +82,10 @@ export class Analyses {
   analysisFields: DatasetField[];
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

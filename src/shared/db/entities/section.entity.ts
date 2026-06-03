@@ -19,7 +19,7 @@ import { Tab } from './tab.entity';
 
 @Entity()
 @Index(['tabId'])
-@Index(['organisationId', 'datasourceId'])
+@Index(['clientId', 'datasourceId'])
 export class Section {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -38,10 +38,10 @@ export class Section {
   tab: Tab;
 
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

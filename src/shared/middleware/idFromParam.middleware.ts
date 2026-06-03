@@ -10,13 +10,13 @@
  *
  * Usage:
  *   router.put(
- *     '/:orgId/:analysisId',
+ *     '/:clientId/:analysisId',
  *     idFromParam('analysisId', 'id'),   // copies req.params.analysisId → req.body.id
  *     ...validation, controller,
  *   );
  *
  *   router.put(
- *     '/:orgId/:datasetId/fields/:fieldId',
+ *     '/:clientId/:datasetId/fields/:fieldId',
  *     idFromParam('fieldId', 'fieldId'), // copies req.params.fieldId → req.body.fieldId
  *     ...,
  *   );

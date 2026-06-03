@@ -2,7 +2,7 @@
  * ChangePasswordValidation — validates the new password field for self-service password
  * changes by the currently authenticated user.
  *
- * No org or user ID validation is needed here because the controller derives the target
+ * No client or user ID validation is needed here because the controller derives the target
  * user from the JWT token in `res.locals.loggedInId` — the endpoint is inherently
  * self-scoped and cannot be used to change another user's password.
  */

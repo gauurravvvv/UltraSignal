@@ -84,7 +84,7 @@ export const snapshotAnalysisIntoDashboard = async (
 
   // ── Load source state (analysis + visuals + visualConfigs) ───────
   const analysis = await manager.getRepository(Analyses).findOne({
-    where: { id: analysisId, organisationId: dashboard.organisationId },
+    where: { id: analysisId, clientId: dashboard.clientId },
     relations: ['visuals', 'visuals.visualConfig'],
   });
   if (!analysis) {
@@ -94,7 +94,7 @@ export const snapshotAnalysisIntoDashboard = async (
   // Dataset is loaded separately so we get the .sql column without
   // pulling unrelated relations into memory.
   const dataset = await manager.getRepository(Dataset).findOne({
-    where: { id: analysis.datasetId, organisationId: dashboard.organisationId },
+    where: { id: analysis.datasetId, clientId: dashboard.clientId },
   });
   if (!dataset) {
     throw new Error(`Dataset ${analysis.datasetId} not found`);
@@ -138,7 +138,7 @@ export const snapshotAnalysisIntoDashboard = async (
 
   // Analysis filters.
   const sourceFilters = await manager.getRepository(AnalysisFilter).find({
-    where: { analysisId, organisationId: dashboard.organisationId },
+    where: { analysisId, clientId: dashboard.clientId },
     order: { sequence: 'ASC' },
   });
 
@@ -174,8 +174,8 @@ export const snapshotAnalysisIntoDashboard = async (
     f.type = src.type;
     f.dataType = src.dataType;
     f.sequence = src.sequence;
-    f.organisationId = src.organisationId;
-    f.organisationName = src.organisationName;
+    f.clientId = src.clientId;
+    f.clientName = src.clientName;
     f.datasourceId = src.datasourceId;
     f.datasetId = src.datasetId;
     f.sourceFieldId = src.id;
@@ -227,8 +227,8 @@ export const snapshotAnalysisIntoDashboard = async (
     v.xRatio = src.xRatio;
     v.yRatio = src.yRatio;
     v.sequence = i;
-    v.organisationId = src.organisationId;
-    v.organisationName = src.organisationName;
+    v.clientId = src.clientId;
+    v.clientName = src.clientName;
     v.datasourceId = src.datasourceId;
     v.datasetId = src.datasetId;
     v.sourceVisualId = src.id;
@@ -258,8 +258,8 @@ export const snapshotAnalysisIntoDashboard = async (
       c.xAxisColumn = srcCfg.xAxisColumn;
       c.yAxisColumn = srcCfg.yAxisColumn;
       c.config = srcCfg.config;
-      c.organisationId = srcCfg.organisationId;
-      c.organisationName = srcCfg.organisationName;
+      c.clientId = srcCfg.clientId;
+      c.clientName = srcCfg.clientName;
       c.datasourceId = srcCfg.datasourceId;
       c.datasetId = srcCfg.datasetId;
       return c;
@@ -283,8 +283,8 @@ export const snapshotAnalysisIntoDashboard = async (
     f.isEnabled = src.isEnabled;
     f.isMandatory = src.isMandatory;
     f.sequence = src.sequence;
-    f.organisationId = src.organisationId;
-    f.organisationName = src.organisationName;
+    f.clientId = src.clientId;
+    f.clientName = src.clientName;
     f.datasourceId = src.datasourceId;
     f.datasetId = src.datasetId;
     f.sourceFilterId = src.id;

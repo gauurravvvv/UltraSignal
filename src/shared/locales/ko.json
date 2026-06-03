@@ -37,7 +37,7 @@
     "account_locked": "계정이 잠겼습니다. 관리자에게 문의해 주세요",
     "role_inactive": "지정된 역할이 비활성화되어 있습니다. 관리자에게 문의해 주세요"
   },
-  "org": {
+  "client": {
     "created": "조직이 성공적으로 생성되었습니다",
     "updated": "조직이 성공적으로 업데이트되었습니다",
     "deleted": "조직이 성공적으로 삭제되었습니다",
@@ -67,7 +67,7 @@
     "account_not_locked": "이 계정은 잠겨 있지 않습니다",
     "cannot_modify_default": "기본 시스템 관리자는 수정할 수 없습니다"
   },
-  "org_admin": {
+  "client_admin": {
     "created": "관리자가 성공적으로 생성되었습니다",
     "updated": "관리자가 성공적으로 업데이트되었습니다",
     "deleted": "관리자가 성공적으로 삭제되었습니다",
@@ -283,15 +283,15 @@
     "export_failed": "감사 로그 내보내기에 실패했습니다",
     "no_logs_found": "지정된 조건에 해당하는 감사 로그를 찾을 수 없습니다",
     "invalid_export_format": "유효하지 않은 내보내기 형식입니다. 지원 형식: excel, pdf",
-    "org_required_for_export": "내보낼 조직을 선택해 주세요",
-    "no_logs_for_org": "이 조직에 사용 가능한 감사 로그가 없습니다"
+    "client_required_for_export": "내보낼 조직을 선택해 주세요",
+    "no_logs_for_client": "이 조직에 사용 가능한 감사 로그가 없습니다"
   },
   "login_activity": {
     "list_fetched": "로그인 활동을 성공적으로 가져왔습니다",
     "fetch_failed": "로그인 활동을 가져오는 데 실패했습니다",
     "export_failed": "로그인 활동 내보내기에 실패했습니다",
     "no_activity_found": "지정된 조건에 해당하는 로그인 활동을 찾을 수 없습니다",
-    "no_activity_for_org": "이 조직에 사용 가능한 로그인 활동이 없습니다"
+    "no_activity_for_client": "이 조직에 사용 가능한 로그인 활동이 없습니다"
   },
   "query": {
     "executed": "쿼리가 성공적으로 실행되었습니다",
@@ -347,7 +347,7 @@
     "welcome_subject": "{{organisation}}에 오신 것을 환영합니다",
     "welcome_greeting": "환영합니다, {{fullName}}님!",
     "welcome_body": "<strong>{{organisation}}</strong>에 계정이 생성되었습니다. 아래 버튼을 클릭하여 비밀번호를 설정하고 계정을 활성화하세요.",
-    "label_organisation": "조직",
+    "label_client": "조직",
     "label_username": "사용자명",
     "set_password_btn": "비밀번호 설정",
     "expiry_notice": "이 링크는 {{setupTokenExpiryHours}}시간 후에 만료됩니다. 이 이메일을 예상하지 못하셨다면 관리자에게 문의해 주세요.",

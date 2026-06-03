@@ -13,7 +13,7 @@
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
 import { In } from 'typeorm';
-import { SYSTEM_ORGANISATION, CODE, IS_DEFAULT } from '../../../../config/config';
+import { SYSTEM_CLIENT, CODE, IS_DEFAULT } from '../../../../config/config';
 import {
   GENERIC,
   SYSTEM_ADMIN as SYSTEM_ADMIN_MSG } from '../../../shared/constants/response.messages';
@@ -55,7 +55,7 @@ const DeleteSystemAdminBulkValidation = async (
     }
 
     const systemAdmins = await User.find({
-      where: { id: In(ids), organisationName: SYSTEM_ORGANISATION.NAME } });
+      where: { id: In(ids), clientName: SYSTEM_CLIENT.NAME } });
 
     if (systemAdmins.length !== ids.length) {
       return sendResponse(

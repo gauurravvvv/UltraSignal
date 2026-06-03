@@ -14,7 +14,7 @@ import { Dataset } from './dataset.entity';
 
 @Entity()
 @Index(['datasetId'])
-@Index(['organisationId', 'datasetId'])
+@Index(['clientId', 'datasetId'])
 @Index(['scope', 'scopeId'])
 export class RlsRule {
   @PrimaryGeneratedColumn('uuid')
@@ -58,10 +58,10 @@ export class RlsRule {
 
   // Denormalized fields
   @Column({ nullable: false })
-  organisationId: string;
+  clientId: string;
 
   @Column({ nullable: false })
-  organisationName: string;
+  clientName: string;
 
   @Column({ nullable: false })
   datasourceId: string;

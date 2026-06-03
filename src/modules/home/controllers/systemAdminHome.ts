@@ -1,5 +1,5 @@
 /**
- * systemAdminHome — returns summary counts for an organisation's dashboard.
+ * systemAdminHome — returns summary counts for a client's dashboard.
  *
  * `totalAdmins` and `totalUsers` currently both query `User` without a role filter,
  * so they return the same total count. This is a known limitation — splitting by role
@@ -8,17 +8,17 @@
  *
  * The inner `Promise.all(...).catch` swallows count errors silently (counts default to
  * undefined in response) so a failure in one counter does not 500 the whole endpoint.
- * The org lookup check before the Promise.all still gates on org existence.
+ * The client lookup check before the Promise.all still gates on client existence.
  */
 import { Request, Response } from 'express';
 import { CODE } from '../../../../config/config';
 import {
   GENERIC,
   HOME as HOME_MSG,
-  ORGANISATION as ORGANISATION_MSG,
+  CLIENT as CLIENT_MSG,
 } from '../../../shared/constants/response.messages';
 import { DatasourceS } from '../../../shared/db/entities/datasourceS.entity';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
@@ -27,25 +27,25 @@ import sendResponse from '../../../shared/utility/response';
 const systemAdminHome = async (req: Request, res: Response) => {
   Logger.info(`System Admin Home Request`);
 
-  const id = res.locals.organisationId;
+  const id = res.locals.clientId;
   let response: any = {};
 
   try {
-    const org: Organisation | null = await Organisation.findOne({
+    const client: Client | null = await Client.findOne({
       where: { id },
       relations: ['config'],
     });
 
-    if (!org) {
-      sendResponse(res, false, CODE.NOT_FOUND, ORGANISATION_MSG.NOT_FOUND);
+    if (!client) {
+      sendResponse(res, false, CODE.NOT_FOUND, CLIENT_MSG.NOT_FOUND);
       return;
     }
-    let totalDatabases = DatasourceS.count({ where: { organisationId: id } });
+    let totalDatabases = DatasourceS.count({ where: { clientId: id } });
     let totalAdmins = User.count({
-      where: { organisationId: id },
+      where: { clientId: id },
     });
     let totalUsers = User.count({
-      where: { organisationId: id },
+      where: { clientId: id },
     });
 
     await Promise.all([totalDatabases, totalAdmins, totalUsers])

@@ -1,28 +1,27 @@
 /**
- * DeleteOrganisationValidation — confirms the target org exists and is accessible before
- * the controller performs the destructive delete.
+ * GetClientValidation — verifies the requested client exists and pre-fetches it with
+ * its config relation into `res.locals.client` for the controller.
  *
- * Authorisation is enforced upstream by `VerifyPermissionMiddleware('orgManagement')`
- * in the orgs router; this middleware is now payload-only.
+ * Authorisation is enforced upstream by `VerifyPermissionMiddleware('clientManagement')`
+ * in the clients router; this middleware is now payload-only.
  *
- * The inner try-catch around the DB lookup converts a TypeORM UUID parse error (malformed
- * `id`) into a 400 rather than letting it bubble up as a 500 — UUIDs are validated by
- * TypeORM at query time, not by Joi, so invalid formats need to be caught here.
- * The entity is pre-fetched into `res.locals.org` so the controller can log its name in
- * the audit trail without a second query.
+ * The `config` relation is eagerly loaded here rather than in the controller because the
+ * get-client response includes config fields (security policy, email settings) — loading it
+ * once in validation avoids a second round-trip. The inner try-catch converts TypeORM UUID
+ * parse errors on malformed `id` params to 400 instead of 500.
  */
 import { NextFunction, Request, Response } from 'express';
 import { CODE, VALIDATION_MESSAGES } from '../../../../config/config';
 import {
   GENERIC,
-  ORGANISATION as ORGANISATION_MSG,
+  CLIENT as CLIENT_MSG,
 } from '../../../shared/constants/response.messages';
-import { Organisation } from '../../../shared/db/entities/organisation.entity';
+import { Client } from '../../../shared/db/entities/client.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
 
-const DeleteOrganisationValidation = async (
+const GetClientValidation = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -40,24 +39,27 @@ const DeleteOrganisationValidation = async (
     }
 
     try {
-      const org = await Organisation.findOne({ where: { id } });
+      const client = await Client.findOne({
+        where: { id },
+        relations: ['config'],
+      });
 
-      if (!org) {
+      if (!client) {
         return sendResponse(
           res,
           false,
           CODE.NOT_FOUND,
-          ORGANISATION_MSG.NOT_FOUND,
+          CLIENT_MSG.NOT_FOUND,
         );
       }
 
-      res.locals.org = org;
+      res.locals.client = client;
     } catch (err) {
       return sendResponse(
         res,
         false,
         CODE.BAD_REQUEST,
-        ORGANISATION_MSG.INVALID_ID,
+        CLIENT_MSG.INVALID_ID,
       );
     }
 
@@ -68,4 +70,4 @@ const DeleteOrganisationValidation = async (
   }
 };
 
-export default DeleteOrganisationValidation;
+export default GetClientValidation;

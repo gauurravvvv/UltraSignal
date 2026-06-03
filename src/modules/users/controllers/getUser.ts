@@ -13,7 +13,7 @@ import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
 
 const getUser = async (req: Request, res: Response) => {
-  Logger.info(`Get org user request`);
+  Logger.info(`Get client user request`);
 
   const { orgUser } = res.locals;
 

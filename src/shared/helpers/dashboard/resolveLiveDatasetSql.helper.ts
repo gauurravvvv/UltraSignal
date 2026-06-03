@@ -8,7 +8,7 @@
  * dataset propagate to every dashboard without a republish.
  *
  * Throws if any link in the chain is broken (analysis deleted,
- * dataset deleted, mismatched org scope). Render-time callers should
+ * dataset deleted, mismatched client scope). Render-time callers should
  * surface this as a 404 / "source dataset no longer exists" message.
  *
  * Keeps the resolution in one place so future caching, RLS, or
@@ -62,11 +62,11 @@ export const resolveLiveDatasetSql = async (
     .where('analyses.id = :analysisId', {
       analysisId: dashboard.sourceAnalysisId,
     })
-    .andWhere('analyses."organisationId" = :orgId', {
-      orgId: dashboard.organisationId,
+    .andWhere('analyses."clientId" = :clientId', {
+      clientId: dashboard.clientId,
     })
-    .andWhere('dataset."organisationId" = :orgId', {
-      orgId: dashboard.organisationId,
+    .andWhere('dataset."clientId" = :clientId', {
+      clientId: dashboard.clientId,
     })
     .andWhere('analyses."deletedOn" IS NULL')
     .andWhere('dataset."deletedOn" IS NULL')
@@ -83,7 +83,7 @@ export const resolveLiveDatasetSql = async (
     // matter — either way the dashboard's source no longer exists.
     throw new Error(
       `Source for dashboard ${dashboard.id} is no longer available ` +
-        `(analysis ${dashboard.sourceAnalysisId} or its dataset has been deleted or moved out of org scope)`,
+        `(analysis ${dashboard.sourceAnalysisId} or its dataset has been deleted or moved out of client scope)`,
     );
   }
   if (!row.sql || !row.sql.trim()) {

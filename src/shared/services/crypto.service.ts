@@ -1,5 +1,5 @@
 /**
- * crypto.service — envelope encryption for org-scoped secrets.
+ * crypto.service — envelope encryption for client-scoped secrets.
  *
  * Design (no third-party services):
  *
@@ -8,16 +8,16 @@
  *   └─────────────────┬─────────────────────────────────────────┘
  *                     │ wraps
  *                     ▼
- *   ┌─ Per-org DEK (32 random bytes, generated at org creation) ┐
- *   │   stored in OrganisationConfig.encryptedDek as ciphertext │
+ *   ┌─ Per-client DEK (32 random bytes, generated at client creation) ┐
+ *   │   stored in ClientConfig.encryptedDek as ciphertext │
  *   └─────────────────┬─────────────────────────────────────────┘
  *                     │ encrypts
  *                     ▼
- *   ┌─ Org secrets (datasource creds, SMTP/SES creds, ...)      ┐
+ *   ┌─ Client secrets (datasource creds, SMTP/SES creds, ...)      ┐
  *   │   stored as v1:<iv>:<tag>:<ct>                            │
  *   └────────────────────────────────────────────────────────────┘
  *
- * Algorithm: AES-256-GCM. Hardcoded — not configurable per org.
+ * Algorithm: AES-256-GCM. Hardcoded — not configurable per client.
  * AEAD gives confidentiality + integrity in one primitive.
  *
  * IVs: 12 random bytes from `crypto.randomBytes()` per encryption.
@@ -44,7 +44,7 @@ const IV_BYTES = 12;
 const VERSION = 'v1';
 
 /**
- * Generate a fresh 32-byte Data Encryption Key. Used at org creation
+ * Generate a fresh 32-byte Data Encryption Key. Used at client creation
  * (and on key rotation). The caller is responsible for wrapping the
  * returned buffer with `wrapDek()` before persisting it. Never store
  * a raw DEK.
@@ -99,25 +99,25 @@ export function unwrapDek(wrapped: string): Buffer {
 }
 
 /**
- * Encrypt a plaintext secret under an org's DEK. The wrapped DEK is
- * read off the org's config row. The unwrapped DEK is scrubbed from
+ * Encrypt a plaintext secret under a client's DEK. The wrapped DEK is
+ * read off the client's config row. The unwrapped DEK is scrubbed from
  * memory before this function returns.
  *
  * The plaintext is always UTF-8. Passing arbitrary binary is not
  * supported (no current call site needs it).
  */
-export function encryptForOrg(
+export function encryptForClient(
   plaintext: string,
-  orgConfig: { encryptedDek?: string | null },
+  clientConfig: { encryptedDek?: string | null },
 ): string {
-  if (!orgConfig.encryptedDek) {
+  if (!clientConfig.encryptedDek) {
     throw new Error(
-      'Organisation has no wrapped DEK; cannot encrypt. ' +
+      'Client has no wrapped DEK; cannot encrypt. ' +
         'Either it was created with the legacy pepper scheme and needs migration, ' +
         'or its config row is corrupt.',
     );
   }
-  const dek = unwrapDek(orgConfig.encryptedDek);
+  const dek = unwrapDek(clientConfig.encryptedDek);
   try {
     const iv = crypto.randomBytes(IV_BYTES);
     const cipher = crypto.createCipheriv(ALG, dek, iv) as crypto.CipherGCM;
@@ -133,22 +133,22 @@ export function encryptForOrg(
 }
 
 /**
- * Decrypt a stored ciphertext with the org's DEK. Mirror of
- * `encryptForOrg`. Throws on auth-tag mismatch (tampering).
+ * Decrypt a stored ciphertext with the client's DEK. Mirror of
+ * `encryptForClient`. Throws on auth-tag mismatch (tampering).
  */
-export function decryptForOrg(
+export function decryptForClient(
   ciphertext: string,
-  orgConfig: { encryptedDek?: string | null },
+  clientConfig: { encryptedDek?: string | null },
 ): string {
-  if (!orgConfig.encryptedDek) {
-    throw new Error('Organisation has no wrapped DEK; cannot decrypt');
+  if (!clientConfig.encryptedDek) {
+    throw new Error('Client has no wrapped DEK; cannot decrypt');
   }
   const parts = ciphertext.split(':');
   if (parts.length !== 4 || parts[0] !== VERSION) {
     throw new Error('Ciphertext is malformed or has unsupported version');
   }
   const [, ivHex, tagHex, ctHex] = parts;
-  const dek = unwrapDek(orgConfig.encryptedDek);
+  const dek = unwrapDek(clientConfig.encryptedDek);
   try {
     const decipher = crypto.createDecipheriv(
       ALG,
@@ -164,8 +164,8 @@ export function decryptForOrg(
   } catch (err: any) {
     // Don't leak the err.message — it can describe internals of the
     // cipher state. Log it; surface a generic error to the caller.
-    Logger.error(`decryptForOrg failed: ${err?.message ?? 'unknown'}`);
-    throw new Error('Failed to decrypt org secret');
+    Logger.error(`decryptForClient failed: ${err?.message ?? 'unknown'}`);
+    throw new Error('Failed to decrypt client secret');
   } finally {
     dek.fill(0);
   }
