@@ -67,20 +67,6 @@
     "account_not_locked": "Esta conta não está bloqueada",
     "cannot_modify_default": "O administrador do sistema padrão não pode ser modificado"
   },
-  "client_admin": {
-    "created": "Administrador criado com sucesso",
-    "updated": "Administrador atualizado com sucesso",
-    "deleted": "Administrador excluído com sucesso",
-    "fetched": "Detalhes do administrador obtidos com sucesso",
-    "list_fetched": "Administradores obtidos com sucesso",
-    "not_found": "Administrador não encontrado",
-    "already_exists_email": "Já existe um administrador com este e-mail",
-    "already_exists_username": "Já existe um administrador com este nome de usuário",
-    "password_updated": "Senha do administrador atualizada com sucesso",
-    "cannot_delete_default": "O administrador padrão não pode ser excluído",
-    "account_unlocked": "Conta do administrador desbloqueada com sucesso",
-    "account_not_locked": "Esta conta não está bloqueada"
-  },
   "user": {
     "created": "Usuário criado com sucesso",
     "updated": "Usuário atualizado com sucesso",
@@ -97,37 +83,6 @@
     "cannot_delete_default": "O administrador padrão não pode ser excluído",
     "cannot_modify_default": "O administrador padrão não pode ser modificado"
   },
-  "datasource": {
-    "created": "Fonte de dados integrada com sucesso",
-    "updated": "Fonte de dados atualizada com sucesso",
-    "deleted": "Fonte de dados excluída com sucesso",
-    "bulk_deleted": "Fontes de dados excluídas com sucesso",
-    "fetched": "Detalhes da fonte de dados obtidos com sucesso",
-    "list_fetched": "Fontes de dados obtidas com sucesso",
-    "not_found": "Fonte de dados não encontrada",
-    "already_exists": "Já existe uma fonte de dados com este nome",
-    "connection_failed": "Falha ao conectar à fonte de dados",
-    "connection_success": "Conexão com a fonte de dados estabelecida com sucesso",
-    "master_not_found": "Configuração da fonte de dados mestre não encontrada",
-    "structure_fetched": "Estrutura da fonte de dados obtida com sucesso",
-    "validated": "Conexão com a fonte de dados validada",
-    "schema_not_found": "Esquema não encontrado nesta fonte de dados",
-    "table_not_found": "Tabela não encontrada neste esquema"
-  },
-  "connection": {
-    "created": "Conexão criada com sucesso",
-    "updated": "Conexão atualizada com sucesso",
-    "deleted": "Conexão excluída com sucesso",
-    "bulk_deleted": "Conexões excluídas com sucesso",
-    "fetched": "Detalhes da conexão obtidos com sucesso",
-    "list_fetched": "Conexões obtidas com sucesso",
-    "not_found": "Conexão não encontrada",
-    "already_exists": "Já existe uma conexão com este nome",
-    "test_success": "Teste de conexão bem-sucedido",
-    "test_failed": "Teste de conexão falhou",
-    "terminated": "Conexão encerrada com sucesso",
-    "process_not_found": "Conexão não encontrada na fonte de dados atual"
-  },
   "group": {
     "created": "Grupo criado com sucesso",
     "updated": "Grupo atualizado com sucesso",
@@ -141,182 +96,9 @@
     "cannot_include_default_user": "O administrador padrão não pode ser adicionado a um grupo personalizado",
     "cannot_remove_default_user": "O administrador padrão não pode ser removido deste grupo"
   },
-  "access": {
-    "granted": "Acesso concedido com sucesso",
-    "revoked": "Acesso revogado com sucesso",
-    "list_fetched": "Lista de acessos obtida com sucesso",
-    "not_found": "Registro de acesso não encontrado",
-    "already_exists": "Acesso já concedido para este recurso",
-    "datasource_details_not_found": "Detalhes da fonte de dados não encontrados para concessão de acesso",
-    "connection_not_found": "Conexão não encontrada para concessão de acesso"
-  },
-  "dataset": {
-    "created": "Conjunto de dados criado com sucesso",
-    "updated": "Conjunto de dados atualizado com sucesso",
-    "deleted": "Conjunto de dados excluído com sucesso",
-    "bulk_deleted": "Conjuntos de dados excluídos com sucesso",
-    "fetched": "Detalhes do conjunto de dados obtidos com sucesso",
-    "list_fetched": "Conjuntos de dados obtidos com sucesso",
-    "not_found": "Conjunto de dados não encontrado",
-    "already_exists": "Já existe um conjunto de dados com este nome",
-    "id_required": "ID do conjunto de dados é obrigatório",
-    "field_validated": "Campo do conjunto de dados validado com sucesso",
-    "formula_validated": "Fórmula validada com sucesso",
-    "formula_invalid": "Fórmula inválida",
-    "query_execution_failed": "Falha ao executar a consulta do conjunto de dados",
-    "duplicated": "Conjunto de dados duplicado com sucesso"
-  },
-  "tab": {
-    "created": "Aba criada com sucesso",
-    "updated": "Aba atualizada com sucesso",
-    "deleted": "Aba excluída com sucesso",
-    "bulk_deleted": "Abas excluídas com sucesso",
-    "fetched": "Detalhes da aba obtidos com sucesso",
-    "list_fetched": "Abas obtidas com sucesso",
-    "not_found": "Aba não encontrada",
-    "already_exists": "Já existe uma aba com este nome"
-  },
-  "section": {
-    "created": "Seção criada com sucesso",
-    "updated": "Seção atualizada com sucesso",
-    "deleted": "Seção excluída com sucesso",
-    "bulk_deleted": "Seções excluídas com sucesso",
-    "fetched": "Detalhes da seção obtidos com sucesso",
-    "list_fetched": "Seções obtidas com sucesso",
-    "not_found": "Seção não encontrada",
-    "already_exists": "Já existe uma seção com este nome"
-  },
-  "prompt": {
-    "created": "Prompt criado com sucesso",
-    "updated": "Prompt atualizado com sucesso",
-    "deleted": "Prompt excluído com sucesso",
-    "bulk_deleted": "Prompts excluídos com sucesso",
-    "fetched": "Detalhes do prompt obtidos com sucesso",
-    "list_fetched": "Prompts obtidos com sucesso",
-    "not_found": "Prompt não encontrado",
-    "already_exists": "Já existe um prompt com este nome",
-    "values_fetched": "Valores do prompt obtidos com sucesso",
-    "id_required": "ID do prompt é obrigatório"
-  },
-  "query_builder": {
-    "created": "Construtor de consultas criado com sucesso",
-    "updated": "Construtor de consultas atualizado com sucesso",
-    "deleted": "Construtor de consultas excluído com sucesso",
-    "bulk_deleted": "Construtores de consultas excluídos com sucesso",
-    "fetched": "Detalhes do construtor de consultas obtidos com sucesso",
-    "list_fetched": "Construtores de consultas obtidos com sucesso",
-    "not_found": "Construtor de consultas não encontrado",
-    "already_exists": "Já existe um construtor de consultas com este nome",
-    "prompts_fetched": "Prompts do construtor de consultas obtidos com sucesso",
-    "prompts_saved": "Prompts do construtor de consultas salvos com sucesso",
-    "sql_generated": "SQL gerado com sucesso",
-    "id_required": "ID do construtor de consultas é obrigatório"
-  },
-  "analysis": {
-    "created": "Análise criada com sucesso",
-    "updated": "Análise atualizada com sucesso",
-    "deleted": "Análise excluída com sucesso",
-    "bulk_deleted": "Análises excluídas com sucesso",
-    "fetched": "Detalhes da análise obtidos com sucesso",
-    "list_fetched": "Análises obtidas com sucesso",
-    "not_found": "Análise não encontrada",
-    "already_exists": "Já existe uma análise com este nome",
-    "id_required": "ID da análise é obrigatório"
-  },
-  "analysis_filter": {
-    "created": "Filtro de análise criado com sucesso",
-    "updated": "Filtro de análise atualizado com sucesso",
-    "deleted": "Filtro de análise excluído com sucesso",
-    "fetched": "Detalhes do filtro de análise obtidos com sucesso",
-    "list_fetched": "Filtros de análise obtidos com sucesso",
-    "not_found": "Filtro de análise não encontrado",
-    "values_fetched": "Valores do filtro obtidos com sucesso",
-    "values_fetch_failed": "Falha ao obter valores do filtro",
-    "invalid_filter_type": "Tipo de filtro inválido",
-    "invalid_control_type": "Tipo de controle inválido",
-    "column_required": "Nome da coluna é obrigatório"
-  },
-  "visual": {
-    "created": "Visualização criada com sucesso",
-    "updated": "Visualização atualizada com sucesso",
-    "deleted": "Visualização excluída com sucesso",
-    "fetched": "Detalhes da visualização obtidos com sucesso",
-    "list_fetched": "Visualizações obtidas com sucesso",
-    "not_found": "Visualização não encontrada",
-    "empty_config": "Todas as visualizações devem ter um tipo de gráfico configurado"
-  },
-  "announcement": {
-    "saved": "Anúncio criado com sucesso",
-    "save_failed": "Falha ao criar anúncio",
-    "updated": "Anúncio atualizado com sucesso",
-    "update_failed": "Falha ao atualizar anúncio",
-    "deleted": "Anúncio excluído com sucesso",
-    "delete_failed": "Falha ao excluir anúncio",
-    "list_fetched": "Anúncios obtidos com sucesso",
-    "list_fetch_failed": "Falha ao obter anúncios",
-    "active_fetched": "Anúncios ativos obtidos com sucesso",
-    "active_fetch_failed": "Falha ao obter anúncios ativos",
-    "details_fetched": "Detalhes do anúncio obtidos com sucesso",
-    "details_fetch_failed": "Falha ao obter detalhes do anúncio",
-    "dismissed": "Anúncio dispensado com sucesso",
-    "dismiss_failed": "Falha ao dispensar anúncio",
-    "not_found": "Anúncio não encontrado",
-    "target_group_not_found": "Grupo alvo não encontrado nesta organização"
-  },
   "home": {
     "fetched": "Dados da página inicial obtidos com sucesso",
     "fetch_failed": "Falha ao obter dados da página inicial"
-  },
-  "dashboard": {
-    "created": "Dashboard publicado com sucesso",
-    "fetched": "Dashboard obtido com sucesso",
-    "rendered": "Dashboard renderizado com sucesso",
-    "listed": "Dashboards listados com sucesso",
-    "deleted": "Dashboard excluído com sucesso",
-    "bulk_deleted": "Dashboards excluídos com sucesso",
-    "not_found": "Dashboard não encontrado",
-    "already_exists": "Já existe um dashboard com este nome para esta análise"
-  },
-  "audit_log": {
-    "list_fetched": "Logs de auditoria obtidos com sucesso",
-    "fetch_failed": "Falha ao obter logs de auditoria",
-    "export_failed": "Falha ao exportar logs de auditoria",
-    "no_logs_found": "Nenhum log de auditoria encontrado para os critérios especificados",
-    "invalid_export_format": "Formato de exportação inválido. Formatos suportados: excel, pdf",
-    "client_required_for_export": "Por favor, selecione uma organização para exportar",
-    "no_logs_for_client": "Nenhum log de auditoria disponível para esta organização"
-  },
-  "login_activity": {
-    "list_fetched": "Atividade de login obtida com sucesso",
-    "fetch_failed": "Falha ao obter atividade de login",
-    "export_failed": "Falha ao exportar atividade de login",
-    "no_activity_found": "Nenhuma atividade de login encontrada para os critérios especificados",
-    "no_activity_for_client": "Nenhuma atividade de login disponível para esta organização"
-  },
-  "query": {
-    "executed": "Consulta executada com sucesso",
-    "execution_failed": "Falha ao executar consulta",
-    "saved": "Consulta salva com sucesso",
-    "fetched": "Detalhes da consulta obtidos com sucesso",
-    "list_fetched": "Consultas obtidas com sucesso",
-    "deleted": "Consulta excluída com sucesso",
-    "not_found": "Consulta não encontrada",
-    "id_required": "ID da consulta é obrigatório",
-    "required": "Consulta é obrigatória",
-    "invalid": "Consulta inválida",
-    "cancelled": "Consulta cancelada com sucesso",
-    "process_not_found": "Processo não encontrado na fonte de dados atual",
-    "cancel_not_permitted": "O cancelamento requer privilégios adicionais nesta fonte de dados.",
-    "cancel_not_supported": "O cancelamento de consultas não é suportado para este tipo de fonte de dados."
-  },
-  "rls_rule": {
-    "created": "Regra RLS criada com sucesso",
-    "updated": "Regra RLS atualizada com sucesso",
-    "deleted": "Regra RLS excluída com sucesso",
-    "list_fetched": "Regras RLS obtidas com sucesso",
-    "fetched": "Regra RLS obtida com sucesso",
-    "not_found": "Regra RLS não encontrada",
-    "already_exists": "Já existe uma regra RLS com este nome para este conjunto de dados"
   },
   "role": {
     "created": "Função criada com sucesso",
@@ -335,10 +117,6 @@
   "profile": {
     "fetched": "Perfil obtido com sucesso",
     "locale_updated": "Preferência de idioma atualizada com sucesso"
-  },
-  "search": {
-    "results_fetched": "Resultados da pesquisa obtidos com sucesso",
-    "fetch_failed": "Falha ao obter resultados da pesquisa"
   },
   "health": {
     "ok": "Todos os sistemas operacionais"

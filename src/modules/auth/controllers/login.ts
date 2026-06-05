@@ -28,7 +28,6 @@ import {
 import { AppDataSource } from '../../../shared/db';
 import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
-import { getActiveAnnouncementsForUser } from '../../../shared/helpers/announcements/getActiveAnnouncementsForUser';
 import { decryptForClient } from '../../../shared/services/crypto.service';
 import { generateSecureSessionID } from '../../../shared/utility/generateSessionId';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
@@ -171,25 +170,11 @@ const login = async (req: Request, res: Response) => {
       ...safeUser
     } = user;
 
-    let announcements: unknown[] = [];
-    try {
-      announcements = await getActiveAnnouncementsForUser(
-        AppDataSource,
-        client.id,
-        user.id,
-      );
-    } catch (err) {
-      Logger.error(
-        `Failed to load announcements during login for user ${user.id}: ${getErrorMessage(err)}`,
-      );
-    }
-
     sendResponse(res, true, CODE.SUCCESS, AUTH_MSG.LOGIN_SUCCESS, {
       user: safeUser,
       accessToken,
       refreshToken,
       sessionInactivityTimeout: client.config?.sessionInactivityTimeout || 30,
-      announcements,
     });
   } catch (error) {
     Logger.error(`Error in login: ${getErrorMessage(error)}`);

@@ -11,7 +11,6 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { DatasourceAccess } from './datasource_access.entity';
 import { Group } from './group.entity';
 import { UserGroupMapping } from './user-group-mapping.entity';
 
@@ -103,9 +102,6 @@ export class User extends BaseEntity {
 
   @OneToMany(() => UserGroupMapping, ugm => ugm.user)
   userGroups: UserGroupMapping[];
-
-  @OneToMany(() => DatasourceAccess, access => access.user)
-  databaseAccess: DatasourceAccess[];
 
   @VersionColumn({ select: false })
   version: number;

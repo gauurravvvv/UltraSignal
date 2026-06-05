@@ -1,11 +1,11 @@
 /**
- * deleteUser — cascades hard-deletes to UserGroupMapping and DatasourceAccess,
- * then soft-deletes the User entity within a single transaction.
+ * deleteUser — cascades hard-delete of UserGroupMapping, then soft-deletes
+ * the User entity within a single transaction.
  *
- * UserGroupMapping and DatasourceAccess are hard-deleted because keeping
- * orphaned access/membership records after user removal would require
- * excluding deleted users from every access-check query. Soft-delete on
- * the User itself preserves the account for audit history.
+ * UserGroupMapping is hard-deleted because keeping orphaned membership records
+ * after user removal would require excluding deleted users from every
+ * membership query. Soft-delete on the User itself preserves the account
+ * for audit history.
  *
  * `deletedBy` is set before softRemove so the audit identity survives in the
  * soft-deleted row even after the normal `updatedBy` field is no longer visible.
@@ -17,7 +17,6 @@ import {
   GENERIC,
   USER as USER_MSG,
 } from '../../../shared/constants/response.messages';
-import { DatasourceAccess } from '../../../shared/db/entities/datasource_access.entity';
 import { UserGroupMapping } from '../../../shared/db/entities/user-group-mapping.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
@@ -35,9 +34,6 @@ const deleteUser = async (req: Request, res: Response) => {
       async (manager: EntityManager) => {
         await manager
           .getRepository(UserGroupMapping)
-          .delete({ userId: orgUser.id });
-        await manager
-          .getRepository(DatasourceAccess)
           .delete({ userId: orgUser.id });
         orgUser.deletedBy = loggedInId;
         await manager.getRepository(User).save(orgUser);

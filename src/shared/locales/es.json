@@ -67,20 +67,6 @@
     "account_not_locked": "Esta cuenta no está bloqueada",
     "cannot_modify_default": "No se puede modificar el administrador del sistema predeterminado"
   },
-  "client_admin": {
-    "created": "Administrador creado correctamente",
-    "updated": "Administrador actualizado correctamente",
-    "deleted": "Administrador eliminado correctamente",
-    "fetched": "Detalles del administrador obtenidos correctamente",
-    "list_fetched": "Administradores obtenidos correctamente",
-    "not_found": "Administrador no encontrado",
-    "already_exists_email": "Ya existe un administrador con este correo electrónico",
-    "already_exists_username": "Ya existe un administrador con este nombre de usuario",
-    "password_updated": "Contraseña del administrador actualizada correctamente",
-    "cannot_delete_default": "El administrador predeterminado no puede ser eliminado",
-    "account_unlocked": "Cuenta del administrador desbloqueada correctamente",
-    "account_not_locked": "Esta cuenta no está bloqueada"
-  },
   "user": {
     "created": "Usuario creado correctamente",
     "updated": "Usuario actualizado correctamente",
@@ -97,37 +83,6 @@
     "cannot_delete_default": "No se puede eliminar el administrador predeterminado",
     "cannot_modify_default": "No se puede modificar el administrador predeterminado"
   },
-  "datasource": {
-    "created": "Fuente de datos incorporada correctamente",
-    "updated": "Fuente de datos actualizada correctamente",
-    "deleted": "Fuente de datos eliminada correctamente",
-    "bulk_deleted": "Fuentes de datos eliminadas correctamente",
-    "fetched": "Detalles de la fuente de datos obtenidos correctamente",
-    "list_fetched": "Fuentes de datos obtenidas correctamente",
-    "not_found": "Fuente de datos no encontrada",
-    "already_exists": "Ya existe una fuente de datos con este nombre",
-    "connection_failed": "No se pudo conectar a la fuente de datos",
-    "connection_success": "Conexión a la fuente de datos establecida correctamente",
-    "master_not_found": "Configuración de la fuente de datos principal no encontrada",
-    "structure_fetched": "Estructura de la fuente de datos obtenida correctamente",
-    "validated": "Conexión a la fuente de datos validada",
-    "schema_not_found": "Esquema no encontrado en esta fuente de datos",
-    "table_not_found": "Tabla no encontrada en este esquema"
-  },
-  "connection": {
-    "created": "Conexión creada correctamente",
-    "updated": "Conexión actualizada correctamente",
-    "deleted": "Conexión eliminada correctamente",
-    "bulk_deleted": "Conexiones eliminadas correctamente",
-    "fetched": "Detalles de la conexión obtenidos correctamente",
-    "list_fetched": "Conexiones obtenidas correctamente",
-    "not_found": "Conexión no encontrada",
-    "already_exists": "Ya existe una conexión con este nombre",
-    "test_success": "Prueba de conexión exitosa",
-    "test_failed": "Prueba de conexión fallida",
-    "terminated": "Conexión terminada correctamente",
-    "process_not_found": "Conexión no encontrada en la fuente de datos actual"
-  },
   "group": {
     "created": "Grupo creado correctamente",
     "updated": "Grupo actualizado correctamente",
@@ -141,182 +96,9 @@
     "cannot_include_default_user": "El administrador predeterminado no se puede agregar a un grupo personalizado",
     "cannot_remove_default_user": "No se puede quitar al administrador predeterminado de este grupo"
   },
-  "access": {
-    "granted": "Acceso concedido correctamente",
-    "revoked": "Acceso revocado correctamente",
-    "list_fetched": "Lista de accesos obtenida correctamente",
-    "not_found": "Registro de acceso no encontrado",
-    "already_exists": "El acceso ya fue concedido para este recurso",
-    "datasource_details_not_found": "Detalles de la fuente de datos no encontrados para la concesión de acceso",
-    "connection_not_found": "Conexión no encontrada para la concesión de acceso"
-  },
-  "dataset": {
-    "created": "Conjunto de datos creado correctamente",
-    "updated": "Conjunto de datos actualizado correctamente",
-    "deleted": "Conjunto de datos eliminado correctamente",
-    "bulk_deleted": "Conjuntos de datos eliminados correctamente",
-    "fetched": "Detalles del conjunto de datos obtenidos correctamente",
-    "list_fetched": "Conjuntos de datos obtenidos correctamente",
-    "not_found": "Conjunto de datos no encontrado",
-    "already_exists": "Ya existe un conjunto de datos con este nombre",
-    "id_required": "Se requiere el ID del conjunto de datos",
-    "field_validated": "Campo del conjunto de datos validado correctamente",
-    "formula_validated": "Fórmula validada correctamente",
-    "formula_invalid": "Fórmula inválida",
-    "query_execution_failed": "Error al ejecutar la consulta del conjunto de datos",
-    "duplicated": "Conjunto de datos duplicado correctamente"
-  },
-  "tab": {
-    "created": "Pestaña creada correctamente",
-    "updated": "Pestaña actualizada correctamente",
-    "deleted": "Pestaña eliminada correctamente",
-    "bulk_deleted": "Pestañas eliminadas correctamente",
-    "fetched": "Detalles de la pestaña obtenidos correctamente",
-    "list_fetched": "Pestañas obtenidas correctamente",
-    "not_found": "Pestaña no encontrada",
-    "already_exists": "Ya existe una pestaña con este nombre"
-  },
-  "section": {
-    "created": "Sección creada correctamente",
-    "updated": "Sección actualizada correctamente",
-    "deleted": "Sección eliminada correctamente",
-    "bulk_deleted": "Secciones eliminadas correctamente",
-    "fetched": "Detalles de la sección obtenidos correctamente",
-    "list_fetched": "Secciones obtenidas correctamente",
-    "not_found": "Sección no encontrada",
-    "already_exists": "Ya existe una sección con este nombre"
-  },
-  "prompt": {
-    "created": "Prompt creado correctamente",
-    "updated": "Prompt actualizado correctamente",
-    "deleted": "Prompt eliminado correctamente",
-    "bulk_deleted": "Prompts eliminados correctamente",
-    "fetched": "Detalles del prompt obtenidos correctamente",
-    "list_fetched": "Prompts obtenidos correctamente",
-    "not_found": "Prompt no encontrado",
-    "already_exists": "Ya existe un prompt con este nombre",
-    "values_fetched": "Valores del prompt obtenidos correctamente",
-    "id_required": "Se requiere el ID del prompt"
-  },
-  "query_builder": {
-    "created": "Constructor de consultas creado correctamente",
-    "updated": "Constructor de consultas actualizado correctamente",
-    "deleted": "Constructor de consultas eliminado correctamente",
-    "bulk_deleted": "Constructores de consultas eliminados correctamente",
-    "fetched": "Detalles del constructor de consultas obtenidos correctamente",
-    "list_fetched": "Constructores de consultas obtenidos correctamente",
-    "not_found": "Constructor de consultas no encontrado",
-    "already_exists": "Ya existe un constructor de consultas con este nombre",
-    "prompts_fetched": "Prompts del constructor de consultas obtenidos correctamente",
-    "prompts_saved": "Prompts del constructor de consultas guardados correctamente",
-    "sql_generated": "SQL generado correctamente",
-    "id_required": "Se requiere el ID del constructor de consultas"
-  },
-  "analysis": {
-    "created": "Análisis creado correctamente",
-    "updated": "Análisis actualizado correctamente",
-    "deleted": "Análisis eliminado correctamente",
-    "bulk_deleted": "Análisis eliminados correctamente",
-    "fetched": "Detalles del análisis obtenidos correctamente",
-    "list_fetched": "Análisis obtenidos correctamente",
-    "not_found": "Análisis no encontrado",
-    "already_exists": "Ya existe un análisis con este nombre",
-    "id_required": "Se requiere el ID del análisis"
-  },
-  "analysis_filter": {
-    "created": "Filtro de análisis creado correctamente",
-    "updated": "Filtro de análisis actualizado correctamente",
-    "deleted": "Filtro de análisis eliminado correctamente",
-    "fetched": "Detalles del filtro de análisis obtenidos correctamente",
-    "list_fetched": "Filtros de análisis obtenidos correctamente",
-    "not_found": "Filtro de análisis no encontrado",
-    "values_fetched": "Valores del filtro obtenidos correctamente",
-    "values_fetch_failed": "Error al obtener los valores del filtro",
-    "invalid_filter_type": "Tipo de filtro inválido",
-    "invalid_control_type": "Tipo de control inválido",
-    "column_required": "Se requiere el nombre de la columna"
-  },
-  "visual": {
-    "created": "Visual creado correctamente",
-    "updated": "Visual actualizado correctamente",
-    "deleted": "Visual eliminado correctamente",
-    "fetched": "Detalles del visual obtenidos correctamente",
-    "list_fetched": "Visuales obtenidos correctamente",
-    "not_found": "Visual no encontrado",
-    "empty_config": "Todos los visuales deben tener configurado un tipo de gráfico"
-  },
-  "announcement": {
-    "saved": "Anuncio creado correctamente",
-    "save_failed": "Error al crear el anuncio",
-    "updated": "Anuncio actualizado correctamente",
-    "update_failed": "Error al actualizar el anuncio",
-    "deleted": "Anuncio eliminado correctamente",
-    "delete_failed": "Error al eliminar el anuncio",
-    "list_fetched": "Anuncios obtenidos correctamente",
-    "list_fetch_failed": "Error al obtener los anuncios",
-    "active_fetched": "Anuncios activos obtenidos correctamente",
-    "active_fetch_failed": "Error al obtener los anuncios activos",
-    "details_fetched": "Detalles del anuncio obtenidos correctamente",
-    "details_fetch_failed": "Error al obtener los detalles del anuncio",
-    "dismissed": "Anuncio descartado correctamente",
-    "dismiss_failed": "Error al descartar el anuncio",
-    "not_found": "Anuncio no encontrado",
-    "target_group_not_found": "Grupo objetivo no encontrado en esta organización"
-  },
   "home": {
     "fetched": "Datos de inicio obtenidos correctamente",
     "fetch_failed": "Error al obtener los datos de inicio"
-  },
-  "dashboard": {
-    "created": "Panel de control publicado correctamente",
-    "fetched": "Panel de control obtenido correctamente",
-    "rendered": "Panel de control renderizado correctamente",
-    "listed": "Paneles de control listados correctamente",
-    "deleted": "Panel de control eliminado correctamente",
-    "bulk_deleted": "Paneles de control eliminados correctamente",
-    "not_found": "Panel de control no encontrado",
-    "already_exists": "Ya existe un panel de control con este nombre para este análisis"
-  },
-  "audit_log": {
-    "list_fetched": "Registros de auditoría obtenidos correctamente",
-    "fetch_failed": "Error al obtener los registros de auditoría",
-    "export_failed": "Error al exportar los registros de auditoría",
-    "no_logs_found": "No se encontraron registros de auditoría para los criterios especificados",
-    "invalid_export_format": "Formato de exportación inválido. Formatos admitidos: excel, pdf",
-    "client_required_for_export": "Por favor, seleccione una organización para exportar",
-    "no_logs_for_client": "No hay registros de auditoría disponibles para esta organización"
-  },
-  "login_activity": {
-    "list_fetched": "Actividad de inicio de sesión obtenida correctamente",
-    "fetch_failed": "Error al obtener la actividad de inicio de sesión",
-    "export_failed": "Error al exportar la actividad de inicio de sesión",
-    "no_activity_found": "No se encontró actividad de inicio de sesión para los criterios especificados",
-    "no_activity_for_client": "No hay actividad de inicio de sesión disponible para esta organización"
-  },
-  "query": {
-    "executed": "Consulta ejecutada correctamente",
-    "execution_failed": "Error al ejecutar la consulta",
-    "saved": "Consulta guardada correctamente",
-    "fetched": "Detalles de la consulta obtenidos correctamente",
-    "list_fetched": "Consultas obtenidas correctamente",
-    "deleted": "Consulta eliminada correctamente",
-    "not_found": "Consulta no encontrada",
-    "id_required": "Se requiere el ID de la consulta",
-    "required": "Se requiere la consulta",
-    "invalid": "Consulta inválida",
-    "cancelled": "Consulta cancelada correctamente",
-    "process_not_found": "Proceso no encontrado en la fuente de datos actual",
-    "cancel_not_permitted": "La cancelación requiere privilegios adicionales en esta fuente de datos.",
-    "cancel_not_supported": "La cancelación de consultas no es compatible con este tipo de fuente de datos."
-  },
-  "rls_rule": {
-    "created": "Regla RLS creada correctamente",
-    "updated": "Regla RLS actualizada correctamente",
-    "deleted": "Regla RLS eliminada correctamente",
-    "list_fetched": "Reglas RLS obtenidas correctamente",
-    "fetched": "Regla RLS obtenida correctamente",
-    "not_found": "Regla RLS no encontrada",
-    "already_exists": "Ya existe una regla RLS con este nombre para este conjunto de datos"
   },
   "role": {
     "created": "Rol creado correctamente",
@@ -335,10 +117,6 @@
   "profile": {
     "fetched": "Perfil obtenido con éxito",
     "locale_updated": "Preferencia de idioma actualizada con éxito"
-  },
-  "search": {
-    "results_fetched": "Resultados de búsqueda obtenidos correctamente",
-    "fetch_failed": "Error al obtener los resultados de búsqueda"
   },
   "health": {
     "ok": "Todos los sistemas operativos"

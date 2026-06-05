@@ -67,20 +67,6 @@
     "account_not_locked": "该账户未被锁定",
     "cannot_modify_default": "默认系统管理员无法修改"
   },
-  "client_admin": {
-    "created": "管理员创建成功",
-    "updated": "管理员更新成功",
-    "deleted": "管理员删除成功",
-    "fetched": "管理员详情获取成功",
-    "list_fetched": "管理员列表获取成功",
-    "not_found": "未找到管理员",
-    "already_exists_email": "该邮箱的管理员已存在",
-    "already_exists_username": "该用户名的管理员已存在",
-    "password_updated": "管理员密码更新成功",
-    "cannot_delete_default": "默认管理员无法删除",
-    "account_unlocked": "管理员账户解锁成功",
-    "account_not_locked": "该账户未被锁定"
-  },
   "user": {
     "created": "用户创建成功",
     "updated": "用户更新成功",
@@ -97,37 +83,6 @@
     "cannot_delete_default": "默认管理员无法删除",
     "cannot_modify_default": "默认管理员无法修改"
   },
-  "datasource": {
-    "created": "数据源接入成功",
-    "updated": "数据源更新成功",
-    "deleted": "数据源删除成功",
-    "bulk_deleted": "数据源批量删除成功",
-    "fetched": "数据源详情获取成功",
-    "list_fetched": "数据源列表获取成功",
-    "not_found": "未找到数据源",
-    "already_exists": "同名数据源已存在",
-    "connection_failed": "连接数据源失败",
-    "connection_success": "数据源连接建立成功",
-    "master_not_found": "未找到主数据源配置",
-    "structure_fetched": "数据源结构获取成功",
-    "validated": "数据源连接验证成功",
-    "schema_not_found": "在该数据源中找不到 Schema",
-    "table_not_found": "在该 Schema 中找不到表"
-  },
-  "connection": {
-    "created": "连接创建成功",
-    "updated": "连接更新成功",
-    "deleted": "连接删除成功",
-    "bulk_deleted": "连接批量删除成功",
-    "fetched": "连接详情获取成功",
-    "list_fetched": "连接列表获取成功",
-    "not_found": "未找到连接",
-    "already_exists": "同名连接已存在",
-    "test_success": "连接测试成功",
-    "test_failed": "连接测试失败",
-    "terminated": "连接终止成功",
-    "process_not_found": "在当前数据源中未找到连接"
-  },
   "group": {
     "created": "组创建成功",
     "updated": "组更新成功",
@@ -141,182 +96,9 @@
     "cannot_include_default_user": "默认管理员无法添加到自定义组",
     "cannot_remove_default_user": "无法从此组中移除默认管理员"
   },
-  "access": {
-    "granted": "访问权限授予成功",
-    "revoked": "访问权限撤销成功",
-    "list_fetched": "访问列表获取成功",
-    "not_found": "未找到访问记录",
-    "already_exists": "该资源的访问权限已授予",
-    "datasource_details_not_found": "授权访问时未找到数据源详情",
-    "connection_not_found": "授权访问时未找到连接"
-  },
-  "dataset": {
-    "created": "数据集创建成功",
-    "updated": "数据集更新成功",
-    "deleted": "数据集删除成功",
-    "bulk_deleted": "数据集批量删除成功",
-    "fetched": "数据集详情获取成功",
-    "list_fetched": "数据集列表获取成功",
-    "not_found": "未找到数据集",
-    "already_exists": "同名数据集已存在",
-    "id_required": "数据集 ID 为必填项",
-    "field_validated": "数据集字段验证成功",
-    "formula_validated": "公式验证成功",
-    "formula_invalid": "无效公式",
-    "query_execution_failed": "数据集查询执行失败",
-    "duplicated": "数据集复制成功"
-  },
-  "tab": {
-    "created": "标签页创建成功",
-    "updated": "标签页更新成功",
-    "deleted": "标签页删除成功",
-    "bulk_deleted": "标签页批量删除成功",
-    "fetched": "标签页详情获取成功",
-    "list_fetched": "标签页列表获取成功",
-    "not_found": "未找到标签页",
-    "already_exists": "同名标签页已存在"
-  },
-  "section": {
-    "created": "分区创建成功",
-    "updated": "分区更新成功",
-    "deleted": "分区删除成功",
-    "bulk_deleted": "分区批量删除成功",
-    "fetched": "分区详情获取成功",
-    "list_fetched": "分区列表获取成功",
-    "not_found": "未找到分区",
-    "already_exists": "同名分区已存在"
-  },
-  "prompt": {
-    "created": "提示词创建成功",
-    "updated": "提示词更新成功",
-    "deleted": "提示词删除成功",
-    "bulk_deleted": "提示词批量删除成功",
-    "fetched": "提示词详情获取成功",
-    "list_fetched": "提示词列表获取成功",
-    "not_found": "未找到提示词",
-    "already_exists": "同名提示词已存在",
-    "values_fetched": "提示词值获取成功",
-    "id_required": "提示词 ID 为必填项"
-  },
-  "query_builder": {
-    "created": "查询构建器创建成功",
-    "updated": "查询构建器更新成功",
-    "deleted": "查询构建器删除成功",
-    "bulk_deleted": "查询构建器批量删除成功",
-    "fetched": "查询构建器详情获取成功",
-    "list_fetched": "查询构建器列表获取成功",
-    "not_found": "未找到查询构建器",
-    "already_exists": "同名查询构建器已存在",
-    "prompts_fetched": "查询构建器提示词获取成功",
-    "prompts_saved": "查询构建器提示词保存成功",
-    "sql_generated": "SQL 生成成功",
-    "id_required": "查询构建器 ID 为必填项"
-  },
-  "analysis": {
-    "created": "分析创建成功",
-    "updated": "分析更新成功",
-    "deleted": "分析删除成功",
-    "bulk_deleted": "分析批量删除成功",
-    "fetched": "分析详情获取成功",
-    "list_fetched": "分析列表获取成功",
-    "not_found": "未找到分析",
-    "already_exists": "同名分析已存在",
-    "id_required": "分析 ID 为必填项"
-  },
-  "analysis_filter": {
-    "created": "分析筛选器创建成功",
-    "updated": "分析筛选器更新成功",
-    "deleted": "分析筛选器删除成功",
-    "fetched": "分析筛选器详情获取成功",
-    "list_fetched": "分析筛选器列表获取成功",
-    "not_found": "未找到分析筛选器",
-    "values_fetched": "筛选器值获取成功",
-    "values_fetch_failed": "筛选器值获取失败",
-    "invalid_filter_type": "无效的筛选器类型",
-    "invalid_control_type": "无效的控件类型",
-    "column_required": "列名为必填项"
-  },
-  "visual": {
-    "created": "可视化创建成功",
-    "updated": "可视化更新成功",
-    "deleted": "可视化删除成功",
-    "fetched": "可视化详情获取成功",
-    "list_fetched": "可视化列表获取成功",
-    "not_found": "未找到可视化",
-    "empty_config": "所有可视化必须配置图表类型"
-  },
-  "announcement": {
-    "saved": "公告创建成功",
-    "save_failed": "公告创建失败",
-    "updated": "公告更新成功",
-    "update_failed": "公告更新失败",
-    "deleted": "公告删除成功",
-    "delete_failed": "公告删除失败",
-    "list_fetched": "公告列表获取成功",
-    "list_fetch_failed": "公告列表获取失败",
-    "active_fetched": "活跃公告获取成功",
-    "active_fetch_failed": "活跃公告获取失败",
-    "details_fetched": "公告详情获取成功",
-    "details_fetch_failed": "公告详情获取失败",
-    "dismissed": "公告已成功关闭",
-    "dismiss_failed": "公告关闭失败",
-    "not_found": "未找到公告",
-    "target_group_not_found": "在此组织中未找到目标组"
-  },
   "home": {
     "fetched": "首页数据获取成功",
     "fetch_failed": "首页数据获取失败"
-  },
-  "dashboard": {
-    "created": "仪表板发布成功",
-    "fetched": "仪表板获取成功",
-    "rendered": "仪表板渲染成功",
-    "listed": "仪表板列表获取成功",
-    "deleted": "仪表板删除成功",
-    "bulk_deleted": "仪表板批量删除成功",
-    "not_found": "未找到仪表板",
-    "already_exists": "该分析已存在同名仪表板"
-  },
-  "audit_log": {
-    "list_fetched": "审计日志获取成功",
-    "fetch_failed": "审计日志获取失败",
-    "export_failed": "审计日志导出失败",
-    "no_logs_found": "未找到符合指定条件的审计日志",
-    "invalid_export_format": "无效的导出格式，支持的格式：excel、pdf",
-    "client_required_for_export": "请选择要导出的组织",
-    "no_logs_for_client": "该组织没有可用的审计日志"
-  },
-  "login_activity": {
-    "list_fetched": "登录活动获取成功",
-    "fetch_failed": "登录活动获取失败",
-    "export_failed": "登录活动导出失败",
-    "no_activity_found": "未找到符合指定条件的登录活动",
-    "no_activity_for_client": "该组织没有可用的登录活动"
-  },
-  "query": {
-    "executed": "查询执行成功",
-    "execution_failed": "查询执行失败",
-    "saved": "查询保存成功",
-    "fetched": "查询详情获取成功",
-    "list_fetched": "查询列表获取成功",
-    "deleted": "查询删除成功",
-    "not_found": "未找到查询",
-    "id_required": "查询 ID 为必填项",
-    "required": "查询为必填项",
-    "invalid": "无效查询",
-    "cancelled": "查询取消成功",
-    "process_not_found": "在当前数据源中未找到进程",
-    "cancel_not_permitted": "在此数据源上取消查询需要额外的权限。",
-    "cancel_not_supported": "此数据源类型不支持取消查询。"
-  },
-  "rls_rule": {
-    "created": "RLS 规则创建成功",
-    "updated": "RLS 规则更新成功",
-    "deleted": "RLS 规则删除成功",
-    "list_fetched": "RLS 规则列表获取成功",
-    "fetched": "RLS 规则获取成功",
-    "not_found": "未找到 RLS 规则",
-    "already_exists": "该数据集已存在同名 RLS 规则"
   },
   "role": {
     "created": "角色创建成功",
@@ -335,10 +117,6 @@
   "profile": {
     "fetched": "个人资料获取成功",
     "locale_updated": "语言偏好更新成功"
-  },
-  "search": {
-    "results_fetched": "搜索结果获取成功",
-    "fetch_failed": "搜索结果获取失败"
   },
   "health": {
     "ok": "所有系统运行正常"

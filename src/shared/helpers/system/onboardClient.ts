@@ -36,6 +36,7 @@ const onboardClient = async (
   client.isDefault = IS_DEFAULT.YES;
   client.configId = clientConfig.id;
   client.config = clientConfig;
+  client.clientCode = '0000';
 
   await manager.save(client);
 

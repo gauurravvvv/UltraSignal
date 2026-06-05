@@ -25,10 +25,6 @@ import Logger from '../../../shared/utility/logger/logger';
 import { ClientEmailConfig } from '../../../shared/utility/mail';
 import passwordChangedSuccessEmail from '../../../shared/utility/mail/passwordChangedSuccessEmail';
 import { buildRequestContext } from '../../../shared/utility/mail/requestContext';
-import {
-  isPasswordReusedShared,
-  savePasswordHistoryShared,
-} from '../../../shared/utility/passwordHistory';
 import sendResponse from '../../../shared/utility/response';
 
 const changePassword = async (req: Request, res: Response) => {
@@ -55,22 +51,6 @@ const changePassword = async (req: Request, res: Response) => {
       return sendResponse(res, false, CODE.NOT_FOUND, 'User not found');
     }
 
-    const isReused = await isPasswordReusedShared(
-      AppDataSource.manager,
-      user.id,
-      newPassword,
-      client.config,
-      user.password ?? undefined,
-    );
-    if (isReused) {
-      return sendResponse(
-        res,
-        false,
-        CODE.BAD_REQUEST,
-        AUTH_MSG.PASSWORD_REUSED,
-      );
-    }
-
     user.password = encryptForClient(newPassword, client.config);
     user.updatedBy = loggedInId;
     user.refreshToken = null;
@@ -78,7 +58,6 @@ const changePassword = async (req: Request, res: Response) => {
 
     await AppDataSource.transaction(async (manager: EntityManager) => {
       await manager.save(user);
-      await savePasswordHistoryShared(manager, user.id, user.password!);
     });
 
     const clientEmailConfig: ClientEmailConfig | undefined = client.config?.emailProvider

@@ -67,20 +67,6 @@
     "account_not_locked": "このアカウントはロックされていません",
     "cannot_modify_default": "デフォルトのシステム管理者は変更できません"
   },
-  "client_admin": {
-    "created": "管理者を作成しました",
-    "updated": "管理者を更新しました",
-    "deleted": "管理者を削除しました",
-    "fetched": "管理者の詳細を取得しました",
-    "list_fetched": "管理者一覧を取得しました",
-    "not_found": "管理者が見つかりません",
-    "already_exists_email": "このメールアドレスの管理者はすでに存在します",
-    "already_exists_username": "このユーザー名の管理者はすでに存在します",
-    "password_updated": "管理者のパスワードを更新しました",
-    "cannot_delete_default": "デフォルトの管理者は削除できません",
-    "account_unlocked": "管理者アカウントのロックを解除しました",
-    "account_not_locked": "このアカウントはロックされていません"
-  },
   "user": {
     "created": "ユーザーを作成しました",
     "updated": "ユーザーを更新しました",
@@ -97,37 +83,6 @@
     "cannot_delete_default": "デフォルトの管理者は削除できません",
     "cannot_modify_default": "デフォルトの管理者は変更できません"
   },
-  "datasource": {
-    "created": "データソースをオンボードしました",
-    "updated": "データソースを更新しました",
-    "deleted": "データソースを削除しました",
-    "bulk_deleted": "データソースを一括削除しました",
-    "fetched": "データソースの詳細を取得しました",
-    "list_fetched": "データソース一覧を取得しました",
-    "not_found": "データソースが見つかりません",
-    "already_exists": "この名前のデータソースはすでに存在します",
-    "connection_failed": "データソースに接続できませんでした",
-    "connection_success": "データソースへの接続を確立しました",
-    "master_not_found": "マスターデータソースの設定が見つかりません",
-    "structure_fetched": "データソースの構造を取得しました",
-    "validated": "データソースの接続を検証しました",
-    "schema_not_found": "このデータソースにスキーマが見つかりません",
-    "table_not_found": "このスキーマにテーブルが見つかりません"
-  },
-  "connection": {
-    "created": "接続を作成しました",
-    "updated": "接続を更新しました",
-    "deleted": "接続を削除しました",
-    "bulk_deleted": "接続を一括削除しました",
-    "fetched": "接続の詳細を取得しました",
-    "list_fetched": "接続一覧を取得しました",
-    "not_found": "接続が見つかりません",
-    "already_exists": "この名前の接続はすでに存在します",
-    "test_success": "接続テストに成功しました",
-    "test_failed": "接続テストに失敗しました",
-    "terminated": "接続を終了しました",
-    "process_not_found": "現在のデータソースに接続が見つかりません"
-  },
   "group": {
     "created": "グループを作成しました",
     "updated": "グループを更新しました",
@@ -141,182 +96,9 @@
     "cannot_include_default_user": "デフォルトの管理者をカスタムグループに追加することはできません",
     "cannot_remove_default_user": "デフォルトの管理者をこのグループから削除することはできません"
   },
-  "access": {
-    "granted": "アクセスを付与しました",
-    "revoked": "アクセスを取り消しました",
-    "list_fetched": "アクセス一覧を取得しました",
-    "not_found": "アクセスレコードが見つかりません",
-    "already_exists": "このリソースへのアクセスはすでに付与されています",
-    "datasource_details_not_found": "アクセス付与のためのデータソース詳細が見つかりません",
-    "connection_not_found": "アクセス付与のための接続が見つかりません"
-  },
-  "dataset": {
-    "created": "データセットを作成しました",
-    "updated": "データセットを更新しました",
-    "deleted": "データセットを削除しました",
-    "bulk_deleted": "データセットを一括削除しました",
-    "fetched": "データセットの詳細を取得しました",
-    "list_fetched": "データセット一覧を取得しました",
-    "not_found": "データセットが見つかりません",
-    "already_exists": "この名前のデータセットはすでに存在します",
-    "id_required": "データセットIDが必要です",
-    "field_validated": "データセットフィールドを検証しました",
-    "formula_validated": "数式を検証しました",
-    "formula_invalid": "数式が無効です",
-    "query_execution_failed": "データセットクエリの実行に失敗しました",
-    "duplicated": "データセットを複製しました"
-  },
-  "tab": {
-    "created": "タブを作成しました",
-    "updated": "タブを更新しました",
-    "deleted": "タブを削除しました",
-    "bulk_deleted": "タブを一括削除しました",
-    "fetched": "タブの詳細を取得しました",
-    "list_fetched": "タブ一覧を取得しました",
-    "not_found": "タブが見つかりません",
-    "already_exists": "この名前のタブはすでに存在します"
-  },
-  "section": {
-    "created": "セクションを作成しました",
-    "updated": "セクションを更新しました",
-    "deleted": "セクションを削除しました",
-    "bulk_deleted": "セクションを一括削除しました",
-    "fetched": "セクションの詳細を取得しました",
-    "list_fetched": "セクション一覧を取得しました",
-    "not_found": "セクションが見つかりません",
-    "already_exists": "この名前のセクションはすでに存在します"
-  },
-  "prompt": {
-    "created": "プロンプトを作成しました",
-    "updated": "プロンプトを更新しました",
-    "deleted": "プロンプトを削除しました",
-    "bulk_deleted": "プロンプトを一括削除しました",
-    "fetched": "プロンプトの詳細を取得しました",
-    "list_fetched": "プロンプト一覧を取得しました",
-    "not_found": "プロンプトが見つかりません",
-    "already_exists": "この名前のプロンプトはすでに存在します",
-    "values_fetched": "プロンプトの値を取得しました",
-    "id_required": "プロンプトIDが必要です"
-  },
-  "query_builder": {
-    "created": "クエリビルダーを作成しました",
-    "updated": "クエリビルダーを更新しました",
-    "deleted": "クエリビルダーを削除しました",
-    "bulk_deleted": "クエリビルダーを一括削除しました",
-    "fetched": "クエリビルダーの詳細を取得しました",
-    "list_fetched": "クエリビルダー一覧を取得しました",
-    "not_found": "クエリビルダーが見つかりません",
-    "already_exists": "この名前のクエリビルダーはすでに存在します",
-    "prompts_fetched": "クエリビルダーのプロンプトを取得しました",
-    "prompts_saved": "クエリビルダーのプロンプトを保存しました",
-    "sql_generated": "SQLを生成しました",
-    "id_required": "クエリビルダーIDが必要です"
-  },
-  "analysis": {
-    "created": "分析を作成しました",
-    "updated": "分析を更新しました",
-    "deleted": "分析を削除しました",
-    "bulk_deleted": "分析を一括削除しました",
-    "fetched": "分析の詳細を取得しました",
-    "list_fetched": "分析一覧を取得しました",
-    "not_found": "分析が見つかりません",
-    "already_exists": "この名前の分析はすでに存在します",
-    "id_required": "分析IDが必要です"
-  },
-  "analysis_filter": {
-    "created": "分析フィルターを作成しました",
-    "updated": "分析フィルターを更新しました",
-    "deleted": "分析フィルターを削除しました",
-    "fetched": "分析フィルターの詳細を取得しました",
-    "list_fetched": "分析フィルター一覧を取得しました",
-    "not_found": "分析フィルターが見つかりません",
-    "values_fetched": "フィルター値を取得しました",
-    "values_fetch_failed": "フィルター値の取得に失敗しました",
-    "invalid_filter_type": "フィルタータイプが無効です",
-    "invalid_control_type": "コントロールタイプが無効です",
-    "column_required": "列名が必要です"
-  },
-  "visual": {
-    "created": "ビジュアルを作成しました",
-    "updated": "ビジュアルを更新しました",
-    "deleted": "ビジュアルを削除しました",
-    "fetched": "ビジュアルの詳細を取得しました",
-    "list_fetched": "ビジュアル一覧を取得しました",
-    "not_found": "ビジュアルが見つかりません",
-    "empty_config": "すべてのビジュアルにグラフタイプを設定する必要があります"
-  },
-  "announcement": {
-    "saved": "お知らせを作成しました",
-    "save_failed": "お知らせの作成に失敗しました",
-    "updated": "お知らせを更新しました",
-    "update_failed": "お知らせの更新に失敗しました",
-    "deleted": "お知らせを削除しました",
-    "delete_failed": "お知らせの削除に失敗しました",
-    "list_fetched": "お知らせ一覧を取得しました",
-    "list_fetch_failed": "お知らせ一覧の取得に失敗しました",
-    "active_fetched": "有効なお知らせを取得しました",
-    "active_fetch_failed": "有効なお知らせの取得に失敗しました",
-    "details_fetched": "お知らせの詳細を取得しました",
-    "details_fetch_failed": "お知らせの詳細の取得に失敗しました",
-    "dismissed": "お知らせを非表示にしました",
-    "dismiss_failed": "お知らせの非表示に失敗しました",
-    "not_found": "お知らせが見つかりません",
-    "target_group_not_found": "この組織にターゲットグループが見つかりません"
-  },
   "home": {
     "fetched": "ホームデータを取得しました",
     "fetch_failed": "ホームデータの取得に失敗しました"
-  },
-  "dashboard": {
-    "created": "ダッシュボードを公開しました",
-    "fetched": "ダッシュボードを取得しました",
-    "rendered": "ダッシュボードを表示しました",
-    "listed": "ダッシュボード一覧を取得しました",
-    "deleted": "ダッシュボードを削除しました",
-    "bulk_deleted": "ダッシュボードを一括削除しました",
-    "not_found": "ダッシュボードが見つかりません",
-    "already_exists": "この分析にはすでに同名のダッシュボードが存在します"
-  },
-  "audit_log": {
-    "list_fetched": "監査ログを取得しました",
-    "fetch_failed": "監査ログの取得に失敗しました",
-    "export_failed": "監査ログのエクスポートに失敗しました",
-    "no_logs_found": "指定された条件の監査ログが見つかりません",
-    "invalid_export_format": "エクスポート形式が無効です。対応形式: excel、pdf",
-    "client_required_for_export": "エクスポートする組織を選択してください",
-    "no_logs_for_client": "この組織の監査ログはありません"
-  },
-  "login_activity": {
-    "list_fetched": "ログインアクティビティを取得しました",
-    "fetch_failed": "ログインアクティビティの取得に失敗しました",
-    "export_failed": "ログインアクティビティのエクスポートに失敗しました",
-    "no_activity_found": "指定された条件のログインアクティビティが見つかりません",
-    "no_activity_for_client": "この組織のログインアクティビティはありません"
-  },
-  "query": {
-    "executed": "クエリを実行しました",
-    "execution_failed": "クエリの実行に失敗しました",
-    "saved": "クエリを保存しました",
-    "fetched": "クエリの詳細を取得しました",
-    "list_fetched": "クエリ一覧を取得しました",
-    "deleted": "クエリを削除しました",
-    "not_found": "クエリが見つかりません",
-    "id_required": "クエリIDが必要です",
-    "required": "クエリが必要です",
-    "invalid": "クエリが無効です",
-    "cancelled": "クエリをキャンセルしました",
-    "process_not_found": "現在のデータソースにプロセスが見つかりません",
-    "cancel_not_permitted": "このデータソースをキャンセルするには追加の権限が必要です。",
-    "cancel_not_supported": "このデータソースタイプではクエリのキャンセルはサポートされていません。"
-  },
-  "rls_rule": {
-    "created": "RLSルールを作成しました",
-    "updated": "RLSルールを更新しました",
-    "deleted": "RLSルールを削除しました",
-    "list_fetched": "RLSルール一覧を取得しました",
-    "fetched": "RLSルールを取得しました",
-    "not_found": "RLSルールが見つかりません",
-    "already_exists": "このデータセットにはすでに同名のRLSルールが存在します"
   },
   "role": {
     "created": "ロールを作成しました",
@@ -335,10 +117,6 @@
   "profile": {
     "fetched": "プロフィールの取得に成功しました",
     "locale_updated": "言語設定を正常に更新しました"
-  },
-  "search": {
-    "results_fetched": "検索結果を取得しました",
-    "fetch_failed": "検索結果の取得に失敗しました"
   },
   "health": {
     "ok": "すべてのシステムが正常に稼働しています"

@@ -14,9 +14,8 @@ export interface RequestContext {
 }
 
 /**
- * Build a `RequestContext` from an Express `req`. Mirrors the IP
- * extraction in `auditLogger.service.ts` so the email and the
- * audit log show the same address.
+ * Build a `RequestContext` from an Express `req`, extracting the
+ * caller's IP and user agent for inclusion in transactional emails.
  */
 export const buildRequestContext = (req: Request): RequestContext => ({
   ip:

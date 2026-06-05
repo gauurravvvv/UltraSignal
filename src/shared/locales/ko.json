@@ -67,20 +67,6 @@
     "account_not_locked": "이 계정은 잠겨 있지 않습니다",
     "cannot_modify_default": "기본 시스템 관리자는 수정할 수 없습니다"
   },
-  "client_admin": {
-    "created": "관리자가 성공적으로 생성되었습니다",
-    "updated": "관리자가 성공적으로 업데이트되었습니다",
-    "deleted": "관리자가 성공적으로 삭제되었습니다",
-    "fetched": "관리자 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "관리자 목록을 성공적으로 가져왔습니다",
-    "not_found": "관리자를 찾을 수 없습니다",
-    "already_exists_email": "해당 이메일의 관리자가 이미 존재합니다",
-    "already_exists_username": "해당 사용자명의 관리자가 이미 존재합니다",
-    "password_updated": "관리자 비밀번호가 성공적으로 업데이트되었습니다",
-    "cannot_delete_default": "기본 관리자는 삭제할 수 없습니다",
-    "account_unlocked": "관리자 계정이 성공적으로 잠금 해제되었습니다",
-    "account_not_locked": "이 계정은 잠겨 있지 않습니다"
-  },
   "user": {
     "created": "사용자가 성공적으로 생성되었습니다",
     "updated": "사용자가 성공적으로 업데이트되었습니다",
@@ -97,37 +83,6 @@
     "cannot_delete_default": "기본 관리자는 삭제할 수 없습니다",
     "cannot_modify_default": "기본 관리자는 수정할 수 없습니다"
   },
-  "datasource": {
-    "created": "데이터 소스가 성공적으로 연결되었습니다",
-    "updated": "데이터 소스가 성공적으로 업데이트되었습니다",
-    "deleted": "데이터 소스가 성공적으로 삭제되었습니다",
-    "bulk_deleted": "데이터 소스가 성공적으로 일괄 삭제되었습니다",
-    "fetched": "데이터 소스 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "데이터 소스 목록을 성공적으로 가져왔습니다",
-    "not_found": "데이터 소스를 찾을 수 없습니다",
-    "already_exists": "동일한 이름의 데이터 소스가 이미 존재합니다",
-    "connection_failed": "데이터 소스 연결에 실패했습니다",
-    "connection_success": "데이터 소스 연결이 성공적으로 설정되었습니다",
-    "master_not_found": "마스터 데이터 소스 구성을 찾을 수 없습니다",
-    "structure_fetched": "데이터 소스 구조를 성공적으로 가져왔습니다",
-    "validated": "데이터 소스 연결이 확인되었습니다",
-    "schema_not_found": "이 데이터 소스에서 스키마를 찾을 수 없습니다",
-    "table_not_found": "이 스키마에서 테이블을 찾을 수 없습니다"
-  },
-  "connection": {
-    "created": "연결이 성공적으로 생성되었습니다",
-    "updated": "연결이 성공적으로 업데이트되었습니다",
-    "deleted": "연결이 성공적으로 삭제되었습니다",
-    "bulk_deleted": "연결이 성공적으로 일괄 삭제되었습니다",
-    "fetched": "연결 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "연결 목록을 성공적으로 가져왔습니다",
-    "not_found": "연결을 찾을 수 없습니다",
-    "already_exists": "동일한 이름의 연결이 이미 존재합니다",
-    "test_success": "연결 테스트에 성공했습니다",
-    "test_failed": "연결 테스트에 실패했습니다",
-    "terminated": "연결이 성공적으로 종료되었습니다",
-    "process_not_found": "현재 데이터 소스에서 연결을 찾을 수 없습니다"
-  },
   "group": {
     "created": "그룹이 성공적으로 생성되었습니다",
     "updated": "그룹이 성공적으로 업데이트되었습니다",
@@ -141,182 +96,9 @@
     "cannot_include_default_user": "기본 관리자는 사용자 정의 그룹에 추가할 수 없습니다",
     "cannot_remove_default_user": "이 그룹에서 기본 관리자를 제거할 수 없습니다"
   },
-  "access": {
-    "granted": "접근 권한이 성공적으로 부여되었습니다",
-    "revoked": "접근 권한이 성공적으로 취소되었습니다",
-    "list_fetched": "접근 목록을 성공적으로 가져왔습니다",
-    "not_found": "접근 기록을 찾을 수 없습니다",
-    "already_exists": "이 리소스에 대한 접근 권한이 이미 부여되어 있습니다",
-    "datasource_details_not_found": "접근 부여를 위한 데이터 소스 상세 정보를 찾을 수 없습니다",
-    "connection_not_found": "접근 부여를 위한 연결을 찾을 수 없습니다"
-  },
-  "dataset": {
-    "created": "데이터셋이 성공적으로 생성되었습니다",
-    "updated": "데이터셋이 성공적으로 업데이트되었습니다",
-    "deleted": "데이터셋이 성공적으로 삭제되었습니다",
-    "bulk_deleted": "데이터셋이 성공적으로 일괄 삭제되었습니다",
-    "fetched": "데이터셋 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "데이터셋 목록을 성공적으로 가져왔습니다",
-    "not_found": "데이터셋을 찾을 수 없습니다",
-    "already_exists": "동일한 이름의 데이터셋이 이미 존재합니다",
-    "id_required": "데이터셋 ID가 필요합니다",
-    "field_validated": "데이터셋 필드가 성공적으로 검증되었습니다",
-    "formula_validated": "수식이 성공적으로 검증되었습니다",
-    "formula_invalid": "유효하지 않은 수식입니다",
-    "query_execution_failed": "데이터셋 쿼리 실행에 실패했습니다",
-    "duplicated": "데이터셋이 성공적으로 복제되었습니다"
-  },
-  "tab": {
-    "created": "탭이 성공적으로 생성되었습니다",
-    "updated": "탭이 성공적으로 업데이트되었습니다",
-    "deleted": "탭이 성공적으로 삭제되었습니다",
-    "bulk_deleted": "탭이 성공적으로 일괄 삭제되었습니다",
-    "fetched": "탭 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "탭 목록을 성공적으로 가져왔습니다",
-    "not_found": "탭을 찾을 수 없습니다",
-    "already_exists": "동일한 이름의 탭이 이미 존재합니다"
-  },
-  "section": {
-    "created": "섹션이 성공적으로 생성되었습니다",
-    "updated": "섹션이 성공적으로 업데이트되었습니다",
-    "deleted": "섹션이 성공적으로 삭제되었습니다",
-    "bulk_deleted": "섹션이 성공적으로 일괄 삭제되었습니다",
-    "fetched": "섹션 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "섹션 목록을 성공적으로 가져왔습니다",
-    "not_found": "섹션을 찾을 수 없습니다",
-    "already_exists": "동일한 이름의 섹션이 이미 존재합니다"
-  },
-  "prompt": {
-    "created": "프롬프트가 성공적으로 생성되었습니다",
-    "updated": "프롬프트가 성공적으로 업데이트되었습니다",
-    "deleted": "프롬프트가 성공적으로 삭제되었습니다",
-    "bulk_deleted": "프롬프트가 성공적으로 일괄 삭제되었습니다",
-    "fetched": "프롬프트 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "프롬프트 목록을 성공적으로 가져왔습니다",
-    "not_found": "프롬프트를 찾을 수 없습니다",
-    "already_exists": "동일한 이름의 프롬프트가 이미 존재합니다",
-    "values_fetched": "프롬프트 값을 성공적으로 가져왔습니다",
-    "id_required": "프롬프트 ID가 필요합니다"
-  },
-  "query_builder": {
-    "created": "쿼리 빌더가 성공적으로 생성되었습니다",
-    "updated": "쿼리 빌더가 성공적으로 업데이트되었습니다",
-    "deleted": "쿼리 빌더가 성공적으로 삭제되었습니다",
-    "bulk_deleted": "쿼리 빌더가 성공적으로 일괄 삭제되었습니다",
-    "fetched": "쿼리 빌더 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "쿼리 빌더 목록을 성공적으로 가져왔습니다",
-    "not_found": "쿼리 빌더를 찾을 수 없습니다",
-    "already_exists": "동일한 이름의 쿼리 빌더가 이미 존재합니다",
-    "prompts_fetched": "쿼리 빌더 프롬프트를 성공적으로 가져왔습니다",
-    "prompts_saved": "쿼리 빌더 프롬프트가 성공적으로 저장되었습니다",
-    "sql_generated": "SQL이 성공적으로 생성되었습니다",
-    "id_required": "쿼리 빌더 ID가 필요합니다"
-  },
-  "analysis": {
-    "created": "분석이 성공적으로 생성되었습니다",
-    "updated": "분석이 성공적으로 업데이트되었습니다",
-    "deleted": "분석이 성공적으로 삭제되었습니다",
-    "bulk_deleted": "분석이 성공적으로 일괄 삭제되었습니다",
-    "fetched": "분석 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "분석 목록을 성공적으로 가져왔습니다",
-    "not_found": "분석을 찾을 수 없습니다",
-    "already_exists": "동일한 이름의 분석이 이미 존재합니다",
-    "id_required": "분석 ID가 필요합니다"
-  },
-  "analysis_filter": {
-    "created": "분석 필터가 성공적으로 생성되었습니다",
-    "updated": "분석 필터가 성공적으로 업데이트되었습니다",
-    "deleted": "분석 필터가 성공적으로 삭제되었습니다",
-    "fetched": "분석 필터 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "분석 필터 목록을 성공적으로 가져왔습니다",
-    "not_found": "분석 필터를 찾을 수 없습니다",
-    "values_fetched": "필터 값을 성공적으로 가져왔습니다",
-    "values_fetch_failed": "필터 값을 가져오는 데 실패했습니다",
-    "invalid_filter_type": "유효하지 않은 필터 유형입니다",
-    "invalid_control_type": "유효하지 않은 컨트롤 유형입니다",
-    "column_required": "컬럼명이 필요합니다"
-  },
-  "visual": {
-    "created": "시각화가 성공적으로 생성되었습니다",
-    "updated": "시각화가 성공적으로 업데이트되었습니다",
-    "deleted": "시각화가 성공적으로 삭제되었습니다",
-    "fetched": "시각화 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "시각화 목록을 성공적으로 가져왔습니다",
-    "not_found": "시각화를 찾을 수 없습니다",
-    "empty_config": "모든 시각화에는 차트 유형이 구성되어 있어야 합니다"
-  },
-  "announcement": {
-    "saved": "공지사항이 성공적으로 생성되었습니다",
-    "save_failed": "공지사항 생성에 실패했습니다",
-    "updated": "공지사항이 성공적으로 업데이트되었습니다",
-    "update_failed": "공지사항 업데이트에 실패했습니다",
-    "deleted": "공지사항이 성공적으로 삭제되었습니다",
-    "delete_failed": "공지사항 삭제에 실패했습니다",
-    "list_fetched": "공지사항 목록을 성공적으로 가져왔습니다",
-    "list_fetch_failed": "공지사항 목록을 가져오는 데 실패했습니다",
-    "active_fetched": "활성 공지사항을 성공적으로 가져왔습니다",
-    "active_fetch_failed": "활성 공지사항을 가져오는 데 실패했습니다",
-    "details_fetched": "공지사항 상세 정보를 성공적으로 가져왔습니다",
-    "details_fetch_failed": "공지사항 상세 정보를 가져오는 데 실패했습니다",
-    "dismissed": "공지사항이 성공적으로 닫혔습니다",
-    "dismiss_failed": "공지사항을 닫는 데 실패했습니다",
-    "not_found": "공지사항을 찾을 수 없습니다",
-    "target_group_not_found": "이 조직에서 대상 그룹을 찾을 수 없습니다"
-  },
   "home": {
     "fetched": "홈 데이터를 성공적으로 가져왔습니다",
     "fetch_failed": "홈 데이터를 가져오는 데 실패했습니다"
-  },
-  "dashboard": {
-    "created": "대시보드가 성공적으로 게시되었습니다",
-    "fetched": "대시보드를 성공적으로 가져왔습니다",
-    "rendered": "대시보드가 성공적으로 렌더링되었습니다",
-    "listed": "대시보드 목록을 성공적으로 가져왔습니다",
-    "deleted": "대시보드가 성공적으로 삭제되었습니다",
-    "bulk_deleted": "대시보드가 성공적으로 일괄 삭제되었습니다",
-    "not_found": "대시보드를 찾을 수 없습니다",
-    "already_exists": "이 분석에 동일한 이름의 대시보드가 이미 존재합니다"
-  },
-  "audit_log": {
-    "list_fetched": "감사 로그를 성공적으로 가져왔습니다",
-    "fetch_failed": "감사 로그를 가져오는 데 실패했습니다",
-    "export_failed": "감사 로그 내보내기에 실패했습니다",
-    "no_logs_found": "지정된 조건에 해당하는 감사 로그를 찾을 수 없습니다",
-    "invalid_export_format": "유효하지 않은 내보내기 형식입니다. 지원 형식: excel, pdf",
-    "client_required_for_export": "내보낼 조직을 선택해 주세요",
-    "no_logs_for_client": "이 조직에 사용 가능한 감사 로그가 없습니다"
-  },
-  "login_activity": {
-    "list_fetched": "로그인 활동을 성공적으로 가져왔습니다",
-    "fetch_failed": "로그인 활동을 가져오는 데 실패했습니다",
-    "export_failed": "로그인 활동 내보내기에 실패했습니다",
-    "no_activity_found": "지정된 조건에 해당하는 로그인 활동을 찾을 수 없습니다",
-    "no_activity_for_client": "이 조직에 사용 가능한 로그인 활동이 없습니다"
-  },
-  "query": {
-    "executed": "쿼리가 성공적으로 실행되었습니다",
-    "execution_failed": "쿼리 실행에 실패했습니다",
-    "saved": "쿼리가 성공적으로 저장되었습니다",
-    "fetched": "쿼리 상세 정보를 성공적으로 가져왔습니다",
-    "list_fetched": "쿼리 목록을 성공적으로 가져왔습니다",
-    "deleted": "쿼리가 성공적으로 삭제되었습니다",
-    "not_found": "쿼리를 찾을 수 없습니다",
-    "id_required": "쿼리 ID가 필요합니다",
-    "required": "쿼리가 필요합니다",
-    "invalid": "유효하지 않은 쿼리입니다",
-    "cancelled": "쿼리가 성공적으로 취소되었습니다",
-    "process_not_found": "현재 데이터 소스에서 프로세스를 찾을 수 없습니다",
-    "cancel_not_permitted": "이 데이터 소스에서 취소하려면 추가 권한이 필요합니다.",
-    "cancel_not_supported": "이 데이터 소스 유형에서는 쿼리 취소가 지원되지 않습니다."
-  },
-  "rls_rule": {
-    "created": "RLS 규칙이 성공적으로 생성되었습니다",
-    "updated": "RLS 규칙이 성공적으로 업데이트되었습니다",
-    "deleted": "RLS 규칙이 성공적으로 삭제되었습니다",
-    "list_fetched": "RLS 규칙 목록을 성공적으로 가져왔습니다",
-    "fetched": "RLS 규칙을 성공적으로 가져왔습니다",
-    "not_found": "RLS 규칙을 찾을 수 없습니다",
-    "already_exists": "이 데이터셋에 동일한 이름의 RLS 규칙이 이미 존재합니다"
   },
   "role": {
     "created": "역할이 성공적으로 생성되었습니다",
@@ -335,10 +117,6 @@
   "profile": {
     "fetched": "프로필을 성공적으로 가져왔습니다",
     "locale_updated": "언어 기본 설정이 성공적으로 업데이트되었습니다"
-  },
-  "search": {
-    "results_fetched": "검색 결과를 성공적으로 가져왔습니다",
-    "fetch_failed": "검색 결과를 가져오는 데 실패했습니다"
   },
   "health": {
     "ok": "모든 시스템이 정상 운영 중입니다"

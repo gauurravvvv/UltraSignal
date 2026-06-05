@@ -1,9 +1,8 @@
 /**
  * deleteUserBulk — batch version of deleteUser with the same cascade semantics.
  *
- * UserGroupMapping and DatasourceAccess use `In(ids)` to hard-delete all
- * affected rows in two statements rather than per-user loops — this avoids
- * N×2 round-trips for large batches.
+ * UserGroupMapping uses `In(ids)` to hard-delete all affected rows in one
+ * statement rather than per-user loops.
  *
  * The User soft-delete loop is sequential because TypeORM's softRemove stamps
  * each row with an individual `deletedOn` timestamp — a bulk softRemove would
@@ -16,7 +15,6 @@ import {
   GENERIC,
   USER as USER_MSG,
 } from '../../../shared/constants/response.messages';
-import { DatasourceAccess } from '../../../shared/db/entities/datasource_access.entity';
 import { UserGroupMapping } from '../../../shared/db/entities/user-group-mapping.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
@@ -36,9 +34,6 @@ const deleteUserBulk = async (req: Request, res: Response) => {
       async (manager: EntityManager) => {
         await manager
           .getRepository(UserGroupMapping)
-          .delete({ userId: In(ids) });
-        await manager
-          .getRepository(DatasourceAccess)
           .delete({ userId: In(ids) });
 
         for (const orgUser of orgUsers) {

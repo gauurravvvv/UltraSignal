@@ -13,7 +13,6 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { DatasourceAccess } from './datasource_access.entity';
 import { Role } from './role.entity';
 import { UserGroupMapping } from './user-group-mapping.entity';
 import { User } from './user.entity';
@@ -83,7 +82,4 @@ export class Group extends BaseEntity {
 
   @OneToMany(() => UserGroupMapping, ugm => ugm.group)
   userGroups: UserGroupMapping[];
-
-  @OneToMany(() => DatasourceAccess, access => access.group)
-  databaseAccess: DatasourceAccess[];
 }

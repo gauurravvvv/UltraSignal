@@ -67,20 +67,6 @@
     "account_not_locked": "Questo account non è bloccato",
     "cannot_modify_default": "L'amministratore di sistema predefinito non può essere modificato"
   },
-  "client_admin": {
-    "created": "Amministratore creato con successo",
-    "updated": "Amministratore aggiornato con successo",
-    "deleted": "Amministratore eliminato con successo",
-    "fetched": "Dettagli amministratore recuperati con successo",
-    "list_fetched": "Amministratori recuperati con successo",
-    "not_found": "Amministratore non trovato",
-    "already_exists_email": "Esiste già un amministratore con questa email",
-    "already_exists_username": "Esiste già un amministratore con questo nome utente",
-    "password_updated": "Password amministratore aggiornata con successo",
-    "cannot_delete_default": "L'amministratore predefinito non può essere eliminato",
-    "account_unlocked": "Account amministratore sbloccato con successo",
-    "account_not_locked": "Questo account non è bloccato"
-  },
   "user": {
     "created": "Utente creato con successo",
     "updated": "Utente aggiornato con successo",
@@ -97,37 +83,6 @@
     "cannot_delete_default": "L'amministratore predefinito non può essere eliminato",
     "cannot_modify_default": "L'amministratore predefinito non può essere modificato"
   },
-  "datasource": {
-    "created": "Sorgente dati integrata con successo",
-    "updated": "Sorgente dati aggiornata con successo",
-    "deleted": "Sorgente dati eliminata con successo",
-    "bulk_deleted": "Sorgenti dati eliminate con successo",
-    "fetched": "Dettagli sorgente dati recuperati con successo",
-    "list_fetched": "Sorgenti dati recuperate con successo",
-    "not_found": "Sorgente dati non trovata",
-    "already_exists": "Esiste già una sorgente dati con questo nome",
-    "connection_failed": "Connessione alla sorgente dati non riuscita",
-    "connection_success": "Connessione alla sorgente dati stabilita con successo",
-    "master_not_found": "Configurazione sorgente dati master non trovata",
-    "structure_fetched": "Struttura sorgente dati recuperata con successo",
-    "validated": "Connessione sorgente dati validata",
-    "schema_not_found": "Schema non trovato in questa origine dati",
-    "table_not_found": "Tabella non trovata in questo schema"
-  },
-  "connection": {
-    "created": "Connessione creata con successo",
-    "updated": "Connessione aggiornata con successo",
-    "deleted": "Connessione eliminata con successo",
-    "bulk_deleted": "Connessioni eliminate con successo",
-    "fetched": "Dettagli connessione recuperati con successo",
-    "list_fetched": "Connessioni recuperate con successo",
-    "not_found": "Connessione non trovata",
-    "already_exists": "Esiste già una connessione con questo nome",
-    "test_success": "Test di connessione riuscito",
-    "test_failed": "Test di connessione fallito",
-    "terminated": "Connessione terminata con successo",
-    "process_not_found": "Connessione non trovata nella sorgente dati corrente"
-  },
   "group": {
     "created": "Gruppo creato con successo",
     "updated": "Gruppo aggiornato con successo",
@@ -141,182 +96,9 @@
     "cannot_include_default_user": "L'amministratore predefinito non può essere aggiunto a un gruppo personalizzato",
     "cannot_remove_default_user": "L'amministratore predefinito non può essere rimosso da questo gruppo"
   },
-  "access": {
-    "granted": "Accesso concesso con successo",
-    "revoked": "Accesso revocato con successo",
-    "list_fetched": "Elenco accessi recuperato con successo",
-    "not_found": "Record di accesso non trovato",
-    "already_exists": "Accesso già concesso per questa risorsa",
-    "datasource_details_not_found": "Dettagli sorgente dati non trovati per la concessione dell'accesso",
-    "connection_not_found": "Connessione non trovata per la concessione dell'accesso"
-  },
-  "dataset": {
-    "created": "Dataset creato con successo",
-    "updated": "Dataset aggiornato con successo",
-    "deleted": "Dataset eliminato con successo",
-    "bulk_deleted": "Dataset eliminati con successo",
-    "fetched": "Dettagli dataset recuperati con successo",
-    "list_fetched": "Dataset recuperati con successo",
-    "not_found": "Dataset non trovato",
-    "already_exists": "Esiste già un dataset con questo nome",
-    "id_required": "L'ID dataset è obbligatorio",
-    "field_validated": "Campo dataset validato con successo",
-    "formula_validated": "Formula validata con successo",
-    "formula_invalid": "Formula non valida",
-    "query_execution_failed": "Esecuzione query dataset non riuscita",
-    "duplicated": "Dataset duplicato con successo"
-  },
-  "tab": {
-    "created": "Tab creato con successo",
-    "updated": "Tab aggiornato con successo",
-    "deleted": "Tab eliminato con successo",
-    "bulk_deleted": "Tab eliminati con successo",
-    "fetched": "Dettagli tab recuperati con successo",
-    "list_fetched": "Tab recuperati con successo",
-    "not_found": "Tab non trovato",
-    "already_exists": "Esiste già un tab con questo nome"
-  },
-  "section": {
-    "created": "Sezione creata con successo",
-    "updated": "Sezione aggiornata con successo",
-    "deleted": "Sezione eliminata con successo",
-    "bulk_deleted": "Sezioni eliminate con successo",
-    "fetched": "Dettagli sezione recuperati con successo",
-    "list_fetched": "Sezioni recuperate con successo",
-    "not_found": "Sezione non trovata",
-    "already_exists": "Esiste già una sezione con questo nome"
-  },
-  "prompt": {
-    "created": "Prompt creato con successo",
-    "updated": "Prompt aggiornato con successo",
-    "deleted": "Prompt eliminato con successo",
-    "bulk_deleted": "Prompt eliminati con successo",
-    "fetched": "Dettagli prompt recuperati con successo",
-    "list_fetched": "Prompt recuperati con successo",
-    "not_found": "Prompt non trovato",
-    "already_exists": "Esiste già un prompt con questo nome",
-    "values_fetched": "Valori prompt recuperati con successo",
-    "id_required": "L'ID prompt è obbligatorio"
-  },
-  "query_builder": {
-    "created": "Query Builder creato con successo",
-    "updated": "Query Builder aggiornato con successo",
-    "deleted": "Query Builder eliminato con successo",
-    "bulk_deleted": "Query Builder eliminati con successo",
-    "fetched": "Dettagli Query Builder recuperati con successo",
-    "list_fetched": "Query Builder recuperati con successo",
-    "not_found": "Query Builder non trovato",
-    "already_exists": "Esiste già un Query Builder con questo nome",
-    "prompts_fetched": "Prompt Query Builder recuperati con successo",
-    "prompts_saved": "Prompt Query Builder salvati con successo",
-    "sql_generated": "SQL generato con successo",
-    "id_required": "L'ID Query Builder è obbligatorio"
-  },
-  "analysis": {
-    "created": "Analisi creata con successo",
-    "updated": "Analisi aggiornata con successo",
-    "deleted": "Analisi eliminata con successo",
-    "bulk_deleted": "Analisi eliminate con successo",
-    "fetched": "Dettagli analisi recuperati con successo",
-    "list_fetched": "Analisi recuperate con successo",
-    "not_found": "Analisi non trovata",
-    "already_exists": "Esiste già un'analisi con questo nome",
-    "id_required": "L'ID analisi è obbligatorio"
-  },
-  "analysis_filter": {
-    "created": "Filtro analisi creato con successo",
-    "updated": "Filtro analisi aggiornato con successo",
-    "deleted": "Filtro analisi eliminato con successo",
-    "fetched": "Dettagli filtro analisi recuperati con successo",
-    "list_fetched": "Filtri analisi recuperati con successo",
-    "not_found": "Filtro analisi non trovato",
-    "values_fetched": "Valori filtro recuperati con successo",
-    "values_fetch_failed": "Recupero valori filtro non riuscito",
-    "invalid_filter_type": "Tipo di filtro non valido",
-    "invalid_control_type": "Tipo di controllo non valido",
-    "column_required": "Il nome della colonna è obbligatorio"
-  },
-  "visual": {
-    "created": "Visualizzazione creata con successo",
-    "updated": "Visualizzazione aggiornata con successo",
-    "deleted": "Visualizzazione eliminata con successo",
-    "fetched": "Dettagli visualizzazione recuperati con successo",
-    "list_fetched": "Visualizzazioni recuperate con successo",
-    "not_found": "Visualizzazione non trovata",
-    "empty_config": "Tutte le visualizzazioni devono avere un tipo di grafico configurato"
-  },
-  "announcement": {
-    "saved": "Annuncio creato con successo",
-    "save_failed": "Creazione annuncio non riuscita",
-    "updated": "Annuncio aggiornato con successo",
-    "update_failed": "Aggiornamento annuncio non riuscito",
-    "deleted": "Annuncio eliminato con successo",
-    "delete_failed": "Eliminazione annuncio non riuscita",
-    "list_fetched": "Annunci recuperati con successo",
-    "list_fetch_failed": "Recupero annunci non riuscito",
-    "active_fetched": "Annunci attivi recuperati con successo",
-    "active_fetch_failed": "Recupero annunci attivi non riuscito",
-    "details_fetched": "Dettagli annuncio recuperati con successo",
-    "details_fetch_failed": "Recupero dettagli annuncio non riuscito",
-    "dismissed": "Annuncio chiuso con successo",
-    "dismiss_failed": "Chiusura annuncio non riuscita",
-    "not_found": "Annuncio non trovato",
-    "target_group_not_found": "Gruppo destinatario non trovato in questa organizzazione"
-  },
   "home": {
     "fetched": "Dati home recuperati con successo",
     "fetch_failed": "Recupero dati home non riuscito"
-  },
-  "dashboard": {
-    "created": "Dashboard pubblicato con successo",
-    "fetched": "Dashboard recuperato con successo",
-    "rendered": "Dashboard renderizzato con successo",
-    "listed": "Dashboard elencati con successo",
-    "deleted": "Dashboard eliminato con successo",
-    "bulk_deleted": "Dashboard eliminati con successo",
-    "not_found": "Dashboard non trovato",
-    "already_exists": "Esiste già un dashboard con questo nome per questa analisi"
-  },
-  "audit_log": {
-    "list_fetched": "Log di controllo recuperati con successo",
-    "fetch_failed": "Recupero log di controllo non riuscito",
-    "export_failed": "Esportazione log di controllo non riuscita",
-    "no_logs_found": "Nessun log di controllo trovato per i criteri specificati",
-    "invalid_export_format": "Formato di esportazione non valido. Formati supportati: excel, pdf",
-    "client_required_for_export": "Seleziona un'organizzazione per esportare",
-    "no_logs_for_client": "Nessun log di controllo disponibile per questa organizzazione"
-  },
-  "login_activity": {
-    "list_fetched": "Attività di accesso recuperata con successo",
-    "fetch_failed": "Recupero attività di accesso non riuscito",
-    "export_failed": "Esportazione attività di accesso non riuscita",
-    "no_activity_found": "Nessuna attività di accesso trovata per i criteri specificati",
-    "no_activity_for_client": "Nessuna attività di accesso disponibile per questa organizzazione"
-  },
-  "query": {
-    "executed": "Query eseguita con successo",
-    "execution_failed": "Esecuzione query non riuscita",
-    "saved": "Query salvata con successo",
-    "fetched": "Dettagli query recuperati con successo",
-    "list_fetched": "Query recuperate con successo",
-    "deleted": "Query eliminata con successo",
-    "not_found": "Query non trovata",
-    "id_required": "L'ID query è obbligatorio",
-    "required": "La query è obbligatoria",
-    "invalid": "Query non valida",
-    "cancelled": "Query annullata con successo",
-    "process_not_found": "Processo non trovato nella sorgente dati corrente",
-    "cancel_not_permitted": "L'annullamento richiede privilegi aggiuntivi su questa origine dati.",
-    "cancel_not_supported": "L'annullamento delle query non è supportato per questo tipo di origine dati."
-  },
-  "rls_rule": {
-    "created": "Regola RLS creata con successo",
-    "updated": "Regola RLS aggiornata con successo",
-    "deleted": "Regola RLS eliminata con successo",
-    "list_fetched": "Regole RLS recuperate con successo",
-    "fetched": "Regola RLS recuperata con successo",
-    "not_found": "Regola RLS non trovata",
-    "already_exists": "Esiste già una regola RLS con questo nome per questo dataset"
   },
   "role": {
     "created": "Ruolo creato con successo",
@@ -335,10 +117,6 @@
   "profile": {
     "fetched": "Profilo recuperato con successo",
     "locale_updated": "Preferenza lingua aggiornata con successo"
-  },
-  "search": {
-    "results_fetched": "Risultati ricerca recuperati con successo",
-    "fetch_failed": "Recupero risultati ricerca non riuscito"
   },
   "health": {
     "ok": "Tutti i sistemi operativi"

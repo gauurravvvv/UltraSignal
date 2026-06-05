@@ -21,7 +21,6 @@ import { Request, Response } from 'express';
 import { EntityManager } from 'typeorm';
 import { CODE } from '../../../../config/config';
 import {
-  AUTH as AUTH_MSG,
   GENERIC,
   SYSTEM_ADMIN as SYSTEM_ADMIN_MSG,
 } from '../../../shared/constants/response.messages';
@@ -29,10 +28,6 @@ import { AppDataSource } from '../../../shared/db';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import { hashPassword } from '../../../shared/utility/hashPassword';
 import Logger from '../../../shared/utility/logger/logger';
-import {
-  isPasswordReusedMaster,
-  savePasswordHistoryMaster,
-} from '../../../shared/utility/passwordHistory';
 import sendResponse from '../../../shared/utility/response';
 
 const updateSystemAdminPassword = async (req: Request, res: Response) => {
@@ -42,21 +37,6 @@ const updateSystemAdminPassword = async (req: Request, res: Response) => {
   const { loggedInId, systemAdmin } = res.locals;
 
   try {
-    // Check password history
-    const isReused = await isPasswordReusedMaster(
-      systemAdmin.id,
-      newPassword,
-      systemAdmin.password,
-    );
-    if (isReused) {
-      return sendResponse(
-        res,
-        false,
-        CODE.BAD_REQUEST,
-        AUTH_MSG.PASSWORD_REUSED,
-      );
-    }
-
     systemAdmin.password = await hashPassword(newPassword);
     systemAdmin.updatedBy = loggedInId;
     systemAdmin.refreshToken = null;
@@ -65,12 +45,6 @@ const updateSystemAdminPassword = async (req: Request, res: Response) => {
     let result: any;
     await AppDataSource.transaction(async (manager: EntityManager) => {
       result = await manager.save(systemAdmin);
-      await savePasswordHistoryMaster(
-        systemAdmin.id,
-        systemAdmin.password,
-        5,
-        manager,
-      );
     });
 
     sendResponse(

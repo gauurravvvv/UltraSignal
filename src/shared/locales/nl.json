@@ -67,20 +67,6 @@
     "account_not_locked": "Dit account is niet geblokkeerd",
     "cannot_modify_default": "De standaard systeembeheerder kan niet worden gewijzigd"
   },
-  "client_admin": {
-    "created": "Beheerder succesvol aangemaakt",
-    "updated": "Beheerder succesvol bijgewerkt",
-    "deleted": "Beheerder succesvol verwijderd",
-    "fetched": "Beheerdergegevens succesvol opgehaald",
-    "list_fetched": "Beheerders succesvol opgehaald",
-    "not_found": "Beheerder niet gevonden",
-    "already_exists_email": "Er bestaat al een beheerder met dit e-mailadres",
-    "already_exists_username": "Er bestaat al een beheerder met deze gebruikersnaam",
-    "password_updated": "Beheerder wachtwoord succesvol bijgewerkt",
-    "cannot_delete_default": "De standaard beheerder kan niet worden verwijderd",
-    "account_unlocked": "Beheerderaccount succesvol ontgrendeld",
-    "account_not_locked": "Dit account is niet geblokkeerd"
-  },
   "user": {
     "created": "Gebruiker succesvol aangemaakt",
     "updated": "Gebruiker succesvol bijgewerkt",
@@ -97,37 +83,6 @@
     "cannot_delete_default": "De standaardbeheerder kan niet worden verwijderd",
     "cannot_modify_default": "De standaardbeheerder kan niet worden gewijzigd"
   },
-  "datasource": {
-    "created": "Gegevensbron succesvol gekoppeld",
-    "updated": "Gegevensbron succesvol bijgewerkt",
-    "deleted": "Gegevensbron succesvol verwijderd",
-    "bulk_deleted": "Gegevensbronnen succesvol verwijderd",
-    "fetched": "Gegevensbrongegevens succesvol opgehaald",
-    "list_fetched": "Gegevensbronnen succesvol opgehaald",
-    "not_found": "Gegevensbron niet gevonden",
-    "already_exists": "Er bestaat al een gegevensbron met deze naam",
-    "connection_failed": "Verbinding met gegevensbron mislukt",
-    "connection_success": "Verbinding met gegevensbron succesvol tot stand gebracht",
-    "master_not_found": "Master gegevensbron configuratie niet gevonden",
-    "structure_fetched": "Structuur gegevensbron succesvol opgehaald",
-    "validated": "Verbinding gegevensbron gevalideerd",
-    "schema_not_found": "Schema niet gevonden in deze gegevensbron",
-    "table_not_found": "Tabel niet gevonden in dit schema"
-  },
-  "connection": {
-    "created": "Verbinding succesvol aangemaakt",
-    "updated": "Verbinding succesvol bijgewerkt",
-    "deleted": "Verbinding succesvol verwijderd",
-    "bulk_deleted": "Verbindingen succesvol verwijderd",
-    "fetched": "Verbindingsgegevens succesvol opgehaald",
-    "list_fetched": "Verbindingen succesvol opgehaald",
-    "not_found": "Verbinding niet gevonden",
-    "already_exists": "Er bestaat al een verbinding met deze naam",
-    "test_success": "Verbindingstest geslaagd",
-    "test_failed": "Verbindingstest mislukt",
-    "terminated": "Verbinding succesvol beëindigd",
-    "process_not_found": "Verbinding niet gevonden in de huidige gegevensbron"
-  },
   "group": {
     "created": "Groep succesvol aangemaakt",
     "updated": "Groep succesvol bijgewerkt",
@@ -141,182 +96,9 @@
     "cannot_include_default_user": "De standaardbeheerder kan niet worden toegevoegd aan een aangepaste groep",
     "cannot_remove_default_user": "De standaardbeheerder kan niet uit deze groep worden verwijderd"
   },
-  "access": {
-    "granted": "Toegang succesvol verleend",
-    "revoked": "Toegang succesvol ingetrokken",
-    "list_fetched": "Toegangslijst succesvol opgehaald",
-    "not_found": "Toegangsrecord niet gevonden",
-    "already_exists": "Toegang al verleend voor deze resource",
-    "datasource_details_not_found": "Gegevensbrongegevens niet gevonden voor toegangsverlening",
-    "connection_not_found": "Verbinding niet gevonden voor toegangsverlening"
-  },
-  "dataset": {
-    "created": "Dataset succesvol aangemaakt",
-    "updated": "Dataset succesvol bijgewerkt",
-    "deleted": "Dataset succesvol verwijderd",
-    "bulk_deleted": "Datasets succesvol verwijderd",
-    "fetched": "Datasetgegevens succesvol opgehaald",
-    "list_fetched": "Datasets succesvol opgehaald",
-    "not_found": "Dataset niet gevonden",
-    "already_exists": "Er bestaat al een dataset met deze naam",
-    "id_required": "Dataset-ID is vereist",
-    "field_validated": "Datasetveld succesvol gevalideerd",
-    "formula_validated": "Formule succesvol gevalideerd",
-    "formula_invalid": "Ongeldige formule",
-    "query_execution_failed": "Uitvoering dataset-query mislukt",
-    "duplicated": "Dataset succesvol gedupliceerd"
-  },
-  "tab": {
-    "created": "Tabblad succesvol aangemaakt",
-    "updated": "Tabblad succesvol bijgewerkt",
-    "deleted": "Tabblad succesvol verwijderd",
-    "bulk_deleted": "Tabbladen succesvol verwijderd",
-    "fetched": "Tabbladgegevens succesvol opgehaald",
-    "list_fetched": "Tabbladen succesvol opgehaald",
-    "not_found": "Tabblad niet gevonden",
-    "already_exists": "Er bestaat al een tabblad met deze naam"
-  },
-  "section": {
-    "created": "Sectie succesvol aangemaakt",
-    "updated": "Sectie succesvol bijgewerkt",
-    "deleted": "Sectie succesvol verwijderd",
-    "bulk_deleted": "Secties succesvol verwijderd",
-    "fetched": "Sectiegegevens succesvol opgehaald",
-    "list_fetched": "Secties succesvol opgehaald",
-    "not_found": "Sectie niet gevonden",
-    "already_exists": "Er bestaat al een sectie met deze naam"
-  },
-  "prompt": {
-    "created": "Prompt succesvol aangemaakt",
-    "updated": "Prompt succesvol bijgewerkt",
-    "deleted": "Prompt succesvol verwijderd",
-    "bulk_deleted": "Prompts succesvol verwijderd",
-    "fetched": "Promptgegevens succesvol opgehaald",
-    "list_fetched": "Prompts succesvol opgehaald",
-    "not_found": "Prompt niet gevonden",
-    "already_exists": "Er bestaat al een prompt met deze naam",
-    "values_fetched": "Promptwaarden succesvol opgehaald",
-    "id_required": "Prompt-ID is vereist"
-  },
-  "query_builder": {
-    "created": "Query Builder succesvol aangemaakt",
-    "updated": "Query Builder succesvol bijgewerkt",
-    "deleted": "Query Builder succesvol verwijderd",
-    "bulk_deleted": "Query Builders succesvol verwijderd",
-    "fetched": "Query Builder gegevens succesvol opgehaald",
-    "list_fetched": "Query Builders succesvol opgehaald",
-    "not_found": "Query Builder niet gevonden",
-    "already_exists": "Er bestaat al een Query Builder met deze naam",
-    "prompts_fetched": "Query Builder prompts succesvol opgehaald",
-    "prompts_saved": "Query Builder prompts succesvol opgeslagen",
-    "sql_generated": "SQL succesvol gegenereerd",
-    "id_required": "Query Builder-ID is vereist"
-  },
-  "analysis": {
-    "created": "Analyse succesvol aangemaakt",
-    "updated": "Analyse succesvol bijgewerkt",
-    "deleted": "Analyse succesvol verwijderd",
-    "bulk_deleted": "Analyses succesvol verwijderd",
-    "fetched": "Analysegegevens succesvol opgehaald",
-    "list_fetched": "Analyses succesvol opgehaald",
-    "not_found": "Analyse niet gevonden",
-    "already_exists": "Er bestaat al een analyse met deze naam",
-    "id_required": "Analyse-ID is vereist"
-  },
-  "analysis_filter": {
-    "created": "Analysefilter succesvol aangemaakt",
-    "updated": "Analysefilter succesvol bijgewerkt",
-    "deleted": "Analysefilter succesvol verwijderd",
-    "fetched": "Analysefiltergegevens succesvol opgehaald",
-    "list_fetched": "Analysefilters succesvol opgehaald",
-    "not_found": "Analysefilter niet gevonden",
-    "values_fetched": "Filterwaarden succesvol opgehaald",
-    "values_fetch_failed": "Ophalen filterwaarden mislukt",
-    "invalid_filter_type": "Ongeldig filtertype",
-    "invalid_control_type": "Ongeldig controletype",
-    "column_required": "Kolomnaam is vereist"
-  },
-  "visual": {
-    "created": "Visualisatie succesvol aangemaakt",
-    "updated": "Visualisatie succesvol bijgewerkt",
-    "deleted": "Visualisatie succesvol verwijderd",
-    "fetched": "Visualisatiegegevens succesvol opgehaald",
-    "list_fetched": "Visualisaties succesvol opgehaald",
-    "not_found": "Visualisatie niet gevonden",
-    "empty_config": "Alle visualisaties moeten een geconfigureerd grafiektype hebben"
-  },
-  "announcement": {
-    "saved": "Aankondiging succesvol aangemaakt",
-    "save_failed": "Aanmaken aankondiging mislukt",
-    "updated": "Aankondiging succesvol bijgewerkt",
-    "update_failed": "Bijwerken aankondiging mislukt",
-    "deleted": "Aankondiging succesvol verwijderd",
-    "delete_failed": "Verwijderen aankondiging mislukt",
-    "list_fetched": "Aankondigingen succesvol opgehaald",
-    "list_fetch_failed": "Ophalen aankondigingen mislukt",
-    "active_fetched": "Actieve aankondigingen succesvol opgehaald",
-    "active_fetch_failed": "Ophalen actieve aankondigingen mislukt",
-    "details_fetched": "Aankondigingsgegevens succesvol opgehaald",
-    "details_fetch_failed": "Ophalen aankondigingsgegevens mislukt",
-    "dismissed": "Aankondiging succesvol gesloten",
-    "dismiss_failed": "Sluiten aankondiging mislukt",
-    "not_found": "Aankondiging niet gevonden",
-    "target_group_not_found": "Doelgroep niet gevonden in deze organisatie"
-  },
   "home": {
     "fetched": "Startpaginagegevens succesvol opgehaald",
     "fetch_failed": "Ophalen startpaginagegevens mislukt"
-  },
-  "dashboard": {
-    "created": "Dashboard succesvol gepubliceerd",
-    "fetched": "Dashboard succesvol opgehaald",
-    "rendered": "Dashboard succesvol weergegeven",
-    "listed": "Dashboards succesvol weergegeven",
-    "deleted": "Dashboard succesvol verwijderd",
-    "bulk_deleted": "Dashboards succesvol verwijderd",
-    "not_found": "Dashboard niet gevonden",
-    "already_exists": "Er bestaat al een dashboard met deze naam voor deze analyse"
-  },
-  "audit_log": {
-    "list_fetched": "Auditlogboeken succesvol opgehaald",
-    "fetch_failed": "Ophalen auditlogboeken mislukt",
-    "export_failed": "Exporteren auditlogboeken mislukt",
-    "no_logs_found": "Geen auditlogboeken gevonden voor de opgegeven criteria",
-    "invalid_export_format": "Ongeldig exportformaat. Ondersteunde formaten: excel, pdf",
-    "client_required_for_export": "Selecteer een organisatie om te exporteren",
-    "no_logs_for_client": "Geen auditlogboeken beschikbaar voor deze organisatie"
-  },
-  "login_activity": {
-    "list_fetched": "Inlogactiviteit succesvol opgehaald",
-    "fetch_failed": "Ophalen inlogactiviteit mislukt",
-    "export_failed": "Exporteren inlogactiviteit mislukt",
-    "no_activity_found": "Geen inlogactiviteit gevonden voor de opgegeven criteria",
-    "no_activity_for_client": "Geen inlogactiviteit beschikbaar voor deze organisatie"
-  },
-  "query": {
-    "executed": "Query succesvol uitgevoerd",
-    "execution_failed": "Uitvoeren query mislukt",
-    "saved": "Query succesvol opgeslagen",
-    "fetched": "Querygegevens succesvol opgehaald",
-    "list_fetched": "Query's succesvol opgehaald",
-    "deleted": "Query succesvol verwijderd",
-    "not_found": "Query niet gevonden",
-    "id_required": "Query-ID is vereist",
-    "required": "Query is vereist",
-    "invalid": "Ongeldige query",
-    "cancelled": "Query succesvol geannuleerd",
-    "process_not_found": "Proces niet gevonden in de huidige gegevensbron",
-    "cancel_not_permitted": "Annulering vereist aanvullende rechten op deze gegevensbron.",
-    "cancel_not_supported": "Het annuleren van query's wordt voor dit type gegevensbron niet ondersteund."
-  },
-  "rls_rule": {
-    "created": "RLS-regel succesvol aangemaakt",
-    "updated": "RLS-regel succesvol bijgewerkt",
-    "deleted": "RLS-regel succesvol verwijderd",
-    "list_fetched": "RLS-regels succesvol opgehaald",
-    "fetched": "RLS-regel succesvol opgehaald",
-    "not_found": "RLS-regel niet gevonden",
-    "already_exists": "Er bestaat al een RLS-regel met deze naam voor deze dataset"
   },
   "role": {
     "created": "Rol succesvol aangemaakt",
@@ -335,10 +117,6 @@
   "profile": {
     "fetched": "Profiel succesvol opgehaald",
     "locale_updated": "Taalvoorkeur succesvol bijgewerkt"
-  },
-  "search": {
-    "results_fetched": "Zoekresultaten succesvol opgehaald",
-    "fetch_failed": "Ophalen zoekresultaten mislukt"
   },
   "health": {
     "ok": "Alle systemen operationeel"

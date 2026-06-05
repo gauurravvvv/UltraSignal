@@ -52,7 +52,6 @@ const DeleteGroupValidation = async (
   try {
     const group = await AppDataSource.getRepository(Group).findOne({
       where: { id, clientId: clientId },
-      relations: ['databaseAccess'],
     });
 
     if (!group) {
@@ -66,16 +65,6 @@ const DeleteGroupValidation = async (
         false,
         CODE.UNAUTHORIZED,
         GROUP.CANNOT_MODIFY_DEFAULT,
-      );
-    }
-
-    // Check if group has database accesses assigned
-    if (group.databaseAccess && group.databaseAccess.length > 0) {
-      return sendResponse(
-        res,
-        false,
-        CODE.CONFLICT,
-        'Cannot delete group with assigned database access. Please remove all assignments first',
       );
     }
 

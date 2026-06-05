@@ -27,10 +27,6 @@ import Logger from '../../../shared/utility/logger/logger';
 import { ClientEmailConfig } from '../../../shared/utility/mail';
 import passwordResetSuccessEmail from '../../../shared/utility/mail/passwordResetSuccessEmail';
 import { buildRequestContext } from '../../../shared/utility/mail/requestContext';
-import {
-  isPasswordReusedShared,
-  savePasswordHistoryShared,
-} from '../../../shared/utility/passwordHistory';
 import sendResponse from '../../../shared/utility/response';
 
 const resetPassword = async (req: Request, res: Response) => {
@@ -82,22 +78,6 @@ const resetPassword = async (req: Request, res: Response) => {
       return;
     }
 
-    // Check password history. Post-OTP, PASSWORD_REUSED is intentionally
-    // distinct from OTP_INVALID — the OTP did succeed, the new password is
-    // simply not acceptable.
-    const passwordHistoryLimit = client.config?.passwordHistoryLimit || 5;
-    const isReused = await isPasswordReusedShared(
-      AppDataSource.manager,
-      user.id,
-      password,
-      client.config,
-      user.password,
-      passwordHistoryLimit,
-    );
-    if (isReused) {
-      return sendResponse(res, false, CODE.BAD_REQUEST, AUTH_MSG.PASSWORD_REUSED);
-    }
-
     user.password = encryptForClient(password, client.config);
     user.otp = null;
     user.otpExpiresAt = null;
@@ -107,12 +87,6 @@ const resetPassword = async (req: Request, res: Response) => {
 
     await AppDataSource.transaction(async (manager: EntityManager) => {
       await manager.save(user);
-      await savePasswordHistoryShared(
-        manager,
-        user.id,
-        user.password!,
-        passwordHistoryLimit,
-      );
     });
 
     const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();

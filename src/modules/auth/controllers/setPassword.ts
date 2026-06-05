@@ -28,7 +28,6 @@ import Logger from '../../../shared/utility/logger/logger';
 import { ClientEmailConfig } from '../../../shared/utility/mail';
 import passwordSetSuccessEmail from '../../../shared/utility/mail/passwordSetSuccessEmail';
 import { buildRequestContext } from '../../../shared/utility/mail/requestContext';
-import { savePasswordHistoryShared } from '../../../shared/utility/passwordHistory';
 import sendResponse from '../../../shared/utility/response';
 
 const setPassword = async (req: Request, res: Response) => {
@@ -105,16 +104,8 @@ const setPassword = async (req: Request, res: Response) => {
     user.setupTokenExpiresAt = null;
     user.updatedBy = id;
 
-    const passwordHistoryLimit = client.config?.passwordHistoryLimit || 5;
-
     await AppDataSource.transaction(async (manager: EntityManager) => {
       await manager.save(user);
-      await savePasswordHistoryShared(
-        manager,
-        user.id,
-        user.password!,
-        passwordHistoryLimit,
-      );
     });
 
     const clientEmailConfig: ClientEmailConfig | undefined = client.config?.emailProvider

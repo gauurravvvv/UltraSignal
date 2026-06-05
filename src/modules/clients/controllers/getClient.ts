@@ -13,8 +13,6 @@ import {
   CLIENT as CLIENT_MSG,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
-import { DatasourceConnection } from '../../../shared/db/entities/connections.entity';
-import { DatasourceS } from '../../../shared/db/entities/datasourceS.entity';
 import { Group } from '../../../shared/db/entities/group.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import { decryptForClient } from '../../../shared/services/crypto.service';
@@ -54,21 +52,14 @@ const getClient = async (req: Request, res: Response) => {
         }
       : null;
 
-    const [usersCount, groupsCount, databasesCount, connectionsCount] =
-      await Promise.all([
-        AppDataSource.getRepository(User).count({
-          where: { clientId: id },
-        }),
-        AppDataSource.getRepository(Group).count({
-          where: { clientId: id },
-        }),
-        AppDataSource.getRepository(DatasourceS).count({
-          where: { clientId: id },
-        }),
-        AppDataSource.getRepository(DatasourceConnection).count({
-          where: { clientId: id },
-        }),
-      ]);
+    const [usersCount, groupsCount] = await Promise.all([
+      AppDataSource.getRepository(User).count({
+        where: { clientId: id },
+      }),
+      AppDataSource.getRepository(Group).count({
+        where: { clientId: id },
+      }),
+    ]);
     const adminsCount = 0;
 
     sendResponse(res, true, CODE.SUCCESS, CLIENT_MSG.FETCHED, {
@@ -76,8 +67,6 @@ const getClient = async (req: Request, res: Response) => {
       usersCount,
       adminsCount,
       groupsCount,
-      databasesCount,
-      connectionsCount,
       encryptionAlgorithm,
       clientConfig: clientConfigData,
     });

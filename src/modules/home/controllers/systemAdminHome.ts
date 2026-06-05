@@ -17,7 +17,6 @@ import {
   HOME as HOME_MSG,
   CLIENT as CLIENT_MSG,
 } from '../../../shared/constants/response.messages';
-import { DatasourceS } from '../../../shared/db/entities/datasourceS.entity';
 import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
@@ -40,7 +39,6 @@ const systemAdminHome = async (req: Request, res: Response) => {
       sendResponse(res, false, CODE.NOT_FOUND, CLIENT_MSG.NOT_FOUND);
       return;
     }
-    let totalDatabases = DatasourceS.count({ where: { clientId: id } });
     let totalAdmins = User.count({
       where: { clientId: id },
     });
@@ -48,9 +46,8 @@ const systemAdminHome = async (req: Request, res: Response) => {
       where: { clientId: id },
     });
 
-    await Promise.all([totalDatabases, totalAdmins, totalUsers])
-      .then(([databasesCount, adminsCount, usersCount]) => {
-        response.databasesCount = databasesCount;
+    await Promise.all([totalAdmins, totalUsers])
+      .then(([adminsCount, usersCount]) => {
         response.adminsCount = adminsCount;
         response.usersCount = usersCount;
       })
