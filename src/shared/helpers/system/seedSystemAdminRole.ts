@@ -16,9 +16,9 @@
  */
 import { EntityManager } from 'typeorm';
 import { IS_DEFAULT, STATUS } from '../../../../config/config';
-import { SYSTEM_ADMIN_PERMISSIONS_V2 } from '../../constants/permissions/systemAdminV2';
 import { Role } from '../../db/entities/role.entity';
 import Logger from '../../utility/logger/logger';
+import { SYSTEM_ADMIN_PERMISSIONS_V2 } from '../../../shared/constants/permissions/systemAdminV2.permission';
 
 const SYSTEM_ADMIN_ROLE_NAME = 'System Admin';
 

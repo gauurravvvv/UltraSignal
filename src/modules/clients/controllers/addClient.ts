@@ -24,8 +24,8 @@ import {
   SETUP_TOKEN_EXPIRY_HOURS,
   STATUS,
 } from '../../../../config/config';
-import { CLIENT_ADMIN_PERMISSIONS } from '../../../shared/constants/permissions/clientAdmin';
-import { CLIENT_USER_PERMISSIONS } from '../../../shared/constants/permissions/user';
+import { CLIENT_ADMIN_PERMISSIONS } from '../../../shared/constants/permissions/clientAdmin.permission';
+
 import {
   GENERIC,
   CLIENT as CLIENT_MSG,
@@ -49,6 +49,7 @@ import Logger from '../../../shared/utility/logger/logger';
 import { ClientEmailConfig } from '../../../shared/utility/mail';
 import welcomeEmailToUser from '../../../shared/utility/mail/welcomeEmailToUser';
 import sendResponse from '../../../shared/utility/response';
+import { CLIENT_USER_PERMISSIONS } from '../../../../src/shared/constants/permissions/user.permission';
 
 const addClient = async (req: Request, res: Response) => {
   Logger.info(`Add Client request`);
@@ -221,28 +222,29 @@ const addClient = async (req: Request, res: Response) => {
 
     Logger.info(`Client Admin created successfully.`);
 
-    const clientEmailConfig: ClientEmailConfig | undefined = clientConfig.emailProvider
-      ? {
-          emailProvider: clientConfig.emailProvider,
-          smtpHost: clientConfig.smtpHost,
-          smtpPort: clientConfig.smtpPort,
-          smtpUser: clientConfig.smtpUser
-            ? decryptForClient(clientConfig.smtpUser, clientConfig)
-            : null,
-          smtpPassword: clientConfig.smtpPassword
-            ? decryptForClient(clientConfig.smtpPassword, clientConfig)
-            : null,
-          smtpFrom: clientConfig.smtpFrom,
-          sesRegion: clientConfig.sesRegion,
-          sesAccessKeyId: clientConfig.sesAccessKeyId
-            ? decryptForClient(clientConfig.sesAccessKeyId, clientConfig)
-            : null,
-          sesSecretAccessKey: clientConfig.sesSecretAccessKey
-            ? decryptForClient(clientConfig.sesSecretAccessKey, clientConfig)
-            : null,
-          sesFrom: clientConfig.sesFrom,
-        }
-      : undefined;
+    const clientEmailConfig: ClientEmailConfig | undefined =
+      clientConfig.emailProvider
+        ? {
+            emailProvider: clientConfig.emailProvider,
+            smtpHost: clientConfig.smtpHost,
+            smtpPort: clientConfig.smtpPort,
+            smtpUser: clientConfig.smtpUser
+              ? decryptForClient(clientConfig.smtpUser, clientConfig)
+              : null,
+            smtpPassword: clientConfig.smtpPassword
+              ? decryptForClient(clientConfig.smtpPassword, clientConfig)
+              : null,
+            smtpFrom: clientConfig.smtpFrom,
+            sesRegion: clientConfig.sesRegion,
+            sesAccessKeyId: clientConfig.sesAccessKeyId
+              ? decryptForClient(clientConfig.sesAccessKeyId, clientConfig)
+              : null,
+            sesSecretAccessKey: clientConfig.sesSecretAccessKey
+              ? decryptForClient(clientConfig.sesSecretAccessKey, clientConfig)
+              : null,
+            sesFrom: clientConfig.sesFrom,
+          }
+        : undefined;
 
     const fullName =
       `${MASTER_ADMIN.FIRST_NAME || ''} ${MASTER_ADMIN.LAST_NAME || ''}`.trim();
@@ -262,9 +264,7 @@ const addClient = async (req: Request, res: Response) => {
 
     sendResponse(res, true, CODE.SUCCESS, CLIENT_MSG.CREATED, client);
   } catch (error) {
-    Logger.error(
-      `Error while creating Client: ${getErrorMessage(error)}`,
-    );
+    Logger.error(`Error while creating Client: ${getErrorMessage(error)}`);
     return sendResponse(res, false, CODE.SERVER_ERROR, GENERIC.SERVER_ERROR);
   }
 };

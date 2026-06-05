@@ -8,9 +8,13 @@ import { createServer, Server as HttpServer } from 'http';
 import morgan from 'morgan';
 import { CODE, FE_URL } from '../config/config';
 import authRoutes from './modules/auth/auth.routes';
+import eventGroupRoutes from './modules/event-groups/event-groups.routes';
+import eventRoutes from './modules/events/events.routes';
 import groupRoutes from './modules/groups/groups.routes';
 import homeRoutes from './modules/home/home.routes';
 import clientRoutes from './modules/clients/clients.routes';
+import productGroupRoutes from './modules/product-groups/product-groups.routes';
+import productRoutes from './modules/products/products.routes';
 import profileRoutes from './modules/profile/profile.routes';
 import roleRoutes from './modules/roles/roles.routes';
 import systemAdminRoutes from './modules/system-admins/system-admins.routes';
@@ -103,6 +107,10 @@ class Server {
     this.app.use('/api/v1/groups', groupRoutes);
     this.app.use('/api/v1/profile', profileRoutes);
     this.app.use('/api/v1/roles', roleRoutes);
+    this.app.use('/api/v1/products', productRoutes);
+    this.app.use('/api/v1/product-groups', productGroupRoutes);
+    this.app.use('/api/v1/events', eventRoutes);
+    this.app.use('/api/v1/event-groups', eventGroupRoutes);
 
     // Catch-all for unmatched routes
     this.app.all('*', (req, res) => {

@@ -15,7 +15,7 @@
     "reload": "pm2 reload ultrasignalapi-repo",
     "logs": "pm2 logs ultrasignalapi-repo",
     "test": "mocha test/*",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/app.ts",
+    "dev": "nodemon --watch src --ext ts,json --exec ts-node src/app.ts",
     "local": "nodemon --watch src/**/*.ts --exec NODE_ENV=local ts-node src/app.ts",
     "dev:sync": "nodemon --watch 'src/**/*.ts' --exec DB_SYNC='true' ts-node src/app.ts 'true'",
     "dev:clear": "DB_CLEAR='true' ts-node src/app.ts",

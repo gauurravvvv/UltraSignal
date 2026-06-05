@@ -1,4 +1,4 @@
-import { CLIENT_ADMIN_PERMISSIONS } from '../constants/permissions/clientAdmin';
+import { CLIENT_ADMIN_PERMISSIONS } from '../constants/permissions/clientAdmin.permission';
 
 /**
  * Flatten all permission `value` strings from a permission tree.

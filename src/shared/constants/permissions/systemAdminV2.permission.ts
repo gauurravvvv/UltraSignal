@@ -12,6 +12,7 @@
  *   - systemAdmin       — manage other system admin users
  *   - clientManagement  — onboard / list / edit / delete clients
  */
+
 export const SYSTEM_ADMIN_PERMISSIONS_V2 = [
   {
     id: 1,
