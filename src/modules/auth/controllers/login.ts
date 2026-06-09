@@ -35,6 +35,7 @@ import { createToken } from '../../../shared/utility/jwt';
 import Logger from '../../../shared/utility/logger/logger';
 import { resolveUserPermissions } from '../../../shared/utility/resolveUserPermissions';
 import sendResponse from '../../../shared/utility/response';
+import { sanitiseUser } from '../../../shared/utility/sanitiseUser';
 
 const login = async (req: Request, res: Response) => {
   Logger.info(`Login request`);
@@ -152,29 +153,21 @@ const login = async (req: Request, res: Response) => {
     user.refreshTokenExpiresAt = refreshTokenExpiresAt;
     await AppDataSource.getRepository(User).save(user);
 
-    // Strip sensitive fields before sending response
-    const {
-      password: _pw,
-      refreshToken: _rt,
-      refreshTokenExpiresAt: _rte,
-      otp: _otp,
-      sessionId: _sid,
-      failedLoginAttempts: _fla,
-      accountLockedAt: _ala,
-      version: _v,
-      createdBy: _cb,
-      updatedBy: _ub,
-      updatedOn: _uo,
-      deletedBy: _db,
-      deletedOn: _do,
-      ...safeUser
-    } = user;
+    // Phase-1 login response: trimmed user (Relay screen calls
+    // /session for permissions + role + inactivity timeout).
+    const safeUser = sanitiseUser(user);
 
     sendResponse(res, true, CODE.SUCCESS, AUTH_MSG.LOGIN_SUCCESS, {
-      user: safeUser,
+      user: {
+        id: safeUser.id,
+        firstName: safeUser.firstName,
+        lastName: safeUser.lastName,
+        email: safeUser.email,
+        username: safeUser.username,
+        locale: safeUser.locale,
+      },
       accessToken,
       refreshToken,
-      sessionInactivityTimeout: client.config?.sessionInactivityTimeout || 30,
     });
   } catch (error) {
     Logger.error(`Error in login: ${getErrorMessage(error)}`);
