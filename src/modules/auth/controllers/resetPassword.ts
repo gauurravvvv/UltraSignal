@@ -27,6 +27,10 @@ import Logger from '../../../shared/utility/logger/logger';
 import { ClientEmailConfig } from '../../../shared/utility/mail';
 import passwordResetSuccessEmail from '../../../shared/utility/mail/passwordResetSuccessEmail';
 import { buildRequestContext } from '../../../shared/utility/mail/requestContext';
+import {
+  isPasswordReused,
+  savePasswordHistory,
+} from '../../../shared/utility/passwordHistory';
 import sendResponse from '../../../shared/utility/response';
 
 const resetPassword = async (req: Request, res: Response) => {
@@ -78,16 +82,45 @@ const resetPassword = async (req: Request, res: Response) => {
       return;
     }
 
-    user.password = encryptForClient(password, client.config);
-    user.otp = null;
-    user.otpExpiresAt = null;
-    user.updatedBy = id;
-    user.refreshToken = null;
-    user.refreshTokenExpiresAt = null;
+    const historyLimit = client.config?.passwordHistoryLimit ?? 5;
+    const newEncrypted = encryptForClient(password, client.config);
 
-    await AppDataSource.transaction(async (manager: EntityManager) => {
-      await manager.save(user);
-    });
+    try {
+      await AppDataSource.transaction(async (manager: EntityManager) => {
+        if (
+          await isPasswordReused(
+            manager,
+            user.id,
+            password,
+            client.config,
+            user.password,
+            historyLimit,
+          )
+        ) {
+          throw new Error('PASSWORD_REUSED');
+        }
+
+        user.password = newEncrypted;
+        user.otp = null;
+        user.otpExpiresAt = null;
+        user.updatedBy = id;
+        user.refreshToken = null;
+        user.refreshTokenExpiresAt = null;
+        await manager.save(user);
+
+        await savePasswordHistory(manager, user.id, newEncrypted, historyLimit);
+      });
+    } catch (err) {
+      if (err instanceof Error && err.message === 'PASSWORD_REUSED') {
+        return sendResponse(
+          res,
+          false,
+          CODE.BAD_REQUEST,
+          AUTH_MSG.PASSWORD_REUSED,
+        );
+      }
+      throw err;
+    }
 
     const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
 
