@@ -7,10 +7,12 @@ import helmet from 'helmet';
 import { createServer, Server as HttpServer } from 'http';
 import morgan from 'morgan';
 import { CODE, FE_URL } from '../config/config';
+import accessLevelRoutes from './modules/access-levels/access-levels.routes';
 import authRoutes from './modules/auth/auth.routes';
 import groupRoutes from './modules/groups/groups.routes';
 import homeRoutes from './modules/home/home.routes';
 import clientRoutes from './modules/clients/clients.routes';
+import permissionRoutes from './modules/permissions/permissions.routes';
 import profileRoutes from './modules/profile/profile.routes';
 import roleRoutes from './modules/roles/roles.routes';
 import systemAdminRoutes from './modules/system-admins/system-admins.routes';
@@ -103,6 +105,8 @@ class Server {
     this.app.use('/api/v1/groups', groupRoutes);
     this.app.use('/api/v1/profile', profileRoutes);
     this.app.use('/api/v1/roles', roleRoutes);
+    this.app.use('/api/v1/access-levels', accessLevelRoutes);
+    this.app.use('/api/v1/permissions', permissionRoutes);
 
     // Catch-all for unmatched routes
     this.app.all('*', (req, res) => {

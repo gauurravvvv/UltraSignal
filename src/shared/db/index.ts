@@ -7,6 +7,8 @@ import {
 } from '../../../config/config';
 import onboardDB, { sendOnboardEmail } from '../helpers/system/onboardDB';
 import onboardClient from '../helpers/system/onboardClient';
+import seedAccessLevels from '../helpers/system/seedAccessLevels';
+import seedPermissionCatalog from '../helpers/system/seedPermissionCatalog';
 import seedSystemAdminRole from '../helpers/system/seedSystemAdminRole';
 import Logger from '../utility/logger/logger';
 import CustomLogger from '../utility/logger/typeORMLogger';
@@ -38,6 +40,15 @@ class Database {
 
     Logger.http(`${DB_CONFIG.database} Database Connected!`);
     Logger.info(`DB URL: ${DB_CONFIG.host}`);
+
+    // Always (re)seed the access-level + permission catalogs. Both seeders
+    // are idempotent — every row upserts by its stable key, so re-running
+    // on each boot just refreshes labels / icons / sequence if the catalog
+    // evolved.
+    await connection.manager.transaction(async manager => {
+      await seedAccessLevels(manager);
+      await seedPermissionCatalog(manager);
+    });
 
     const user: any[] = await connection.manager.query(
       `SELECT 1 FROM "user" LIMIT 1`,
