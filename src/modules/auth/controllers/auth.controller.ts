@@ -4,6 +4,7 @@
  * and focused. No business logic lives here.
  */
 import { Request, Response } from 'express';
+import getSession from './getSession';
 import login from './login';
 import logoutHandler from './logout';
 import refreshTokenHandler from './refreshToken';
@@ -24,6 +25,10 @@ class AuthController {
 
   public refreshToken = async (req: Request, res: Response) => {
     refreshTokenHandler(req, res);
+  };
+
+  public getSession = async (req: Request, res: Response) => {
+    getSession(req, res);
   };
 
   public getOTP = async (req: Request, res: Response) => {
