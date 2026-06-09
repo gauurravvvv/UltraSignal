@@ -32,6 +32,7 @@ import { Client } from '../../../shared/db/entities/client.entity';
 import { Role } from '../../../shared/db/entities/role.entity';
 import { UserGroupMapping } from '../../../shared/db/entities/user-group-mapping.entity';
 import { User } from '../../../shared/db/entities/user.entity';
+import { encryptForClient } from '../../../shared/services/crypto.service';
 import { generateSetupToken } from '../../../shared/utility/generateSetupToken';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
@@ -106,7 +107,7 @@ const addSystemAdmin = async (req: Request, res: Response) => {
         systemAdmin.clientId = seedOrg.id;
         systemAdmin.clientName = SYSTEM_CLIENT.NAME;
         systemAdmin.createdBy = loggedInId;
-        systemAdmin.setupToken = setupToken;
+        systemAdmin.setupToken = encryptForClient(setupToken);
         systemAdmin.setupTokenExpiresAt = new Date(
           Date.now() + SETUP_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
         );

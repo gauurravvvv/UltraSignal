@@ -25,6 +25,7 @@ import {
 import { Group } from '../../db/entities/group.entity';
 import { UserGroupMapping } from '../../db/entities/user-group-mapping.entity';
 import { User } from '../../db/entities/user.entity';
+import { encryptForClient } from '../../services/crypto.service';
 import { generateSetupToken } from '../../utility/generateSetupToken';
 import Logger from '../../utility/logger/logger';
 import welcomeEmailToUser from '../../utility/mail/welcomeEmailToUser';
@@ -51,7 +52,7 @@ const onboardDB = async (
   user.clientId = clientId;
 
   const setupToken = generateSetupToken();
-  user.setupToken = setupToken;
+  user.setupToken = encryptForClient(setupToken);
   user.setupTokenExpiresAt = new Date(
     Date.now() + SETUP_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
   );
