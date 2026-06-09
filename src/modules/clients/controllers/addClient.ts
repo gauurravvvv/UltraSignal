@@ -54,6 +54,9 @@ const addClient = async (req: Request, res: Response) => {
   const {
     name,
     description,
+    adminFirstName,
+    adminLastName,
+    adminUsername,
     adminEmail,
     adminLocale = 'en',
     maxLoginAttempts,
@@ -169,12 +172,16 @@ const addClient = async (req: Request, res: Response) => {
         memberGroup.createdBy = loggedInId;
         await manager.save(memberGroup);
 
-        // Bootstrap client admin user
+        // Bootstrap client admin user. Identity comes from the request
+        // body now — the legacy MASTER_ADMIN constants only act as
+        // fallbacks for callers that don't supply the admin* fields
+        // (the validator requires them today, so the fallbacks are
+        // defensive only).
         const clientAdmin = new User();
-        clientAdmin.firstName = MASTER_ADMIN.FIRST_NAME;
-        clientAdmin.lastName = MASTER_ADMIN.LAST_NAME;
+        clientAdmin.firstName = adminFirstName || MASTER_ADMIN.FIRST_NAME;
+        clientAdmin.lastName = adminLastName || MASTER_ADMIN.LAST_NAME;
         clientAdmin.email = adminEmail;
-        clientAdmin.username = MASTER_ADMIN.USER_NAME;
+        clientAdmin.username = adminUsername || MASTER_ADMIN.USER_NAME;
         clientAdmin.status = STATUS.ACTIVE;
         clientAdmin.clientName = client.name;
         clientAdmin.clientId = client.id;
@@ -225,13 +232,12 @@ const addClient = async (req: Request, res: Response) => {
         }
       : undefined;
 
-    const fullName =
-      `${MASTER_ADMIN.FIRST_NAME || ''} ${MASTER_ADMIN.LAST_NAME || ''}`.trim();
+    const fullName = `${clientAdmin.firstName || ''} ${clientAdmin.lastName || ''}`.trim();
 
     welcomeEmailToUser(
       adminEmail,
       fullName,
-      MASTER_ADMIN.USER_NAME,
+      clientAdmin.username,
       client.name,
       clientAdmin.id,
       client.id,

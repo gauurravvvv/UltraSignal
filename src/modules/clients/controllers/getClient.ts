@@ -1,14 +1,21 @@
 /**
- * getClient — returns an client record with live counts.
+ * getClient — returns an client record with live counts + the
+ * bootstrap admin user.
  *
  * All counts (users, groups, datasources, connections) live in the single
  * AppDataSource. Sensitive config fields (passwords, secret keys) are
  * explicitly excluded from the clientConfigData projection. SMTP/SES user-facing
  * values are decrypted with the platform master key before returning so the
  * UI can display them.
+ *
+ * The default admin user (the row created by addClient with
+ * isDefault = IS_DEFAULT.YES) is loaded alongside the counts so the
+ * client-edit screen can prefill the admin block. We project only
+ * id/firstName/lastName/username/email/locale — sensitive fields like
+ * password and setupToken stay out of the response.
  */
 import { Request, Response } from 'express';
-import { CODE } from '../../../../config/config';
+import { CODE, IS_DEFAULT } from '../../../../config/config';
 import {
   GENERIC,
   CLIENT as CLIENT_MSG,
@@ -50,15 +57,32 @@ const getClient = async (req: Request, res: Response) => {
         }
       : null;
 
-    const [usersCount, groupsCount] = await Promise.all([
+    const [usersCount, groupsCount, defaultAdmin] = await Promise.all([
       AppDataSource.getRepository(User).count({
         where: { clientId: id },
       }),
       AppDataSource.getRepository(Group).count({
         where: { clientId: id },
       }),
+      AppDataSource.getRepository(User).findOne({
+        where: { clientId: id, isDefault: IS_DEFAULT.YES },
+      }),
     ]);
     const adminsCount = 0;
+
+    // Project a safe slice of the admin row — never leak password,
+    // setupToken, refreshToken, or any audit timestamps.
+    const admin = defaultAdmin
+      ? {
+          id: defaultAdmin.id,
+          firstName: defaultAdmin.firstName,
+          lastName: defaultAdmin.lastName,
+          username: defaultAdmin.username,
+          email: defaultAdmin.email,
+          locale: defaultAdmin.locale,
+          status: defaultAdmin.status,
+        }
+      : null;
 
     sendResponse(res, true, CODE.SUCCESS, CLIENT_MSG.FETCHED, {
       ...client,
@@ -66,6 +90,7 @@ const getClient = async (req: Request, res: Response) => {
       adminsCount,
       groupsCount,
       clientConfig: clientConfigData,
+      admin,
     });
   } catch (error) {
     Logger.error(

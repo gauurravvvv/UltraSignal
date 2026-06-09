@@ -34,6 +34,9 @@ const schema = Joi.object({
   // (env: ULTRASIGNAL_MASTER_KEY) — no per-client crypto fields here.
   // dbHost/dbPort/dbName/dbUsername/dbPassword are not accepted: the
   // platform runs against a single DB from .env.
+  adminFirstName: fields.firstName.required(),
+  adminLastName: fields.lastName.required(),
+  adminUsername: fields.username.required(),
   adminEmail: fields.email.required(),
   adminLocale: Joi.string()
     .valid(...SUPPORTED_LOCALES)
