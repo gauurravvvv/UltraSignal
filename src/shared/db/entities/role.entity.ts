@@ -5,10 +5,12 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
+import { RolePermissionMapping } from './role-permission-mapping.entity';
 
 @Entity()
 @Index(['clientId', 'status'])
@@ -20,8 +22,13 @@ export class Role extends BaseEntity {
   @Column({ nullable: false })
   name: string;
 
-  @Column({ type: 'text', nullable: false })
-  permissions: string; // JSON stringified permission array
+  /**
+   * Permission grants live in `role_permission_mapping` — one row per
+   * (role, permission) carrying a level (1=Read, 2=Write, 3=Full). The
+   * legacy `permissions: text` JSON column has been removed.
+   */
+  @OneToMany(() => RolePermissionMapping, m => m.role)
+  permissionMappings: RolePermissionMapping[];
 
   @Column({ nullable: true })
   description: string;

@@ -23,8 +23,12 @@ import {
   SETUP_TOKEN_EXPIRY_HOURS,
   STATUS,
 } from '../../../../config/config';
-import { CLIENT_ADMIN_PERMISSIONS } from '../../../shared/constants/permissions/clientAdmin';
-import { CLIENT_USER_PERMISSIONS } from '../../../shared/constants/permissions/user';
+import { ACCESS } from '../../../shared/constants/permissions/access';
+import { RolePermissionMapping } from '../../../shared/db/entities/role-permission-mapping.entity';
+import {
+  getPermissionIdByValue,
+  getPermissionIdsByScope,
+} from '../../../shared/helpers/system/seedPermissionCatalog';
 import {
   GENERIC,
   CLIENT as CLIENT_MSG,
@@ -125,11 +129,11 @@ const addClient = async (req: Request, res: Response) => {
         client.createdBy = loggedInId;
         await manager.save(client);
 
-        // Seed default per-client roles
+        // Seed default per-client roles. The role row carries only
+        // metadata; permission grants live in role_permission_mapping.
         const adminRole = new Role();
         adminRole.name = 'Administrator';
         adminRole.description = 'Full client access';
-        adminRole.permissions = JSON.stringify(CLIENT_ADMIN_PERMISSIONS);
         adminRole.scope = 'ORG';
         adminRole.isDefault = IS_DEFAULT.YES;
         adminRole.clientId = client.id;
@@ -140,13 +144,38 @@ const addClient = async (req: Request, res: Response) => {
         const memberRole = new Role();
         memberRole.name = 'Member';
         memberRole.description = 'Standard user access';
-        memberRole.permissions = JSON.stringify(CLIENT_USER_PERMISSIONS);
         memberRole.scope = 'ORG';
         memberRole.isDefault = IS_DEFAULT.YES;
         memberRole.clientId = client.id;
         memberRole.clientName = client.name;
         memberRole.status = STATUS.ACTIVE;
         const savedMemberRole = await manager.save(memberRole);
+
+        // Administrator: FULL on every ORG-scope permission leaf.
+        const orgLeaves = await getPermissionIdsByScope(manager, 'ORG');
+        if (orgLeaves.length > 0) {
+          const adminMappings = orgLeaves.map(p => {
+            const m = new RolePermissionMapping();
+            m.roleId = savedAdminRole.id;
+            m.permissionId = p.id;
+            m.level = ACCESS.FULL;
+            m.createdBy = loggedInId;
+            return m;
+          });
+          await manager
+            .getRepository(RolePermissionMapping)
+            .save(adminMappings);
+        }
+
+        // Member: READ on `home` only. The tenant Administrator can raise
+        // levels or add more permissions via the role editor.
+        const homePermissionId = await getPermissionIdByValue(manager, 'home');
+        const memberHome = new RolePermissionMapping();
+        memberHome.roleId = savedMemberRole.id;
+        memberHome.permissionId = homePermissionId;
+        memberHome.level = ACCESS.READ;
+        memberHome.createdBy = loggedInId;
+        await manager.getRepository(RolePermissionMapping).save(memberHome);
 
         // Seed default groups bound to the roles
         const adminGroup = new Group();

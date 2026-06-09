@@ -1,45 +1,80 @@
 /**
- * addRole — creates a new custom permission role for a client.
+ * addRole — creates a new custom role for a client and stores its
+ * permission grants as rows in `role_permission_mapping`.
  *
- * `isDefault` is always set to 0 on creation — default roles are seeded at client
- * onboarding and cannot be created through this endpoint. Protecting this field
- * prevents an admin from creating a role that would then be immune to modification.
+ * Body shape:
+ *   {
+ *     name: string,
+ *     description?: string,
+ *     selectedPermissions?: [{ permissionId: string, level: 1|2|3 }]
+ *   }
  *
- * `permissions` is stored as a JSON string rather than a relational join because
- * the permission tree is a static constant — there is no `Permission` table to
- * foreign-key against. Storing as JSON lets the schema evolve without requiring
- * a migration every time the permission tree changes.
+ * Entries with level <= 0 are ignored (absence = NONE, no row stored).
+ *
+ * Role row + mapping rows commit in a single transaction so an interrupted
+ * save can't leave a role with partial grants.
+ *
+ * `isDefault` is always 0 on creation — default roles are seeded at client
+ * onboarding and can't be added through this endpoint.
  */
 import { Request, Response } from 'express';
+import { EntityManager } from 'typeorm';
 import { CODE, IS_DEFAULT } from '../../../../config/config';
+import { ACCESS } from '../../../shared/constants/permissions/access';
 import {
   GENERIC,
   ROLE as ROLE_MSG,
 } from '../../../shared/constants/response.messages';
+import { AppDataSource } from '../../../shared/db';
 import { Role } from '../../../shared/db/entities/role.entity';
+import { RolePermissionMapping } from '../../../shared/db/entities/role-permission-mapping.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
-import { AppDataSource } from '../../../shared/db';
+
+interface SelectedPermission {
+  permissionId: string;
+  level: number;
+}
 
 const addRole = async (req: Request, res: Response) => {
   Logger.info('Add Role request');
 
-  const { name, description, selectedPermissions } = req.body;
+  const { name, description, selectedPermissions } = req.body as {
+    name: string;
+    description?: string;
+    selectedPermissions?: SelectedPermission[];
+  };
   const { loggedInId, clientData } = res.locals;
 
   try {
-    const role = new Role();
-    role.name = name;
-    role.description = description || null;
-    role.permissions = JSON.stringify(selectedPermissions);
-    role.clientId = clientData.id;
-    role.clientName = clientData.name;
-    role.isDefault = IS_DEFAULT.NO;
-    role.status = 1;
-    role.createdBy = loggedInId;
+    let saved!: Role;
+    await AppDataSource.manager.transaction(async (manager: EntityManager) => {
+      const role = new Role();
+      role.name = name;
+      role.description = description || null!;
+      role.clientId = clientData.id;
+      role.clientName = clientData.name;
+      role.isDefault = IS_DEFAULT.NO;
+      role.status = 1;
+      role.createdBy = loggedInId;
+      saved = await manager.getRepository(Role).save(role);
 
-    const saved = await AppDataSource.getRepository(Role).save(role);
+      const wantedMappings = (selectedPermissions ?? [])
+        .filter(p => p.permissionId && p.level >= ACCESS.READ && p.level <= ACCESS.FULL)
+        .map(p => {
+          const m = new RolePermissionMapping();
+          m.roleId = saved.id;
+          m.permissionId = p.permissionId;
+          m.level = p.level;
+          m.createdBy = loggedInId;
+          return m;
+        });
+
+      if (wantedMappings.length > 0) {
+        await manager.getRepository(RolePermissionMapping).save(wantedMappings);
+      }
+    });
 
     sendResponse(res, true, CODE.SUCCESS, ROLE_MSG.CREATED, saved);
   } catch (error) {
