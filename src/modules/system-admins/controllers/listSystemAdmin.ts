@@ -19,7 +19,6 @@ import {
   DEFAULT_PAGE,
   IS_DEFAULT,
   MAX_ROW,
-  ROLES,
   SYSTEM_CLIENT,
 } from '../../../../config/config';
 import {
@@ -59,11 +58,16 @@ const listSystemAdmin = async (req: Request, res: Response) => {
       sort?: string;
     };
 
-    const query = User.createQueryBuilder('user')
-      .where('user.clientName = :orgName', {
-        orgName: SYSTEM_CLIENT.NAME,
-      })
-      .andWhere('user.role = :role', { role: ROLES.SYSTEM_ADMIN });
+    // Every user attached to the seed System Client IS a system admin —
+    // addSystemAdmin only ever inserts into that client. The legacy
+    // .andWhere('user.role = ...') used to backstop this when User
+    // carried an inline `role` column, but that column was removed in
+    // the Group → Role refactor. Postgres now throws
+    // `syntax error at or near "."` against the missing column.
+    const query = User.createQueryBuilder('user').where(
+      'user.clientName = :orgName',
+      { orgName: SYSTEM_CLIENT.NAME },
+    );
 
     if (filter) {
       try {
