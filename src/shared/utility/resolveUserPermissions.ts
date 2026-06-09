@@ -39,6 +39,11 @@ export async function resolveUserPermissions(
   userId: string,
 ): Promise<ResolvedPermissions> {
   // Merged permission set — one MAX(level) per permission value.
+  //
+  // `g.status` / `r.status` / `p.status` are Postgres ENUMs whose labels
+  // are the strings '0' and '1' (the underlying TypeORM column is
+  // `enum: [0, 1]`). Compare against the string label, not an int, or
+  // Postgres raises "operator does not exist: <enum> = integer".
   const permRows: { value: string; level: number | string }[] =
     await connection.query(
       `
@@ -50,9 +55,9 @@ export async function resolveUserPermissions(
       JOIN   role_permission_mapping rpm  ON rpm."roleId" = r.id
       JOIN   permission p                 ON p.id = rpm."permissionId"
       WHERE  ugm."userId" = $1
-        AND  g.status = 1
-        AND  r.status = 1
-        AND  p.status = 1
+        AND  g.status = '1'
+        AND  r.status = '1'
+        AND  p.status = '1'
       GROUP  BY p.value
       `,
       [userId],
@@ -68,8 +73,8 @@ export async function resolveUserPermissions(
     JOIN   "group" g  ON g.id = ugm."groupId"
     JOIN   role r     ON r.id = g."roleId"
     WHERE  ugm."userId" = $1
-      AND  g.status = 1
-      AND  r.status = 1
+      AND  g.status = '1'
+      AND  r.status = '1'
     `,
     [userId],
   );
