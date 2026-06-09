@@ -50,12 +50,6 @@ export const CLIENT_TYPE = {
   CUSTOM: 0,
 };
 
-export const MASTER_ADMIN = {
-  FIRST_NAME: 'Master',
-  LAST_NAME: 'Admin',
-  USER_NAME: 'master_admin',
-};
-
 export const JWT_SECRET_KEY = (() => {
   const key = process.env.JWT_SECRET_KEY;
   if (!key) throw new Error('JWT_SECRET_KEY environment variable is required');
@@ -95,6 +89,13 @@ export const DEFAULT_PAGE = 1;
 
 // Default row limit for dataset/analysis query execution
 export const DATASET_QUERY_LIMIT = 1000;
+
+export const DEFAULT_CLIENT_CONFIG = {
+  maxLoginAttempts: 5,
+  accountLockDurationHours: 1,
+  passwordHistoryLimit: 5,
+  sessionInactivityTimeout: 30,
+};
 
 export const MAX_LENGTH = {
   FIRST_NAME: 30,
@@ -170,8 +171,6 @@ export const IS_DEFAULT = {
 } as const;
 
 export const CONNECTION_TIMEOUT = 30000;
-
-export const ULTRASIGNAL_SCHEMA_NAME = 'dbexec_master';
 
 /**
  * Database engines UltraSignal can talk to.

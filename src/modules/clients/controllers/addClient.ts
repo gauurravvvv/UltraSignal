@@ -20,7 +20,6 @@ import { EntityManager } from 'typeorm';
 import {
   CODE,
   IS_DEFAULT,
-  MASTER_ADMIN,
   SETUP_TOKEN_EXPIRY_HOURS,
   STATUS,
 } from '../../../../config/config';
@@ -178,10 +177,10 @@ const addClient = async (req: Request, res: Response) => {
         // (the validator requires them today, so the fallbacks are
         // defensive only).
         const clientAdmin = new User();
-        clientAdmin.firstName = adminFirstName || MASTER_ADMIN.FIRST_NAME;
-        clientAdmin.lastName = adminLastName || MASTER_ADMIN.LAST_NAME;
+        clientAdmin.firstName = adminFirstName;
+        clientAdmin.lastName = adminLastName;
         clientAdmin.email = adminEmail;
-        clientAdmin.username = adminUsername || MASTER_ADMIN.USER_NAME;
+        clientAdmin.username = adminUsername;
         clientAdmin.status = STATUS.ACTIVE;
         clientAdmin.clientName = client.name;
         clientAdmin.clientId = client.id;
@@ -209,30 +208,32 @@ const addClient = async (req: Request, res: Response) => {
 
     Logger.info(`Client Admin created successfully.`);
 
-    const clientEmailConfig: ClientEmailConfig | undefined = clientConfig.emailProvider
-      ? {
-          emailProvider: clientConfig.emailProvider,
-          smtpHost: clientConfig.smtpHost,
-          smtpPort: clientConfig.smtpPort,
-          smtpUser: clientConfig.smtpUser
-            ? decryptForClient(clientConfig.smtpUser)
-            : null,
-          smtpPassword: clientConfig.smtpPassword
-            ? decryptForClient(clientConfig.smtpPassword)
-            : null,
-          smtpFrom: clientConfig.smtpFrom,
-          sesRegion: clientConfig.sesRegion,
-          sesAccessKeyId: clientConfig.sesAccessKeyId
-            ? decryptForClient(clientConfig.sesAccessKeyId)
-            : null,
-          sesSecretAccessKey: clientConfig.sesSecretAccessKey
-            ? decryptForClient(clientConfig.sesSecretAccessKey)
-            : null,
-          sesFrom: clientConfig.sesFrom,
-        }
-      : undefined;
+    const clientEmailConfig: ClientEmailConfig | undefined =
+      clientConfig.emailProvider
+        ? {
+            emailProvider: clientConfig.emailProvider,
+            smtpHost: clientConfig.smtpHost,
+            smtpPort: clientConfig.smtpPort,
+            smtpUser: clientConfig.smtpUser
+              ? decryptForClient(clientConfig.smtpUser)
+              : null,
+            smtpPassword: clientConfig.smtpPassword
+              ? decryptForClient(clientConfig.smtpPassword)
+              : null,
+            smtpFrom: clientConfig.smtpFrom,
+            sesRegion: clientConfig.sesRegion,
+            sesAccessKeyId: clientConfig.sesAccessKeyId
+              ? decryptForClient(clientConfig.sesAccessKeyId)
+              : null,
+            sesSecretAccessKey: clientConfig.sesSecretAccessKey
+              ? decryptForClient(clientConfig.sesSecretAccessKey)
+              : null,
+            sesFrom: clientConfig.sesFrom,
+          }
+        : undefined;
 
-    const fullName = `${clientAdmin.firstName || ''} ${clientAdmin.lastName || ''}`.trim();
+    const fullName =
+      `${clientAdmin.firstName || ''} ${clientAdmin.lastName || ''}`.trim();
 
     welcomeEmailToUser(
       adminEmail,
@@ -249,9 +250,7 @@ const addClient = async (req: Request, res: Response) => {
 
     sendResponse(res, true, CODE.SUCCESS, CLIENT_MSG.CREATED, client);
   } catch (error) {
-    Logger.error(
-      `Error while creating Client: ${getErrorMessage(error)}`,
-    );
+    Logger.error(`Error while creating Client: ${getErrorMessage(error)}`);
     return sendResponse(res, false, CODE.SERVER_ERROR, GENERIC.SERVER_ERROR);
   }
 };
