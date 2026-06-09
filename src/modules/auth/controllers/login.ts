@@ -93,7 +93,7 @@ const login = async (req: Request, res: Response) => {
       }
     }
 
-    if (password != decryptForClient(user.password, client.config)) {
+    if (password != decryptForClient(user.password)) {
       user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
       if (user.failedLoginAttempts >= maxAttempts) {
         user.accountLockedAt = new Date();

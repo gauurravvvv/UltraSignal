@@ -69,7 +69,7 @@ const addUser = async (req: Request, res: Response) => {
     user.locale = locale;
 
     const setupToken = generateSetupToken();
-    user.setupToken = encryptForClient(setupToken, clientData.config);
+    user.setupToken = encryptForClient(setupToken);
     user.setupTokenExpiresAt = new Date(
       Date.now() + SETUP_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
     );
@@ -99,18 +99,18 @@ const addUser = async (req: Request, res: Response) => {
           smtpHost: clientData.config.smtpHost,
           smtpPort: clientData.config.smtpPort,
           smtpUser: clientData.config.smtpUser
-            ? decryptForClient(clientData.config.smtpUser, clientData.config)
+            ? decryptForClient(clientData.config.smtpUser)
             : null,
           smtpPassword: clientData.config.smtpPassword
-            ? decryptForClient(clientData.config.smtpPassword, clientData.config)
+            ? decryptForClient(clientData.config.smtpPassword)
             : null,
           smtpFrom: clientData.config.smtpFrom,
           sesRegion: clientData.config.sesRegion,
           sesAccessKeyId: clientData.config.sesAccessKeyId
-            ? decryptForClient(clientData.config.sesAccessKeyId, clientData.config)
+            ? decryptForClient(clientData.config.sesAccessKeyId)
             : null,
           sesSecretAccessKey: clientData.config.sesSecretAccessKey
-            ? decryptForClient(clientData.config.sesSecretAccessKey, clientData.config)
+            ? decryptForClient(clientData.config.sesSecretAccessKey)
             : null,
           sesFrom: clientData.config.sesFrom,
         }

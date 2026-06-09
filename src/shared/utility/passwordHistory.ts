@@ -9,7 +9,6 @@
  * inside the same transaction that writes the new user.password.
  */
 import { EntityManager } from 'typeorm';
-import { ClientConfig } from '../db/entities/clientConfig.entity';
 import { PasswordHistory } from '../db/entities/passwordHistory.entity';
 import { decryptForClient } from '../services/crypto.service';
 import Logger from './logger/logger';
@@ -18,7 +17,6 @@ export async function isPasswordReused(
   manager: EntityManager,
   userId: string,
   newPassword: string,
-  clientConfig: ClientConfig,
   currentEncryptedPassword?: string | null,
   limit: number = 5,
 ): Promise<boolean> {
@@ -27,7 +25,7 @@ export async function isPasswordReused(
   // PasswordHistory.
   if (currentEncryptedPassword) {
     try {
-      if (decryptForClient(currentEncryptedPassword, clientConfig) === newPassword) {
+      if (decryptForClient(currentEncryptedPassword) === newPassword) {
         return true;
       }
     } catch (err) {
@@ -45,7 +43,7 @@ export async function isPasswordReused(
 
   for (const entry of history) {
     try {
-      if (decryptForClient(entry.password, clientConfig) === newPassword) {
+      if (decryptForClient(entry.password) === newPassword) {
         return true;
       }
     } catch (err) {

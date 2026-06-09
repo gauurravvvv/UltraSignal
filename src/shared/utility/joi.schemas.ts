@@ -10,16 +10,6 @@ const USERNAME_PATTERN = /^[A-Za-z][A-Za-z0-9._-]*$/;
 // Client name: starts with letter/number, allows letters, numbers, spaces, dots, underscores, hyphens
 const CLIENT_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9 ._-]*$/;
 
-// Valid encryption algorithms
-const ENCRYPTION_ALGORITHMS = [
-  'aes-256-gcm',
-  'aes-192-gcm',
-  'aes-128-gcm',
-  'aes-256-cbc',
-  'aes-192-cbc',
-  'aes-128-cbc',
-];
-
 /**
  * Custom Joi validator for password strength.
  * Returns specific error codes for each failed rule,
@@ -159,29 +149,6 @@ export const fields = {
       'string.min': `Description must be at least ${MIN_LENGTH.DESCRIPTION} characters`,
       'string.max': `Description must not exceed ${MAX_LENGTH.DESCRIPTION} characters`,
       'any.required': 'Description is required',
-    }),
-
-  encryptionAlgorithm: Joi.string()
-    .trim()
-    .lowercase()
-    .valid(...ENCRYPTION_ALGORITHMS)
-    .messages({
-      'string.empty': 'Encryption algorithm is required',
-      'any.only': `Encryption algorithm must be one of: ${ENCRYPTION_ALGORITHMS.join(
-        ', ',
-      )}`,
-      'any.required': 'Encryption algorithm is required',
-    }),
-
-  pepperKey: Joi.string()
-    .min(MIN_LENGTH.PEPPER_KEY)
-    .pattern(REGEX_PATTERNS.PEPPER_KEY)
-    .messages({
-      'string.empty': 'Pepper key is required',
-      'string.min': `Pepper key must be at least ${MIN_LENGTH.PEPPER_KEY} characters`,
-      'string.pattern.base':
-        'Pepper key can only contain letters, numbers and special characters (no spaces)',
-      'any.required': 'Pepper key is required',
     }),
 
   maxLoginAttempts: Joi.number().integer().min(3).max(10).messages({

@@ -83,7 +83,7 @@ const resetPassword = async (req: Request, res: Response) => {
     }
 
     const historyLimit = client.config?.passwordHistoryLimit ?? 5;
-    const newEncrypted = encryptForClient(password, client.config);
+    const newEncrypted = encryptForClient(password);
 
     try {
       await AppDataSource.transaction(async (manager: EntityManager) => {
@@ -92,7 +92,6 @@ const resetPassword = async (req: Request, res: Response) => {
             manager,
             user.id,
             password,
-            client.config,
             user.password,
             historyLimit,
           )
@@ -130,18 +129,18 @@ const resetPassword = async (req: Request, res: Response) => {
           smtpHost: client.config.smtpHost,
           smtpPort: client.config.smtpPort,
           smtpUser: client.config.smtpUser
-            ? decryptForClient(client.config.smtpUser, client.config)
+            ? decryptForClient(client.config.smtpUser)
             : null,
           smtpPassword: client.config.smtpPassword
-            ? decryptForClient(client.config.smtpPassword, client.config)
+            ? decryptForClient(client.config.smtpPassword)
             : null,
           smtpFrom: client.config.smtpFrom,
           sesRegion: client.config.sesRegion,
           sesAccessKeyId: client.config.sesAccessKeyId
-            ? decryptForClient(client.config.sesAccessKeyId, client.config)
+            ? decryptForClient(client.config.sesAccessKeyId)
             : null,
           sesSecretAccessKey: client.config.sesSecretAccessKey
-            ? decryptForClient(client.config.sesSecretAccessKey, client.config)
+            ? decryptForClient(client.config.sesSecretAccessKey)
             : null,
           sesFrom: client.config.sesFrom,
         }

@@ -51,7 +51,7 @@ const changePassword = async (req: Request, res: Response) => {
       return sendResponse(res, false, CODE.NOT_FOUND, 'User not found');
     }
 
-    user.password = encryptForClient(newPassword, client.config);
+    user.password = encryptForClient(newPassword);
     user.updatedBy = loggedInId;
     user.refreshToken = null;
     user.refreshTokenExpiresAt = null;
@@ -66,18 +66,18 @@ const changePassword = async (req: Request, res: Response) => {
           smtpHost: client.config.smtpHost,
           smtpPort: client.config.smtpPort,
           smtpUser: client.config.smtpUser
-            ? decryptForClient(client.config.smtpUser, client.config)
+            ? decryptForClient(client.config.smtpUser)
             : null,
           smtpPassword: client.config.smtpPassword
-            ? decryptForClient(client.config.smtpPassword, client.config)
+            ? decryptForClient(client.config.smtpPassword)
             : null,
           smtpFrom: client.config.smtpFrom,
           sesRegion: client.config.sesRegion,
           sesAccessKeyId: client.config.sesAccessKeyId
-            ? decryptForClient(client.config.sesAccessKeyId, client.config)
+            ? decryptForClient(client.config.sesAccessKeyId)
             : null,
           sesSecretAccessKey: client.config.sesSecretAccessKey
-            ? decryptForClient(client.config.sesSecretAccessKey, client.config)
+            ? decryptForClient(client.config.sesSecretAccessKey)
             : null,
           sesFrom: client.config.sesFrom,
         }

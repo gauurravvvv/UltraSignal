@@ -2,7 +2,7 @@
  * addClient — provisions a new tenant client inside the single AppDataSource.
  *
  * All rows commit in a single transaction:
- *  - ClientConfig (with envelope-encrypted DEK, security policy, email config)
+ *  - ClientConfig (security policy + optional email config)
  *  - Client
  *  - Two default per-client roles (Administrator, Member)
  *  - Two default groups (Administrators, Members) bound to the roles
@@ -10,7 +10,7 @@
  *  - The UserGroupMapping joining admin user to Administrators group
  *
  * Email credentials (SMTP user/password, SES keys) are stored encrypted with the
- * client's own DEK so they cannot be decrypted without that key.
+ * platform master key (env: ULTRASIGNAL_MASTER_KEY) — see shared/services/crypto.service.ts.
  *
  * The welcome email to the client admin is sent after the transaction commits so a
  * mail-delivery failure does not roll back the client creation.
@@ -40,8 +40,6 @@ import { User } from '../../../shared/db/entities/user.entity';
 import {
   decryptForClient,
   encryptForClient,
-  generateDek,
-  wrapDek,
 } from '../../../shared/services/crypto.service';
 import { generateSetupToken } from '../../../shared/utility/generateSetupToken';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
@@ -76,27 +74,10 @@ const addClient = async (req: Request, res: Response) => {
   const { loggedInId } = res.locals;
 
   try {
-    // Generate this client's data-encryption key (DEK) and wrap it under
-    // the platform master key. The raw DEK never touches the DB — only
-    // the wrapped form. Scrub the raw buffer the moment wrapping succeeds.
-    const dek = generateDek();
-    let encryptedDek: string;
-    try {
-      encryptedDek = wrapDek(dek);
-    } finally {
-      dek.fill(0);
-    }
-
     const result = await AppDataSource.transaction(
       async (manager: EntityManager) => {
         const clientConfig = new ClientConfig();
         clientConfig.createdBy = loggedInId;
-        clientConfig.encryptedDek = encryptedDek;
-        // Legacy columns intentionally left null on new clients — the
-        // migrate-on-read helper treats `encryptedDek != null` as
-        // "already on the new scheme; skip migration".
-        clientConfig.pepperKey = null;
-        clientConfig.encryptionAlgorithm = null;
 
         if (maxLoginAttempts !== undefined)
           clientConfig.maxLoginAttempts = maxLoginAttempts;
@@ -113,19 +94,19 @@ const addClient = async (req: Request, res: Response) => {
             clientConfig.smtpHost = smtpHost || null;
             clientConfig.smtpPort = smtpPort || null;
             clientConfig.smtpUser = smtpUser
-              ? encryptForClient(smtpUser, clientConfig)
+              ? encryptForClient(smtpUser)
               : null;
             clientConfig.smtpPassword = smtpPassword
-              ? encryptForClient(smtpPassword, clientConfig)
+              ? encryptForClient(smtpPassword)
               : null;
             clientConfig.smtpFrom = smtpFrom || null;
           } else if (emailProvider === 'SES') {
             clientConfig.sesRegion = sesRegion || null;
             clientConfig.sesAccessKeyId = sesAccessKeyId
-              ? encryptForClient(sesAccessKeyId, clientConfig)
+              ? encryptForClient(sesAccessKeyId)
               : null;
             clientConfig.sesSecretAccessKey = sesSecretAccessKey
-              ? encryptForClient(sesSecretAccessKey, clientConfig)
+              ? encryptForClient(sesSecretAccessKey)
               : null;
             clientConfig.sesFrom = sesFrom || null;
           }
@@ -202,7 +183,7 @@ const addClient = async (req: Request, res: Response) => {
         clientAdmin.locale = adminLocale;
 
         const setupToken = generateSetupToken();
-        clientAdmin.setupToken = encryptForClient(setupToken, clientConfig);
+        clientAdmin.setupToken = encryptForClient(setupToken);
         clientAdmin.setupTokenExpiresAt = new Date(
           Date.now() + SETUP_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
         );
@@ -227,18 +208,18 @@ const addClient = async (req: Request, res: Response) => {
           smtpHost: clientConfig.smtpHost,
           smtpPort: clientConfig.smtpPort,
           smtpUser: clientConfig.smtpUser
-            ? decryptForClient(clientConfig.smtpUser, clientConfig)
+            ? decryptForClient(clientConfig.smtpUser)
             : null,
           smtpPassword: clientConfig.smtpPassword
-            ? decryptForClient(clientConfig.smtpPassword, clientConfig)
+            ? decryptForClient(clientConfig.smtpPassword)
             : null,
           smtpFrom: clientConfig.smtpFrom,
           sesRegion: clientConfig.sesRegion,
           sesAccessKeyId: clientConfig.sesAccessKeyId
-            ? decryptForClient(clientConfig.sesAccessKeyId, clientConfig)
+            ? decryptForClient(clientConfig.sesAccessKeyId)
             : null,
           sesSecretAccessKey: clientConfig.sesSecretAccessKey
-            ? decryptForClient(clientConfig.sesSecretAccessKey, clientConfig)
+            ? decryptForClient(clientConfig.sesSecretAccessKey)
             : null,
           sesFrom: clientConfig.sesFrom,
         }

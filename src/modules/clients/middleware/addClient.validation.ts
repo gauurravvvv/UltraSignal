@@ -30,12 +30,10 @@ import { validateSchema } from '../../../shared/utility/validate.middleware';
 const schema = Joi.object({
   name: fields.clientName.required(),
   description: fields.description.required(),
-  // encryptionAlgorithm + pepperKey are no longer accepted from the
-  // client. The server generates a per-client DEK at creation time and
-  // wraps it under the platform master key. See addClient.ts.
-  // dbHost/dbPort/dbName/dbUsername/dbPassword removed — the platform
-  // runs against a single DB from .env; clients no longer carry their
-  // own DB pointer.
+  // All client secrets are encrypted with the platform master key
+  // (env: ULTRASIGNAL_MASTER_KEY) — no per-client crypto fields here.
+  // dbHost/dbPort/dbName/dbUsername/dbPassword are not accepted: the
+  // platform runs against a single DB from .env.
   adminEmail: fields.email.required(),
   adminLocale: Joi.string()
     .valid(...SUPPORTED_LOCALES)

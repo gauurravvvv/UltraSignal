@@ -19,38 +19,9 @@ export class ClientConfig extends BaseEntity {
   @OneToOne(() => Client, client => client.config)
   client: Client;
 
-  /**
-   * Wrapped Data Encryption Key (DEK) for this client's secrets.
-   *
-   * Format: `v1:<iv_hex>:<authtag_hex>:<encrypted_hex>` — produced by
-   * services/crypto.service.ts using AES-256-GCM under the platform
-   * master key. The raw DEK is 32 random bytes generated server-side
-   * at client creation; only the wrapped form ever touches the database.
-   *
-   * Nullable for the migration window: legacy clients still carry
-   * `pepperKey` + `encryptionAlgorithm` and will be migrated on first
-   * use (helpers/client/migrateClientCrypto.ts). After every client
-   * has migrated, the two legacy columns can be dropped and this
-   * column made non-null.
-   */
-  @Column({ type: 'text', nullable: true, default: null })
-  encryptedDek: string | null;
-
-  /**
-   * @deprecated Legacy pepper key from the user-typed scheme. Kept
-   * nullable so existing clients continue to read until they're
-   * migrated. New clients leave this NULL.
-   */
-  @Column({ type: 'varchar', nullable: true, default: null })
-  pepperKey: string | null;
-
-  /**
-   * @deprecated Legacy algorithm picker. Always 'aes-256-gcm' on
-   * any newly-created client — the value comes from the crypto service,
-   * not from a per-client choice. Nullable for legacy rows.
-   */
-  @Column({ type: 'varchar', nullable: true, default: null })
-  encryptionAlgorithm: string | null;
+  // Crypto: every client's secrets are encrypted with the single
+  // platform master key (ULTRASIGNAL_MASTER_KEY in .env). No
+  // per-client DEK row — see shared/services/crypto.service.ts.
 
   // Security Settings
   @Column({ type: 'int', default: 5 })

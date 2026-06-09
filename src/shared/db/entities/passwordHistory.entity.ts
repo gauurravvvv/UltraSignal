@@ -18,9 +18,9 @@ export class PasswordHistory extends BaseEntity {
   @Column({ type: 'uuid', nullable: false })
   userId: string;
 
-  // Stored encrypted under the client DEK via encryptForClient — same
+  // Stored encrypted under the platform master key via encryptForClient — same
   // ciphertext format as user.password. Comparison is decrypt-then-equal
-  // (UltraSignal crypto is reversible per-client, unlike bcrypt).
+  // (UltraSignal crypto is reversible, unlike bcrypt).
   // select: false so a stray .find() doesn't drag encrypted history rows
   // into a response. Callers that need it use .addSelect('password').
   @Column({ type: 'text', nullable: false, select: false })

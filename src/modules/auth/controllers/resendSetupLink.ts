@@ -85,7 +85,7 @@ const resendSetupLink = async (req: Request, res: Response) => {
     }
 
     const setupToken = generateSetupToken();
-    user.setupToken = encryptForClient(setupToken, client.config);
+    user.setupToken = encryptForClient(setupToken);
     user.setupTokenExpiresAt = new Date(
       Date.now() + SETUP_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
     );
@@ -100,18 +100,18 @@ const resendSetupLink = async (req: Request, res: Response) => {
           smtpHost: client.config.smtpHost,
           smtpPort: client.config.smtpPort,
           smtpUser: client.config.smtpUser
-            ? decryptForClient(client.config.smtpUser, client.config)
+            ? decryptForClient(client.config.smtpUser)
             : null,
           smtpPassword: client.config.smtpPassword
-            ? decryptForClient(client.config.smtpPassword, client.config)
+            ? decryptForClient(client.config.smtpPassword)
             : null,
           smtpFrom: client.config.smtpFrom,
           sesRegion: client.config.sesRegion,
           sesAccessKeyId: client.config.sesAccessKeyId
-            ? decryptForClient(client.config.sesAccessKeyId, client.config)
+            ? decryptForClient(client.config.sesAccessKeyId)
             : null,
           sesSecretAccessKey: client.config.sesSecretAccessKey
-            ? decryptForClient(client.config.sesSecretAccessKey, client.config)
+            ? decryptForClient(client.config.sesSecretAccessKey)
             : null,
           sesFrom: client.config.sesFrom,
         }

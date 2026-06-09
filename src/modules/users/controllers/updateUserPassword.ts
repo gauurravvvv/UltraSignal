@@ -32,7 +32,7 @@ const updateOrgUserPassword = async (req: Request, res: Response) => {
   const { loggedInId, clientData, orgUser } = res.locals;
 
   try {
-    orgUser.password = encryptForClient(newPassword, clientData.config);
+    orgUser.password = encryptForClient(newPassword);
     orgUser.updatedBy = loggedInId;
     orgUser.refreshToken = null;
     orgUser.refreshTokenExpiresAt = null;

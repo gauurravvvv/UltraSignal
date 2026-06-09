@@ -65,10 +65,10 @@ const updateClient = async (req: Request, res: Response) => {
         if (smtpPort !== undefined) clientConfig.smtpPort = smtpPort;
         if (smtpUser !== undefined)
           clientConfig.smtpUser = smtpUser
-            ? encryptForClient(smtpUser, clientConfig)
+            ? encryptForClient(smtpUser)
             : null;
         if (smtpPassword)
-          clientConfig.smtpPassword = encryptForClient(smtpPassword, clientConfig);
+          clientConfig.smtpPassword = encryptForClient(smtpPassword);
         if (smtpFrom !== undefined) clientConfig.smtpFrom = smtpFrom;
         clientConfig.sesRegion = null;
         clientConfig.sesAccessKeyId = null;
@@ -78,13 +78,10 @@ const updateClient = async (req: Request, res: Response) => {
         if (sesRegion !== undefined) clientConfig.sesRegion = sesRegion;
         if (sesAccessKeyId !== undefined)
           clientConfig.sesAccessKeyId = sesAccessKeyId
-            ? encryptForClient(sesAccessKeyId, clientConfig)
+            ? encryptForClient(sesAccessKeyId)
             : null;
         if (sesSecretAccessKey)
-          clientConfig.sesSecretAccessKey = encryptForClient(
-            sesSecretAccessKey,
-            clientConfig,
-          );
+          clientConfig.sesSecretAccessKey = encryptForClient(sesSecretAccessKey);
         if (sesFrom !== undefined) clientConfig.sesFrom = sesFrom;
         clientConfig.smtpHost = null;
         clientConfig.smtpPort = null;

@@ -4,7 +4,8 @@
  * All counts (users, groups, datasources, connections) live in the single
  * AppDataSource. Sensitive config fields (passwords, secret keys) are
  * explicitly excluded from the clientConfigData projection. SMTP/SES user-facing
- * values are decrypted before returning so the UI can display them.
+ * values are decrypted with the platform master key before returning so the
+ * UI can display them.
  */
 import { Request, Response } from 'express';
 import { CODE } from '../../../../config/config';
@@ -27,11 +28,8 @@ const getClient = async (req: Request, res: Response) => {
   try {
     const { client } = res.locals;
 
-    const encryptionAlgorithm = client.config?.encryptionAlgorithm || null;
-
     const clientConfigData = client.config
       ? {
-          encryptionAlgorithm: client.config.encryptionAlgorithm,
           maxLoginAttempts: client.config.maxLoginAttempts,
           accountLockDurationHours: client.config.accountLockDurationHours,
           passwordHistoryLimit: client.config.passwordHistoryLimit,
@@ -40,12 +38,12 @@ const getClient = async (req: Request, res: Response) => {
           smtpHost: client.config.smtpHost,
           smtpPort: client.config.smtpPort,
           smtpUser: client.config.smtpUser
-            ? decryptForClient(client.config.smtpUser, client.config)
+            ? decryptForClient(client.config.smtpUser)
             : null,
           smtpFrom: client.config.smtpFrom,
           sesRegion: client.config.sesRegion,
           sesAccessKeyId: client.config.sesAccessKeyId
-            ? decryptForClient(client.config.sesAccessKeyId, client.config)
+            ? decryptForClient(client.config.sesAccessKeyId)
             : null,
           sesFrom: client.config.sesFrom,
           // Passwords/secrets NOT included — sensitive
@@ -67,7 +65,6 @@ const getClient = async (req: Request, res: Response) => {
       usersCount,
       adminsCount,
       groupsCount,
-      encryptionAlgorithm,
       clientConfig: clientConfigData,
     });
   } catch (error) {

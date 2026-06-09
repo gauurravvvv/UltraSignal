@@ -68,7 +68,7 @@ const verifySetupToken = async (req: Request, res: Response) => {
       return respondInvalid(res);
     }
 
-    const decryptedToken = decryptForClient(user.setupToken, client.config);
+    const decryptedToken = decryptForClient(user.setupToken);
     if (!timingSafeEqual(Buffer.from(token), Buffer.from(decryptedToken))) {
       return respondInvalid(res);
     }
