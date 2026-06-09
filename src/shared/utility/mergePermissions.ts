@@ -1,68 +1,112 @@
-import { CLIENT_ADMIN_PERMISSIONS } from '../constants/permissions/clientAdmin';
-
-/**
- * Flatten all permission `value` strings from a permission tree.
- */
-function flattenValues(perms: any[]): Set<string> {
-  const values = new Set<string>();
-  for (const p of perms) {
-    if (p.status !== false) values.add(p.value);
-    if (p.subPermissions) {
-      for (const v of flattenValues(p.subPermissions)) {
-        values.add(v);
-      }
-    }
-  }
-  return values;
-}
-
-/**
- * Build a permission tree keeping only nodes whose value is in `activeValues`
- * (or that have active children). Uses CLIENT_ADMIN_PERMISSIONS as the canonical structure.
- */
-function buildMergedTree(template: any[], activeValues: Set<string>): any[] {
-  const result: any[] = [];
-  for (const perm of template) {
-    const children = perm.subPermissions
-      ? buildMergedTree(perm.subPermissions, activeValues)
-      : undefined;
-
-    const hasActiveChildren = children && children.length > 0;
-    const isActive = activeValues.has(perm.value);
-
-    if (isActive || hasActiveChildren) {
-      result.push({
-        ...perm,
-        status: true,
-        subPermissions: hasActiveChildren ? children : undefined,
-      });
-    }
-  }
-  return result;
-}
-
 /**
  * Merge permission trees from multiple roles.
- * Union semantics: if ANY role has a permission with status=true, user gets it.
  *
- * @param rolePermissionJsons - array of JSON-stringified permission arrays (one per role)
- * @returns merged permission tree
+ * The DB stores each role's permission tree as its own JSON blob —
+ * System Admin, Administrator, Member, etc. all carry their own shape,
+ * label, and icon set. The merge contract is:
+ *
+ *   - Single role  → return that role's tree verbatim (filtering out
+ *                     status: false nodes for safety).
+ *   - Multiple roles → union by `value`. Each node appears once in the
+ *                     output; the FIRST role that contributes a given
+ *                     `value` wins for label / icon / order. Children
+ *                     merge recursively with the same rule.
+ *
+ * `status: false` nodes are dropped at every level — those exist as
+ * "registered but disabled" entries in the seed file and should never
+ * leak to the FE.
+ *
+ * Prior versions of this file hardcoded CLIENT_ADMIN_PERMISSIONS as the
+ * canonical structure, which silently swapped a System Admin's
+ * "System Management → System Admin / Clients" tree for the org
+ * admin's "User Management → Roles / Groups / Users" tree whenever
+ * value strings collided. Bug surfaced as wrong labels in /session.
  */
-export function mergePermissions(rolePermissionJsons: string[]): any[] {
-  const allValues = new Set<string>();
+
+interface PermNode {
+  id?: number | string;
+  parentId?: string;
+  label?: string;
+  value: string;
+  status?: boolean;
+  icon?: string;
+  subPermissions?: PermNode[];
+  [key: string]: any;
+}
+
+/** Recursively strip `status: false` nodes. Leaves the rest untouched. */
+function stripDisabled(tree: PermNode[]): PermNode[] {
+  const out: PermNode[] = [];
+  for (const n of tree) {
+    if (n.status === false) continue;
+    const children = n.subPermissions
+      ? stripDisabled(n.subPermissions)
+      : undefined;
+    out.push({
+      ...n,
+      // Drop subPermissions key entirely when there are none, so the
+      // FE sees the same shape it would for a real leaf.
+      ...(children && children.length > 0
+        ? { subPermissions: children }
+        : { subPermissions: undefined }),
+    });
+  }
+  return out;
+}
+
+/**
+ * Union two permission trees by `value`. The first occurrence of a
+ * value wins for non-children fields; children recurse with the same
+ * rule.
+ */
+function unionTrees(a: PermNode[], b: PermNode[]): PermNode[] {
+  const byValue = new Map<string, PermNode>();
+  const order: string[] = [];
+
+  const visit = (tree: PermNode[]) => {
+    for (const n of tree) {
+      const existing = byValue.get(n.value);
+      if (!existing) {
+        byValue.set(n.value, { ...n });
+        order.push(n.value);
+      } else if (n.subPermissions && existing.subPermissions) {
+        existing.subPermissions = unionTrees(
+          existing.subPermissions,
+          n.subPermissions,
+        );
+      } else if (n.subPermissions && !existing.subPermissions) {
+        // First role had this as a leaf; later role brings children.
+        // Promote to a branch so the union doesn't lose them.
+        existing.subPermissions = [...n.subPermissions];
+      }
+      // If both have no children OR existing already has children and
+      // the new one is a leaf, keep existing as-is.
+    }
+  };
+
+  visit(a);
+  visit(b);
+
+  return order.map(v => byValue.get(v)!);
+}
+
+export function mergePermissions(rolePermissionJsons: string[]): PermNode[] {
+  const trees: PermNode[][] = [];
 
   for (const json of rolePermissionJsons) {
+    if (!json) continue;
     try {
-      const tree = JSON.parse(json);
-      for (const v of flattenValues(tree)) {
-        allValues.add(v);
+      const parsed = JSON.parse(json);
+      if (Array.isArray(parsed)) {
+        trees.push(stripDisabled(parsed as PermNode[]));
       }
     } catch {
-      // Skip malformed JSON
+      // Skip malformed JSON — one bad row shouldn't break login.
     }
   }
 
-  if (allValues.size === 0) return [];
+  if (trees.length === 0) return [];
+  if (trees.length === 1) return trees[0];
 
-  return buildMergedTree(CLIENT_ADMIN_PERMISSIONS, allValues);
+  return trees.reduce((acc, next) => unionTrees(acc, next), [] as PermNode[]);
 }
