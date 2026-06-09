@@ -51,8 +51,19 @@ export function encryptForClient(plaintext: string): string {
  * cipher state is logged but never leaked to the caller.
  */
 export function decryptForClient(ciphertext: string): string {
+  if (typeof ciphertext !== 'string' || ciphertext.length === 0) {
+    Logger.warn(
+      `decryptForClient: empty or non-string ciphertext (type=${typeof ciphertext})`,
+    );
+    throw new Error('Ciphertext is malformed or has unsupported version');
+  }
   const parts = ciphertext.split(':');
   if (parts.length !== 4 || parts[0] !== VERSION) {
+    Logger.warn(
+      `decryptForClient: format-check failed — parts=${parts.length} ` +
+        `versionPrefix=${parts[0] ?? '<empty>'} (expected '${VERSION}'). ` +
+        `Likely legacy ciphertext from the old per-client-DEK scheme.`,
+    );
     throw new Error('Ciphertext is malformed or has unsupported version');
   }
   const [, ivHex, tagHex, ctHex] = parts;

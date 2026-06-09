@@ -33,6 +33,12 @@ const verifySetupToken = async (req: Request, res: Response) => {
 
   const { id, clientId, token } = req.body;
 
+  // Log shape of inputs (NEVER log the plaintext token — it would
+  // otherwise show up in production log aggregators).
+  Logger.debug(
+    `verifySetupToken inputs: id=${id} clientId=${clientId} tokenLen=${(token ?? '').length}`,
+  );
+
   try {
     const client = await Client.findOne({
       where: { id: clientId },
@@ -40,6 +46,9 @@ const verifySetupToken = async (req: Request, res: Response) => {
     });
 
     if (!client) {
+      Logger.warn(
+        `verifySetupToken: client ${clientId} not found → returning invalid`,
+      );
       return respondInvalid(res);
     }
 
@@ -52,12 +61,28 @@ const verifySetupToken = async (req: Request, res: Response) => {
       .andWhere('user.clientId = :clientId', { clientId })
       .getOne();
 
-    if (
-      !user ||
-      user.status === STATUS.INACTIVE ||
-      user.password ||
-      !user.setupToken
-    ) {
+    if (!user) {
+      Logger.warn(
+        `verifySetupToken: user ${id} not found in client ${clientId} → returning invalid`,
+      );
+      return respondInvalid(res);
+    }
+    if (user.status === STATUS.INACTIVE) {
+      Logger.warn(
+        `verifySetupToken: user ${id} is INACTIVE → returning invalid`,
+      );
+      return respondInvalid(res);
+    }
+    if (user.password) {
+      Logger.warn(
+        `verifySetupToken: user ${id} already has password (setup completed) → returning invalid`,
+      );
+      return respondInvalid(res);
+    }
+    if (!user.setupToken) {
+      Logger.warn(
+        `verifySetupToken: user ${id} has no setupToken on file → returning invalid`,
+      );
       return respondInvalid(res);
     }
 
@@ -65,14 +90,62 @@ const verifySetupToken = async (req: Request, res: Response) => {
       user.setupTokenExpiresAt &&
       new Date() > new Date(user.setupTokenExpiresAt)
     ) {
+      Logger.warn(
+        `verifySetupToken: user ${id} setupToken expired at ${user.setupTokenExpiresAt.toISOString?.() ?? user.setupTokenExpiresAt} → returning invalid`,
+      );
       return respondInvalid(res);
     }
 
-    const decryptedToken = decryptForClient(user.setupToken);
+    // Inspect the stored ciphertext shape WITHOUT logging the value
+    // itself. A healthy value is `v1:<32-hex>:<32-hex>:<64-hex>` ≈ 134 chars.
+    const stored = user.setupToken;
+    const parts = stored.split(':');
+    Logger.debug(
+      `verifySetupToken: stored token shape — length=${stored.length} ` +
+        `parts=${parts.length} versionPrefix=${parts[0] ?? '<empty>'}`,
+    );
+
+    let decryptedToken: string;
+    try {
+      decryptedToken = decryptForClient(stored);
+    } catch (decryptErr) {
+      Logger.error(
+        `verifySetupToken: decrypt failed for user ${id} ` +
+          `(${getErrorMessage(decryptErr)}). ` +
+          `Likely cause: stored token was encrypted under the old per-client ` +
+          `DEK scheme and the new master-key-only crypto can't open it. ` +
+          `Fix: resend the setup link for this user.`,
+      );
+      return respondInvalid(res);
+    }
+
+    Logger.debug(
+      `verifySetupToken: decrypt OK — decryptedLen=${decryptedToken.length} ` +
+        `incomingLen=${(token ?? '').length}`,
+    );
+
+    // timingSafeEqual REQUIRES equal-length buffers; otherwise it throws.
+    // Length-check first so we can produce a useful log line and avoid
+    // turning a benign mismatch into an uncaught exception.
+    if (
+      typeof token !== 'string' ||
+      token.length !== decryptedToken.length
+    ) {
+      Logger.warn(
+        `verifySetupToken: token length mismatch for user ${id} ` +
+          `(stored=${decryptedToken.length}, incoming=${(token ?? '').length}) → returning invalid`,
+      );
+      return respondInvalid(res);
+    }
+
     if (!timingSafeEqual(Buffer.from(token), Buffer.from(decryptedToken))) {
+      Logger.warn(
+        `verifySetupToken: token mismatch for user ${id} (lengths matched but bytes differ) → returning invalid`,
+      );
       return respondInvalid(res);
     }
 
+    Logger.info(`verifySetupToken: user ${id} → valid`);
     return sendResponse(res, true, CODE.SUCCESS, AUTH_MSG.SETUP_TOKEN_VALID, {
       tokenStatus: 'valid',
     });
