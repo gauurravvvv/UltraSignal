@@ -7,7 +7,7 @@
  *
  * Public routes (no AuthMiddleware): login, refresh, generateOTP, reset,
  * set-password, verify-setup-token, resend-setup-link.
- * Protected routes (require valid JWT): logout.
+ * Protected routes (require valid JWT): logout, session.
  */
 import { Router } from 'express';
 import AuthController from './controllers/auth.controller';
@@ -26,6 +26,11 @@ const authController = new AuthController();
 
 // Standard login — validates credentials, returns access + refresh tokens
 router.post('/login', LoginValidation, authController.login);
+
+// Phase-2 session bootstrap — returns the full payload the FE needs to
+// render the app shell (permissions, role, inactivity timeout, and
+// theme/branding/announcements placeholders). Called by Relay.
+router.get('/session', AuthMiddleware, authController.getSession);
 
 // Invalidates the refresh token stored in DB, ending the session
 router.post('/logout', AuthMiddleware, authController.logout);
