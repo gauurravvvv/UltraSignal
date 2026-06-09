@@ -1,19 +1,17 @@
 /**
- * Group routes — mounted at /api/v1/groups. All endpoints require the
- * `groupManagement` permission (matches the seeded clientAdmin
- * permission tree value).
+ * Group routes — mounted at /api/v1/groups.
  *
- *  POST   /                       create
- *  GET    /                       list
- *  GET    /:id             read one
- *  PUT    /:id             update
- *  DELETE /:id             delete
- *  POST   /bulk-delete     bulk delete
+ * Permission required: `groups`, with level depending on the verb:
+ *   GET           → READ
+ *   POST / PUT    → WRITE
+ *   DELETE        → FULL
+ *   bulk-delete   → FULL
  */
 import { Router } from 'express';
 import { idFromParam } from '../../shared/middleware/idFromParam.middleware';
 import VerifyPermissionMiddleware from '../../shared/middleware/verifyPermission.middleware';
 import VerifyResourceMiddleware from '../../shared/middleware/verifyResource.middleware';
+import { ACCESS } from '../../shared/constants/permissions/access';
 import AuthMiddleware from '../auth/middleware/auth.middleware';
 import GroupController from './controllers/group.controller';
 import AddGroupValidation from './middleware/addGroup.validation';
@@ -29,7 +27,7 @@ const groupController = new GroupController();
 router.post(
   '/',
   AuthMiddleware,
-  VerifyPermissionMiddleware('groupManagement'),
+  VerifyPermissionMiddleware('groups', ACCESS.WRITE),
   VerifyResourceMiddleware,
   AddGroupValidation,
   groupController.add,
@@ -38,7 +36,7 @@ router.post(
 router.get(
   '/',
   AuthMiddleware,
-  VerifyPermissionMiddleware('groupManagement'),
+  VerifyPermissionMiddleware('groups', ACCESS.READ),
   VerifyResourceMiddleware,
   ListGroupValidation,
   groupController.list,
@@ -47,7 +45,7 @@ router.get(
 router.get(
   '/:id',
   AuthMiddleware,
-  VerifyPermissionMiddleware('groupManagement'),
+  VerifyPermissionMiddleware('groups', ACCESS.READ),
   VerifyResourceMiddleware,
   GetGroupValidation,
   groupController.get,
@@ -56,7 +54,7 @@ router.get(
 router.put(
   '/:id',
   AuthMiddleware,
-  VerifyPermissionMiddleware('groupManagement'),
+  VerifyPermissionMiddleware('groups', ACCESS.WRITE),
   VerifyResourceMiddleware,
   idFromParam('id'),
   UpdateGroupValidation,
@@ -66,7 +64,7 @@ router.put(
 router.delete(
   '/:id',
   AuthMiddleware,
-  VerifyPermissionMiddleware('groupManagement'),
+  VerifyPermissionMiddleware('groups', ACCESS.FULL),
   VerifyResourceMiddleware,
   DeleteGroupValidation,
   groupController.delete,
@@ -75,7 +73,7 @@ router.delete(
 router.post(
   '/bulk-delete',
   AuthMiddleware,
-  VerifyPermissionMiddleware('groupManagement'),
+  VerifyPermissionMiddleware('groups', ACCESS.FULL),
   VerifyResourceMiddleware,
   DeleteGroupBulkValidation,
   groupController.deleteBulk,

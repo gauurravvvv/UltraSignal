@@ -5,6 +5,7 @@ import {
   DEFAULT_SYSTEM_ADMIN_CREDS,
   SYSTEM_CLIENT,
 } from '../../../config/config';
+import { Client } from './entities/client.entity';
 import onboardDB, { sendOnboardEmail } from '../helpers/system/onboardDB';
 import onboardClient from '../helpers/system/onboardClient';
 import seedAccessLevels from '../helpers/system/seedAccessLevels';
@@ -41,19 +42,26 @@ class Database {
     Logger.http(`${DB_CONFIG.database} Database Connected!`);
     Logger.info(`DB URL: ${DB_CONFIG.host}`);
 
-    // Always (re)seed the access-level + permission catalogs. Both seeders
-    // are idempotent — every row upserts by its stable key, so re-running
-    // on each boot just refreshes labels / icons / sequence if the catalog
-    // evolved.
+    // Step 1: always (re)seed the access-level + permission catalogs.
+    // Both seeders are idempotent — every row upserts by its stable key,
+    // so re-running on each boot just refreshes labels / icons / sequence
+    // if the catalog evolved.
     await connection.manager.transaction(async manager => {
       await seedAccessLevels(manager);
       await seedPermissionCatalog(manager);
     });
 
-    const user: any[] = await connection.manager.query(
-      `SELECT 1 FROM "user" LIMIT 1`,
-    );
-    if (!user.length) {
+    // Step 2: ensure the platform System client (UG) exists. On the first
+    // boot ever we also create the seed System Admin user; on every boot
+    // afterwards we re-run `seedSystemAdminRole` so changes to the catalog
+    // (e.g. a new SYSTEM-scope permission or a new cross-scope grant like
+    // `home`) automatically backfill into the System Admin role's mappings.
+    const sysClient = await connection.manager.getRepository(Client).findOne({
+      where: { name: SYSTEM_CLIENT.NAME },
+    });
+
+    if (!sysClient) {
+      // First boot — full bootstrap inside one transaction.
       const { clientId, userId, setupToken, fullName } =
         await connection.manager.transaction(async manager => {
           const clientId = await onboardClient(
@@ -61,10 +69,6 @@ class Database {
             SYSTEM_CLIENT.DESCRIPTION,
             manager,
           );
-          // Seed the System Admin Role row BEFORE the user so we can
-          // hang its id off the user-group mapping. Both rows commit
-          // in the same transaction so a failure mid-seed leaves the
-          // DB in a clean (empty) state for the next boot to retry.
           const roleId = await seedSystemAdminRole(manager, clientId);
           const result = await onboardDB(
             DEFAULT_SYSTEM_ADMIN_CREDS.USER_NAME,
@@ -86,6 +90,12 @@ class Database {
         userId,
         setupToken,
       );
+    } else {
+      // Subsequent boots — system client already exists. Re-run the
+      // role seeder to backfill any new mappings the catalog now expects.
+      await connection.manager.transaction(async manager => {
+        await seedSystemAdminRole(manager, sysClient.id);
+      });
     }
   };
 }

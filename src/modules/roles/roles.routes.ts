@@ -1,20 +1,20 @@
 /**
- * Role routes — mounted at /api/v1/roles. All endpoints require
- * `roleManagement` permission (except /permissions which is a static
- * catalog).
+ * Role routes — mounted at /api/v1/roles.
  *
- *  POST   /                       create
- *  GET    /                       list
- *  GET    /:id             read one
- *  PUT    /:id             update
- *  DELETE /:id             delete
- *  POST   /bulk-delete     bulk delete
- *  GET    /permissions            full static permission catalog (no DB hit)
+ * Permission required: `roles`, with level depending on the verb:
+ *   GET           → READ
+ *   POST / PUT    → WRITE
+ *   DELETE        → FULL
+ *   bulk-delete   → FULL
+ *
+ * `/permissions` returns the static permission catalog (no DB hit) and is
+ * open to any authenticated user — useful for the role-editor UI.
  */
 import { Router } from 'express';
 import { idFromParam } from '../../shared/middleware/idFromParam.middleware';
 import VerifyPermissionMiddleware from '../../shared/middleware/verifyPermission.middleware';
 import VerifyResourceMiddleware from '../../shared/middleware/verifyResource.middleware';
+import { ACCESS } from '../../shared/constants/permissions/access';
 import AuthMiddleware from '../auth/middleware/auth.middleware';
 import RoleController from './controllers/role.controller';
 import AddRoleValidation from './middleware/addRole.validation';
@@ -31,7 +31,7 @@ const roleController = new RoleController();
 router.post(
   '/',
   AuthMiddleware,
-  VerifyPermissionMiddleware('roleManagement'),
+  VerifyPermissionMiddleware('roles', ACCESS.WRITE),
   VerifyResourceMiddleware,
   AddRoleValidation,
   roleController.add,
@@ -40,7 +40,7 @@ router.post(
 router.get(
   '/',
   AuthMiddleware,
-  VerifyPermissionMiddleware('roleManagement'),
+  VerifyPermissionMiddleware('roles', ACCESS.READ),
   VerifyResourceMiddleware,
   ListRoleValidation,
   roleController.list,
@@ -59,7 +59,7 @@ router.get(
 router.get(
   '/:id',
   AuthMiddleware,
-  VerifyPermissionMiddleware('roleManagement'),
+  VerifyPermissionMiddleware('roles', ACCESS.READ),
   VerifyResourceMiddleware,
   GetRoleValidation,
   roleController.get,
@@ -68,7 +68,7 @@ router.get(
 router.put(
   '/:id',
   AuthMiddleware,
-  VerifyPermissionMiddleware('roleManagement'),
+  VerifyPermissionMiddleware('roles', ACCESS.WRITE),
   VerifyResourceMiddleware,
   idFromParam('id'),
   UpdateRoleValidation,
@@ -78,7 +78,7 @@ router.put(
 router.delete(
   '/:id',
   AuthMiddleware,
-  VerifyPermissionMiddleware('roleManagement'),
+  VerifyPermissionMiddleware('roles', ACCESS.FULL),
   VerifyResourceMiddleware,
   DeleteRoleValidation,
   roleController.delete,
@@ -87,7 +87,7 @@ router.delete(
 router.post(
   '/bulk-delete',
   AuthMiddleware,
-  VerifyPermissionMiddleware('roleManagement'),
+  VerifyPermissionMiddleware('roles', ACCESS.FULL),
   VerifyResourceMiddleware,
   DeleteRoleBulkValidation,
   roleController.deleteBulk,

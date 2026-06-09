@@ -65,11 +65,9 @@ const AddUserValidation = async (
 
     const { email, username } = value;
 
-    const ifExistByEmail = await AppDataSource
-      .getRepository(User)
-      .findOne({
-        where: { email, clientId: clientData.id },
-      });
+    const ifExistByEmail = await AppDataSource.getRepository(User).findOne({
+      where: { email, clientId: clientData.id },
+    });
 
     if (ifExistByEmail) {
       return sendResponse(
@@ -80,11 +78,9 @@ const AddUserValidation = async (
       );
     }
 
-    const ifExistByUsername = await AppDataSource
-      .getRepository(User)
-      .findOne({
-        where: { username, clientId: clientData.id },
-      });
+    const ifExistByUsername = await AppDataSource.getRepository(User).findOne({
+      where: { username, clientId: clientData.id },
+    });
 
     if (ifExistByUsername) {
       return sendResponse(
@@ -96,8 +92,7 @@ const AddUserValidation = async (
     }
 
     const { groupIds } = value;
-    const groups = await AppDataSource
-      .getRepository(Group)
+    const groups = await AppDataSource.getRepository(Group)
       .createQueryBuilder('g')
       .where('g.id IN (:...ids)', { ids: groupIds })
       .andWhere('g.clientId = :clientId', { clientId: clientData.id })

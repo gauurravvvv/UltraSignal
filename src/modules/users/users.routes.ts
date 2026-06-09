@@ -1,24 +1,23 @@
 /**
- * User routes — mounted at /api/v1/users. All endpoints require the
- * `userManagement` permission.
+ * User routes — mounted at /api/v1/users.
  *
- *  POST   /                          create
- *  GET    /                          list
- *  GET    /:id                read one
- *  PUT    /:id                update
- *  DELETE /:id                delete
- *  POST   /bulk-delete        bulk delete
- *  PUT    /:id/password       admin password reset
- *  POST   /:id/unlock         clear account lock (action)
+ * Permission required: `users`, with level depending on the verb:
+ *   GET            → READ   (list / view)
+ *   POST / PUT     → WRITE  (create / update)
+ *   DELETE         → FULL   (delete is irreversible)
+ *   bulk-delete    → FULL
+ *   :id/password   → FULL   (admin password reset is sensitive)
+ *   :id/unlock     → FULL   (clearing an account lock is sensitive)
  *
  * Bulk create:
- *  POST   /bulk/validate             dry-run CSV validation
- *  POST   /bulk/commit               commit previously-validated users
+ *   POST /bulk/validate  → WRITE  (dry-run; no rows written)
+ *   POST /bulk/commit    → WRITE  (creates many users at once)
  */
 import { Router } from 'express';
 import { idFromParam } from '../../shared/middleware/idFromParam.middleware';
 import VerifyPermissionMiddleware from '../../shared/middleware/verifyPermission.middleware';
 import VerifyResourceMiddleware from '../../shared/middleware/verifyResource.middleware';
+import { ACCESS } from '../../shared/constants/permissions/access';
 import AuthMiddleware from '../auth/middleware/auth.middleware';
 import UserController from './controllers/user.controller';
 import AddUserValidation from './middleware/addUser.validation';
@@ -37,7 +36,7 @@ const userController = new UserController();
 router.post(
   '/',
   AuthMiddleware,
-  VerifyPermissionMiddleware('userManagement'),
+  VerifyPermissionMiddleware('users', ACCESS.WRITE),
   VerifyResourceMiddleware,
   AddUserValidation,
   userController.add,
@@ -46,20 +45,16 @@ router.post(
 router.get(
   '/',
   AuthMiddleware,
-  VerifyPermissionMiddleware('userManagement'),
+  VerifyPermissionMiddleware('users', ACCESS.READ),
   VerifyResourceMiddleware,
   ListUserValidation,
   userController.list,
 );
 
-// Bulk create: validate-then-commit two-step flow.
-// Multer (inside the validate middleware) must run BEFORE
-// VerifyResource/Database so the clientId field from the multipart body
-// is parsed first.
 router.post(
   '/bulk/validate',
   AuthMiddleware,
-  VerifyPermissionMiddleware('userManagement'),
+  VerifyPermissionMiddleware('users', ACCESS.WRITE),
   BulkAddUserValidateValidation,
   VerifyResourceMiddleware,
   userController.bulkAddValidate,
@@ -68,7 +63,7 @@ router.post(
 router.post(
   '/bulk/commit',
   AuthMiddleware,
-  VerifyPermissionMiddleware('userManagement'),
+  VerifyPermissionMiddleware('users', ACCESS.WRITE),
   VerifyResourceMiddleware,
   BulkAddUserCommitValidation,
   userController.bulkAddCommit,
@@ -77,7 +72,7 @@ router.post(
 router.get(
   '/:id',
   AuthMiddleware,
-  VerifyPermissionMiddleware('userManagement'),
+  VerifyPermissionMiddleware('users', ACCESS.READ),
   VerifyResourceMiddleware,
   GetUserValidation,
   userController.get,
@@ -86,7 +81,7 @@ router.get(
 router.put(
   '/:id',
   AuthMiddleware,
-  VerifyPermissionMiddleware('userManagement'),
+  VerifyPermissionMiddleware('users', ACCESS.WRITE),
   VerifyResourceMiddleware,
   idFromParam('id'),
   UpdateUserValidation,
@@ -96,7 +91,7 @@ router.put(
 router.delete(
   '/:id',
   AuthMiddleware,
-  VerifyPermissionMiddleware('userManagement'),
+  VerifyPermissionMiddleware('users', ACCESS.FULL),
   VerifyResourceMiddleware,
   DeleteUserValidation,
   userController.delete,
@@ -105,7 +100,7 @@ router.delete(
 router.post(
   '/bulk-delete',
   AuthMiddleware,
-  VerifyPermissionMiddleware('userManagement'),
+  VerifyPermissionMiddleware('users', ACCESS.FULL),
   VerifyResourceMiddleware,
   DeleteUserBulkValidation,
   userController.deleteBulk,
@@ -114,7 +109,7 @@ router.post(
 router.put(
   '/:id/password',
   AuthMiddleware,
-  VerifyPermissionMiddleware('userManagement'),
+  VerifyPermissionMiddleware('users', ACCESS.FULL),
   VerifyResourceMiddleware,
   idFromParam('id'),
   UpdatePasswordValidation,
@@ -124,7 +119,7 @@ router.put(
 router.post(
   '/:id/unlock',
   AuthMiddleware,
-  VerifyPermissionMiddleware('userManagement'),
+  VerifyPermissionMiddleware('users', ACCESS.FULL),
   VerifyResourceMiddleware,
   GetUserValidation,
   userController.unlock,

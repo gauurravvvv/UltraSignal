@@ -1,19 +1,17 @@
 /**
- * System Admin routes — mounted at /api/v1/system-admins. Every endpoint
- * requires the `systemAdmin` permission, which today is held only by the
- * seeded platform System Admin role (master DB). Client admins and client
- * users have no `systemAdmin` permission on their roles, so they get a
- * clean 401 from VerifyPermissionMiddleware before the validation layer
- * runs.
+ * System Admin routes — mounted at /api/v1/system-admins.
  *
- *  POST   /                       create
- *  GET    /                       list
- *  GET    /:id                    read one
- *  PUT    /:id                    update profile
- *  DELETE /:id                    delete
- *  POST   /bulk-delete            bulk delete
- *  PUT    /:id/password           admin-forced password reset
- *  POST   /:id/unlock             clear account lock (action, not update)
+ * Permission required: `systemAdmin` (held only by the seeded platform
+ * System Admin role). Per-client users have no `systemAdmin` permission
+ * so they get a clean 401 before validation runs.
+ *
+ * Level mapping:
+ *   GET            → READ
+ *   POST / PUT     → WRITE
+ *   DELETE         → FULL
+ *   bulk-delete    → FULL
+ *   :id/password   → FULL  (admin-forced password reset is sensitive)
+ *   :id/unlock     → FULL  (clearing an account lock is sensitive)
  *
  * /bulk-delete registered BEFORE /:id so Express doesn't match
  * "bulk-delete" as an id.
@@ -21,6 +19,7 @@
 import { Router } from 'express';
 import { idFromParam } from '../../shared/middleware/idFromParam.middleware';
 import VerifyPermissionMiddleware from '../../shared/middleware/verifyPermission.middleware';
+import { ACCESS } from '../../shared/constants/permissions/access';
 import AuthMiddleware from '../auth/middleware/auth.middleware';
 import SystemAdminController from './controllers/systemAdmin.controller';
 import AddSystemAdminValidation from './middleware/addSystemAdmin.validation';
@@ -33,12 +32,11 @@ import UpdateSystemAdminValidation from './middleware/updateSystemAdmin.validati
 
 const router = Router();
 const systemAdminController = new SystemAdminController();
-const requireSystemAdmin = VerifyPermissionMiddleware('systemAdmin');
 
 router.post(
   '/',
   AuthMiddleware,
-  requireSystemAdmin,
+  VerifyPermissionMiddleware('systemAdmin', ACCESS.WRITE),
   AddSystemAdminValidation,
   systemAdminController.add,
 );
@@ -46,7 +44,7 @@ router.post(
 router.get(
   '/',
   AuthMiddleware,
-  requireSystemAdmin,
+  VerifyPermissionMiddleware('systemAdmin', ACCESS.READ),
   ListSystemAdminValidation,
   systemAdminController.list,
 );
@@ -54,7 +52,7 @@ router.get(
 router.post(
   '/bulk-delete',
   AuthMiddleware,
-  requireSystemAdmin,
+  VerifyPermissionMiddleware('systemAdmin', ACCESS.FULL),
   DeleteSystemAdminBulkValidation,
   systemAdminController.deleteBulk,
 );
@@ -62,7 +60,7 @@ router.post(
 router.get(
   '/:id',
   AuthMiddleware,
-  requireSystemAdmin,
+  VerifyPermissionMiddleware('systemAdmin', ACCESS.READ),
   GetSystemAdminValidation,
   systemAdminController.get,
 );
@@ -70,7 +68,7 @@ router.get(
 router.put(
   '/:id',
   AuthMiddleware,
-  requireSystemAdmin,
+  VerifyPermissionMiddleware('systemAdmin', ACCESS.WRITE),
   idFromParam('id'),
   UpdateSystemAdminValidation,
   systemAdminController.update,
@@ -79,7 +77,7 @@ router.put(
 router.delete(
   '/:id',
   AuthMiddleware,
-  requireSystemAdmin,
+  VerifyPermissionMiddleware('systemAdmin', ACCESS.FULL),
   DeleteSystemAdminValidation,
   systemAdminController.delete,
 );
@@ -87,7 +85,7 @@ router.delete(
 router.put(
   '/:id/password',
   AuthMiddleware,
-  requireSystemAdmin,
+  VerifyPermissionMiddleware('systemAdmin', ACCESS.FULL),
   idFromParam('id'),
   UpdatePasswordValidation,
   systemAdminController.updatePassword,
@@ -96,7 +94,7 @@ router.put(
 router.post(
   '/:id/unlock',
   AuthMiddleware,
-  requireSystemAdmin,
+  VerifyPermissionMiddleware('systemAdmin', ACCESS.FULL),
   GetSystemAdminValidation,
   systemAdminController.unlock,
 );
