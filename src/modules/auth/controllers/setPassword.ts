@@ -28,6 +28,10 @@ import Logger from '../../../shared/utility/logger/logger';
 import { ClientEmailConfig } from '../../../shared/utility/mail';
 import passwordSetSuccessEmail from '../../../shared/utility/mail/passwordSetSuccessEmail';
 import { buildRequestContext } from '../../../shared/utility/mail/requestContext';
+import {
+  isPasswordReused,
+  savePasswordHistory,
+} from '../../../shared/utility/passwordHistory';
 import sendResponse from '../../../shared/utility/response';
 
 const setPassword = async (req: Request, res: Response) => {
@@ -99,14 +103,49 @@ const setPassword = async (req: Request, res: Response) => {
       );
     }
 
-    user.password = encryptForClient(password, client.config);
-    user.setupToken = null;
-    user.setupTokenExpiresAt = null;
-    user.updatedBy = id;
+    // Reuse check runs before encrypting the new value (the helper
+    // also decrypts the current password to compare). The history
+    // limit is per-client; default 5 from the entity definition.
+    const historyLimit = client.config?.passwordHistoryLimit ?? 5;
 
-    await AppDataSource.transaction(async (manager: EntityManager) => {
-      await manager.save(user);
-    });
+    const newEncrypted = encryptForClient(password, client.config);
+
+    try {
+      await AppDataSource.transaction(async (manager: EntityManager) => {
+        if (
+          await isPasswordReused(
+            manager,
+            user.id,
+            password,
+            client.config,
+            user.password,
+            historyLimit,
+          )
+        ) {
+          // Throwing inside the tx aborts the user.save below; caught
+          // outside to convert into the FE-facing PASSWORD_REUSED error.
+          throw new Error('PASSWORD_REUSED');
+        }
+
+        user.password = newEncrypted;
+        user.setupToken = null;
+        user.setupTokenExpiresAt = null;
+        user.updatedBy = id;
+        await manager.save(user);
+
+        await savePasswordHistory(manager, user.id, newEncrypted, historyLimit);
+      });
+    } catch (err) {
+      if (err instanceof Error && err.message === 'PASSWORD_REUSED') {
+        return sendResponse(
+          res,
+          false,
+          CODE.BAD_REQUEST,
+          AUTH_MSG.PASSWORD_REUSED,
+        );
+      }
+      throw err;
+    }
 
     const clientEmailConfig: ClientEmailConfig | undefined = client.config?.emailProvider
       ? {
