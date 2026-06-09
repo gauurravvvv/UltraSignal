@@ -140,7 +140,7 @@
     "reset_success_body": "<strong>{{fullName}}</strong>さん、パスワードが正常にリセットされました。",
     "reset_success_button": "今すぐログイン",
     "password_set_subject": "パスワードを設定しました",
-    "password_set_heading": "DBExecへようこそ",
+    "password_set_heading": "UltraSignalへようこそ",
     "password_set_body": "<strong>{{fullName}}</strong>さん、パスワードが設定され、アカウントが有効になりました。いつでもサインインできます。",
     "password_set_button": "今すぐログイン",
     "password_changed_subject": "パスワードが変更されました",

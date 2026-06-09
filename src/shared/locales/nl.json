@@ -140,7 +140,7 @@
     "reset_success_body": "Hoi <strong>{{fullName}}</strong>, je wachtwoord is succesvol gereset.",
     "reset_success_button": "Nu inloggen",
     "password_set_subject": "Wachtwoord succesvol ingesteld",
-    "password_set_heading": "Welkom bij DBExec",
+    "password_set_heading": "Welkom bij UltraSignal",
     "password_set_body": "Hoi <strong>{{fullName}}</strong>, je wachtwoord is ingesteld en je account is nu actief. Je kunt op elk moment inloggen.",
     "password_set_button": "Nu inloggen",
     "password_changed_subject": "Wachtwoord gewijzigd",

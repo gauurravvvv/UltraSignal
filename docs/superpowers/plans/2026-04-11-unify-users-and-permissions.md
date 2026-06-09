@@ -16,8 +16,8 @@
 
 **Files:**
 
-- Modify: `DBExec-API/src/routes/role.routes.ts:67-75`
-- Modify: `DBExec-API/src/controllers/role/listPermissions.ts`
+- Modify: `UltraSignal-API/src/routes/role.routes.ts:67-75`
+- Modify: `UltraSignal-API/src/controllers/role/listPermissions.ts`
 
 The `listPermissions` controller only returns `res.locals.permissions` (from JWT). It never queries the DB, yet `VerifyMasterDatabaseMiddleware` opens a connection just to have it closed. The FE also doesn't send `orgId`, which `VerifyMasterDatabaseMiddleware` requires — so this endpoint is currently **broken** for non-super-admin users.
 
@@ -319,9 +319,9 @@ rm -f src/routes/admin.routes.ts
 
 **Files:**
 
-- Modify: `DBExec-UI/src/app/constants/api.ts` — remove `ORG_ADMIN` object
-- Modify: `DBExec-UI/src/app/constants/routes.ts` — remove `ORGANISATION_ADMIN` object
-- Modify: `DBExec-UI/src/app/modules/users/services/user.service.ts` — add `role` to addUser payload
+- Modify: `UltraSignal-UI/src/app/constants/api.ts` — remove `ORG_ADMIN` object
+- Modify: `UltraSignal-UI/src/app/constants/routes.ts` — remove `ORGANISATION_ADMIN` object
+- Modify: `UltraSignal-UI/src/app/modules/users/services/user.service.ts` — add `role` to addUser payload
 
 - [ ] **Step 1: Remove ORG_ADMIN from api.ts and ORGANISATION_ADMIN from routes.ts**
 
@@ -347,8 +347,8 @@ addUser(userForm: FormGroup) {
 
 **Files:**
 
-- Modify: `DBExec-UI/src/app/modules/users/components/add-users/add-users.component.ts`
-- Modify: `DBExec-UI/src/app/modules/users/components/add-users/add-users.component.html`
+- Modify: `UltraSignal-UI/src/app/modules/users/components/add-users/add-users.component.ts`
+- Modify: `UltraSignal-UI/src/app/modules/users/components/add-users/add-users.component.html`
 
 - [ ] **Step 1: Add `role` form control and `systemRoles` options**
 
@@ -448,7 +448,7 @@ export const HOME_ROUTES = {
 
 **Files to delete:**
 
-- Delete: `DBExec-UI/src/app/modules/organisation-admin/` (entire directory)
+- Delete: `UltraSignal-UI/src/app/modules/organisation-admin/` (entire directory)
 
 **Files to modify:**
 
@@ -466,7 +466,7 @@ export const HOME_ROUTES = {
 
 **Files:**
 
-- Modify: `DBExec-UI/src/app/modules/role/components/list-role/list-role.component.ts`
+- Modify: `UltraSignal-UI/src/app/modules/role/components/list-role/list-role.component.ts`
 
 Rewrite to match the Users module pattern:
 
@@ -488,7 +488,7 @@ The BE `listRole` API currently returns all roles at once (no pagination). The F
 
 **Files:**
 
-- Modify: `DBExec-UI/src/app/modules/role/components/list-role/list-role.component.html`
+- Modify: `UltraSignal-UI/src/app/modules/role/components/list-role/list-role.component.html`
 
 Rewrite to match Users module pattern:
 
@@ -507,7 +507,7 @@ Rewrite to match Users module pattern:
 
 **Files:**
 
-- Modify: `DBExec-UI/src/app/modules/role/components/list-role/list-role.component.scss`
+- Modify: `UltraSignal-UI/src/app/modules/role/components/list-role/list-role.component.scss`
 
 Replace 899-line custom SCSS with the standardized Users module SCSS pattern (card layout, toolbar, p-table overrides, confirmation popup).
 
@@ -519,8 +519,8 @@ Replace 899-line custom SCSS with the standardized Users module SCSS pattern (ca
 
 ### Task 14: Full verification
 
-- [ ] **Step 1: BE type check** — `cd DBExec-API && npx tsc --noEmit`
-- [ ] **Step 2: FE build** — `cd DBExec-UI && ng build`
+- [ ] **Step 1: BE type check** — `cd UltraSignal-API && npx tsc --noEmit`
+- [ ] **Step 2: FE build** — `cd UltraSignal-UI && ng build`
 - [ ] **Step 3: Manual smoke test** — Start both servers, verify:
   - Login as ORG_ADMIN → lands on `/app/home/org`
   - Sidebar shows Users, Roles, etc. based on permissions

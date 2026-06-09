@@ -140,7 +140,7 @@
     "reset_success_body": "您好 <strong>{{fullName}}</strong>，您的密码已成功重置。",
     "reset_success_button": "立即登录",
     "password_set_subject": "密码设置成功",
-    "password_set_heading": "欢迎使用 DBExec",
+    "password_set_heading": "欢迎使用 UltraSignal",
     "password_set_body": "您好 <strong>{{fullName}}</strong>，您的密码已设置，账户现已激活。您可以随时登录。",
     "password_set_button": "立即登录",
     "password_changed_subject": "密码已更改",

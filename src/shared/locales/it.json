@@ -140,7 +140,7 @@
     "reset_success_body": "Ciao <strong>{{fullName}}</strong>, la tua password è stata ripristinata con successo.",
     "reset_success_button": "Accedi ora",
     "password_set_subject": "Password impostata con successo",
-    "password_set_heading": "Benvenuto in DBExec",
+    "password_set_heading": "Benvenuto in UltraSignal",
     "password_set_body": "Ciao <strong>{{fullName}}</strong>, la tua password è stata impostata e il tuo account è ora attivo. Puoi accedere in qualsiasi momento.",
     "password_set_button": "Accedi ora",
     "password_changed_subject": "Password modificata",

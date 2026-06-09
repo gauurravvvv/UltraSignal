@@ -140,7 +140,7 @@
     "reset_success_body": "Hola <strong>{{fullName}}</strong>, tu contraseña se ha restablecido con éxito.",
     "reset_success_button": "Iniciar sesión ahora",
     "password_set_subject": "Contraseña establecida con éxito",
-    "password_set_heading": "Bienvenido a DBExec",
+    "password_set_heading": "Bienvenido a UltraSignal",
     "password_set_body": "Hola <strong>{{fullName}}</strong>, tu contraseña ha sido establecida y tu cuenta ya está activa. Puedes iniciar sesión en cualquier momento.",
     "password_set_button": "Iniciar sesión ahora",
     "password_changed_subject": "Contraseña cambiada",

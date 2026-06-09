@@ -140,7 +140,7 @@
     "reset_success_body": "Olá <strong>{{fullName}}</strong>, sua senha foi redefinida com sucesso.",
     "reset_success_button": "Fazer login agora",
     "password_set_subject": "Senha definida com sucesso",
-    "password_set_heading": "Bem-vindo ao DBExec",
+    "password_set_heading": "Bem-vindo ao UltraSignal",
     "password_set_body": "Olá <strong>{{fullName}}</strong>, sua senha foi definida e sua conta está agora ativa. Você pode fazer login a qualquer momento.",
     "password_set_button": "Fazer login agora",
     "password_changed_subject": "Senha alterada",

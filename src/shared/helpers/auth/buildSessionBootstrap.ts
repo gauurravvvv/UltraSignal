@@ -8,7 +8,7 @@
  *    handing the user here).
  *  - client: the Client row with `config` relation loaded.
  *
- * Output mirrors the DBExec FE contract so the Relay component
+ * Output mirrors the FE Relay/session contract so the Relay component
  * stays portable. `theme` and `branding` are returned as `null` and
  * `announcements` as `[]` because UltraSignal does not yet ship
  * those modules — placeholders so the FE shape is forward-compatible.

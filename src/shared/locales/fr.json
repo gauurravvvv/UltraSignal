@@ -140,7 +140,7 @@
     "reset_success_body": "Bonjour <strong>{{fullName}}</strong>, votre mot de passe a été réinitialisé avec succès.",
     "reset_success_button": "Se connecter maintenant",
     "password_set_subject": "Mot de passe défini avec succès",
-    "password_set_heading": "Bienvenue dans DBExec",
+    "password_set_heading": "Bienvenue dans UltraSignal",
     "password_set_body": "Bonjour <strong>{{fullName}}</strong>, votre mot de passe a été défini et votre compte est maintenant actif. Vous pouvez vous connecter à tout moment.",
     "password_set_button": "Se connecter maintenant",
     "password_changed_subject": "Mot de passe modifié",

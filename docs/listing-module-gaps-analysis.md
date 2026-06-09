@@ -1,6 +1,6 @@
 # Listing Module — Gaps Analysis (Org / Super-Admin / Org-User Lists)
 
-**Branch:** `fix/listing-module-gaps` (mirrored in DBExec-API and DBExec-UI)
+**Branch:** `fix/listing-module-gaps` (mirrored in UltraSignal-API and UltraSignal-UI)
 **Date:** 2026-05-14
 **Scope:** Deep static analysis of three listing pages that are most-used in the admin surface:
 
@@ -216,7 +216,7 @@ When Unlock/Delete is clicked, the icon doesn't show a spinner. The user can cli
 
 ## 6. File Map (For The PR Author)
 
-### Backend (DBExec-API)
+### Backend (UltraSignal-API)
 
 | Concern                      | File                                                         |
 | ---------------------------- | ------------------------------------------------------------ |
@@ -231,7 +231,7 @@ When Unlock/Delete is clicked, the icon doesn't show a spinner. The user can cli
 | User list route              | `src/routes/user.routes.ts:84-92`                            |
 | Page-size constants          | `config/config.ts` (`DEFAULT_PAGE`, `MAX_ROW`)               |
 
-### Frontend (DBExec-UI)
+### Frontend (UltraSignal-UI)
 
 | Concern                 | File                                                                                         |
 | ----------------------- | -------------------------------------------------------------------------------------------- |

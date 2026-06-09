@@ -1,8 +1,8 @@
-# DBExec-API — Backend Reference
+# UltraSignal-API — Backend Reference
 
 ## Project Overview
 
-Express + TypeScript backend for DBExec — a multi-tenant database management, query execution, and visualization platform. Uses TypeORM with PostgreSQL, JWT authentication, and per-organization database isolation.
+Express + TypeScript backend for UltraSignal — a pharmacovigilance signal-detection platform with multi-tenant client isolation. Uses TypeORM with PostgreSQL, JWT authentication, and per-client crypto isolation.
 
 ## Quick Start
 
@@ -346,7 +346,7 @@ Defined in `src/shared/constants/permissions/`:
   the master-DB `Role` table on first boot.
 - `systemAdmin.ts` — full legacy System Admin permission tree.
   **Reference / rollback only**. Not active at runtime.
-- `organisationAdmin.ts` — Dashboard, User Mgmt, Data Mgmt, DBExec Studio,
+- `organisationAdmin.ts` — Dashboard, User Mgmt, Data Mgmt, UltraSignal Studio,
   Visualizations. Seeded into the per-org `Role` table as `Administrator`
   during org onboarding.
 - `user.ts` — Dashboard, Query Executor. Seeded into the per-org `Role`
