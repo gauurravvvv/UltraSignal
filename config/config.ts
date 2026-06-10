@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 dotenv.config({ path: path.resolve(__dirname, `../.env`) });
 
-export const SERVER_PORT = 3000;
+export const SERVER_PORT = 3001;
 export const QUERY_SERVER_PORT = 3001;
 export const DB_CONFIG = {
   type: process.env.DB_TYPE,

@@ -72,9 +72,9 @@ const CATALOG: ModuleSeed[] = [
     sequence: 2,
     scope: 'ORG',
     screens: [
-      { value: 'users', name: 'Users', icon: 'ci ci-users', sequence: 1 },
+      { value: 'roles', name: 'Roles', icon: 'ci ci-shield-halved', sequence: 1 },
       { value: 'groups', name: 'Groups', icon: 'ci ci-user-group', sequence: 2 },
-      { value: 'roles', name: 'Roles', icon: 'ci ci-shield-halved', sequence: 3 },
+      { value: 'users', name: 'Users', icon: 'ci ci-users', sequence: 3 },
     ],
   },
   {
