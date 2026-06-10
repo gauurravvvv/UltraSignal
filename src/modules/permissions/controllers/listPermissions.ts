@@ -1,30 +1,36 @@
 /**
- * listPermissions — returns the permission catalog (modules + screens)
+ * listPermissions — returns the permission catalog (modules + submodules)
  * the role editor needs to render its table of None/Read/Write/Full
  * radio columns.
  *
  * Query parameters:
- *   ?scope=ORG|SYSTEM       (defaults to ORG)
- *   ?roleId=<uuid>          (optional — when present, each screen row
- *                            is enriched with the role's current `level`
- *                            from role_permission_mapping, or 0 if no
- *                            mapping row exists)
+ *   ?scope=ORG|SYSTEM       defaults to ORG
+ *   ?includeInactive=true   include rows with status = 0 (defaults to
+ *                           active-only; only useful for an admin
+ *                           "Permission Catalog" management screen)
+ *   ?roleId=<uuid>          optional — when present, each submodule row
+ *                           (and leaf-only module) is enriched with the
+ *                           role's current `level` from
+ *                           role_permission_mapping (0 if no mapping)
  *
  * Response shape:
  *   {
+ *     count: number,
  *     modules: [
  *       {
- *         id, value, name, icon, sequence, scope,
- *         screens: [
- *           { id, value, name, icon, sequence, scope, level? }
- *         ]
+ *         id, name, value, status, icon, sequence, scope,
+ *         submodules: [
+ *           { id, name, value, status, icon, sequence, scope, level? }
+ *         ],
+ *         level?     // present only on leaf-only modules (e.g. `home`)
  *       }
  *     ]
  *   }
  *
- * Convention: a leaf-only "module" (e.g. `home`) appears as a module row
- * with an empty `screens` array AND its own `level` field — the FE
- * treats those as single-row entries in the editor.
+ * Convention: a leaf-only "module" (e.g. `home` — top-level row with no
+ * children in the catalog) appears as a module row with an empty
+ * `submodules` array AND its own `level` field — the FE treats those as
+ * single-row entries in the editor.
  */
 import { Request, Response } from 'express';
 import { CODE } from '../../../../config/config';
@@ -36,29 +42,36 @@ import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
 
-interface ScreenOut {
+interface SubmoduleOut {
   id: string;
-  value: string;
   name: string;
+  value: string;
+  status: number;
   icon: string | null;
   sequence: number;
   scope: 'SYSTEM' | 'ORG';
   level?: number;
 }
 
-interface ModuleOut extends ScreenOut {
-  screens: ScreenOut[];
+interface ModuleOut extends SubmoduleOut {
+  submodules: SubmoduleOut[];
 }
 
 const listPermissions = async (req: Request, res: Response) => {
   Logger.info('List Permissions request');
 
-  const scope = (req.query.scope as string)?.toUpperCase() === 'SYSTEM' ? 'SYSTEM' : 'ORG';
+  const scope =
+    (req.query.scope as string)?.toUpperCase() === 'SYSTEM' ? 'SYSTEM' : 'ORG';
+  const includeInactive =
+    (req.query.includeInactive as string)?.toLowerCase() === 'true';
   const roleId = (req.query.roleId as string) || null;
 
   try {
+    const where: Record<string, unknown> = { scope };
+    if (!includeInactive) where.status = 1;
+
     const all = await AppDataSource.getRepository(Permission).find({
-      where: { scope, status: 1 },
+      where,
       order: { sequence: 'ASC' },
     });
 
@@ -66,45 +79,55 @@ const listPermissions = async (req: Request, res: Response) => {
     // its current level.
     let levelByPermId = new Map<string, number>();
     if (roleId) {
-      const mappings = await AppDataSource.getRepository(RolePermissionMapping).find({
+      const mappings = await AppDataSource.getRepository(
+        RolePermissionMapping,
+      ).find({
         where: { roleId },
       });
       levelByPermId = new Map(mappings.map(m => [m.permissionId, m.level]));
     }
 
-    // Build module → screens hierarchy.
+    // Build module → submodules hierarchy.
     const modules = all.filter(p => p.parentId === null);
-    const screensByParent = new Map<string, Permission[]>();
+    const submodulesByParent = new Map<string, Permission[]>();
     for (const p of all) {
       if (p.parentId) {
-        const list = screensByParent.get(p.parentId) ?? [];
+        const list = submodulesByParent.get(p.parentId) ?? [];
         list.push(p);
-        screensByParent.set(p.parentId, list);
+        submodulesByParent.set(p.parentId, list);
       }
     }
 
-    const out: ModuleOut[] = modules.map(m => {
-      const children = (screensByParent.get(m.id) ?? []).map(c => ({
-        id: c.id,
-        value: c.value,
-        name: c.name,
-        icon: c.icon,
-        sequence: c.sequence,
-        scope: c.scope,
-        ...(roleId ? { level: levelByPermId.get(c.id) ?? 0 } : {}),
-      }));
-      return {
-        id: m.id,
-        value: m.value,
-        name: m.name,
-        icon: m.icon,
-        sequence: m.sequence,
-        scope: m.scope,
-        ...(roleId && children.length === 0
-          ? { level: levelByPermId.get(m.id) ?? 0 }
-          : {}),
-        screens: children,
+    const toOut = (p: Permission, levelOptional = true): SubmoduleOut => {
+      const out: SubmoduleOut = {
+        id: p.id,
+        name: p.name,
+        value: p.value,
+        status: p.status,
+        icon: p.icon ?? null,
+        sequence: p.sequence,
+        scope: p.scope,
       };
+      if (roleId && levelOptional) {
+        out.level = levelByPermId.get(p.id) ?? 0;
+      }
+      return out;
+    };
+
+    const out: ModuleOut[] = modules.map(m => {
+      const submodules = (submodulesByParent.get(m.id) ?? []).map(c =>
+        toOut(c),
+      );
+      const module: ModuleOut = {
+        ...toOut(m, false), // module row itself doesn't carry level unless leaf-only
+        submodules,
+      };
+      // Leaf-only module (no children in the catalog) — surface its own
+      // level so the FE can render it as a single grantable row.
+      if (roleId && submodules.length === 0) {
+        module.level = levelByPermId.get(m.id) ?? 0;
+      }
+      return module;
     });
 
     return sendResponse(res, true, CODE.SUCCESS, 'permission.list_fetched', {
