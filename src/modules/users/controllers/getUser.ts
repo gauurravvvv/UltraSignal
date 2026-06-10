@@ -1,10 +1,12 @@
 /**
- * getUser — returns the pre-loaded user with two computed UI-facing fields.
+ * getUser — returns the pre-loaded user with computed UI-facing fields.
  *
- * `canDelete` and `isLocked` are derived here rather than stored on the entity
- * so the client doesn't need to replicate the business rule (isDefault === 1
- * means system-seeded; accountLockedAt non-null means locked by failed-login
- * policy). Saves a round-trip for the admin interface.
+ * `canEdit`, `canDelete`, and `isLocked` are derived here rather than stored
+ * on the entity so the client doesn't need to replicate the business rules.
+ * A user is non-mutable (canEdit / canDelete both false) when:
+ *   - `isDefault === 1` — system-seeded "master" admin, OR
+ *   - the row IS the caller — users shouldn't edit or delete themselves
+ *     from the user management screen.
  */
 import { Request, Response } from 'express';
 import { CODE, IS_DEFAULT } from '../../../../config/config';
@@ -15,15 +17,19 @@ import sendResponse from '../../../shared/utility/response';
 const getUser = async (req: Request, res: Response) => {
   Logger.info(`Get client user request`);
 
-  const { orgUser } = res.locals;
+  const { orgUser, loggedInId } = res.locals;
 
-  const orgUserWithCanDelete = {
+  const isMutable =
+    orgUser.isDefault !== IS_DEFAULT.YES && orgUser.id !== loggedInId;
+
+  const orgUserWithMeta = {
     ...orgUser,
-    canDelete: orgUser.isDefault !== IS_DEFAULT.YES,
+    canEdit: isMutable,
+    canDelete: isMutable,
     isLocked: !!orgUser.accountLockedAt,
   };
 
-  sendResponse(res, true, CODE.SUCCESS, USER_MSG.FETCHED, orgUserWithCanDelete);
+  sendResponse(res, true, CODE.SUCCESS, USER_MSG.FETCHED, orgUserWithMeta);
 };
 
 export default getUser;

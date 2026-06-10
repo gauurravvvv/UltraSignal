@@ -1,17 +1,12 @@
 /**
- * getGroup — returns a group with its members and database access connections.
- *
- * `databaseAccess` rows are transformed into human-readable
- * "datasource - connection" strings rather than returning raw entity objects.
- * The UI only needs names for display and this avoids sending sensitive
- * connection metadata (credentials, host) in the group detail response.
+ * getGroup — returns a group with its member list for the detail view.
  *
  * Soft-deleted users are already excluded by the `user.deletedOn IS NULL`
- * inner join applied in GetGroupValidation — the controller can trust that
+ * join applied in GetGroupValidation — the controller can trust that
  * `group.userGroups` only contains active members.
  */
 import { Request, Response } from 'express';
-import { CODE } from '../../../../config/config';
+import { CODE, IS_DEFAULT } from '../../../../config/config';
 import {
   GENERIC,
   GROUP as GROUP_MSG,
@@ -26,15 +21,9 @@ const getGroup = async (req: Request, res: Response) => {
   const { group } = res.locals;
 
   try {
-    const connections: string[] = [];
-
-    if (group.databaseAccess && Array.isArray(group.databaseAccess)) {
-      group.databaseAccess.forEach((access: any) => {
-        connections.push(
-          `${access.connection?.datasource?.name || ''} - ${access.connection?.name || ''}`,
-        );
-      });
-    }
+    // Default groups (Administrators / Members) are immutable — the FE
+    // hides Edit / Delete via these flags.
+    const isMutable = group.isDefault !== IS_DEFAULT.YES;
 
     const response = {
       id: group.id,
@@ -48,7 +37,8 @@ const getGroup = async (req: Request, res: Response) => {
       status: group.status,
       createdOn: group.createdOn,
       userGroups: group.userGroups,
-      connections: connections,
+      canEdit: isMutable,
+      canDelete: isMutable,
     };
 
     sendResponse(res, true, CODE.SUCCESS, GROUP_MSG.FETCHED, response);

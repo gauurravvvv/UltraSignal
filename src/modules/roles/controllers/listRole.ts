@@ -10,7 +10,7 @@
  * rather than the beginning, matching the "append" UX expectation.
  */
 import { Request, Response } from 'express';
-import { CODE, DEFAULT_PAGE, MAX_ROW } from '../../../../config/config';
+import { CODE, DEFAULT_PAGE, IS_DEFAULT, MAX_ROW } from '../../../../config/config';
 import {
   GENERIC,
   ROLE as ROLE_MSG,
@@ -85,9 +85,16 @@ const listRole = async (req: Request, res: Response) => {
       .take(limit)
       .getManyAndCount();
 
+    // Default roles (Administrator / Member, seeded at client onboarding)
+    // are immutable — the FE hides Edit / Delete via these flags.
+    const rolesWithMeta = roles.map((r: any) => {
+      const isMutable = r.isDefault !== IS_DEFAULT.YES;
+      return { ...r, canEdit: isMutable, canDelete: isMutable };
+    });
+
     sendResponse(res, true, CODE.SUCCESS, ROLE_MSG.LIST_FETCHED, {
       count,
-      roles,
+      roles: rolesWithMeta,
     });
   } catch (error) {
     Logger.error(`Error while listing roles: ${getErrorMessage(error)}`);

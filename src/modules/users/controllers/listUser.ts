@@ -7,8 +7,13 @@
  * complications. The second query batches all user IDs in a single IN clause
  * to avoid N+1 round-trips.
  *
- * `canDelete` and `isLocked` are added here (same as getUser) so the list
- * view can render action controls without a per-row detail fetch.
+ * `canEdit`, `canDelete`, and `isLocked` are added here (same as getUser)
+ * so the list view can render action controls without a per-row detail
+ * fetch. A row is non-mutable (canEdit / canDelete both false) when:
+ *   - `isDefault === 1` — system-seeded "master" admin, protected by the
+ *     server-side guards in updateUser/deleteUser validation, OR
+ *   - the row IS the caller — users shouldn't edit or delete themselves
+ *     from the user management screen (profile edits live elsewhere).
  *
  * The `filter` query param is a JSON-serialised object; malformed JSON is
  * caught and silently ignored so an invalid filter degrades to an unfiltered
@@ -62,7 +67,7 @@ const listUsers = async (req: Request, res: Response) => {
       sort?: string;
     };
 
-    const { clientData } = res.locals;
+    const { clientData, loggedInId } = res.locals;
     const clientId = clientData.id;
 
     const query = AppDataSource
@@ -159,13 +164,18 @@ const listUsers = async (req: Request, res: Response) => {
       }
     }
 
-    const usersWithMeta = users.map((user: any) => ({
-      ...user,
-      canDelete: user.isDefault !== IS_DEFAULT.YES,
-      isLocked: !!user.accountLockedAt,
-      groupCount: groupCountMap[user.id] || 0,
-      groupNames: groupNameMap[user.id] || [],
-    }));
+    const usersWithMeta = users.map((user: any) => {
+      const isMutable =
+        user.isDefault !== IS_DEFAULT.YES && user.id !== loggedInId;
+      return {
+        ...user,
+        canEdit: isMutable,
+        canDelete: isMutable,
+        isLocked: !!user.accountLockedAt,
+        groupCount: groupCountMap[user.id] || 0,
+        groupNames: groupNameMap[user.id] || [],
+      };
+    });
 
     sendResponse(res, true, CODE.SUCCESS, USER_MSG.LIST_FETCHED, {
       count,

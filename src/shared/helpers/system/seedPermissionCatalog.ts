@@ -26,9 +26,11 @@ interface ModuleSeed {
   name: string;
   icon?: string;
   sequence: number;
-  scope: 'SYSTEM' | 'ORG';
+  scope: 'SYSTEM' | 'ORG' | 'GLOBAL';
   // Mandatory permissions are granted to every authenticated user without
-  // a mapping row. Used for things like the Home landing page.
+  // a mapping row. Used for things like the Home landing page. Always
+  // pair with scope: 'GLOBAL' so the role editor surfaces them on both
+  // ORG and SYSTEM lookups.
   isMandatory?: boolean;
   screens: ScreenSeed[];
 }
@@ -60,22 +62,26 @@ const CATALOG: ModuleSeed[] = [
     ],
   },
 
-  // ── ORG scope (per-client) ────────────────────────────────
+  // ── GLOBAL scope (cross-cutting, mandatory) ────────────────
   // `home` is mandatory — the FE renders it for every authenticated user.
   // It still lives in the catalog (so the role editor can list it as a
   // locked, always-granted row) but is NEVER stored in
   // role_permission_mapping; resolveUserPermissions UNIONs it onto every
-  // user's effective set at read time.
-  // Sequence 0 so it always sorts first across both scopes.
+  // user's effective set at read time. GLOBAL scope means
+  // listPermissions includes it on both ?scope=ORG and ?scope=SYSTEM
+  // queries.
+  // Sequence 0 so it always sorts first regardless of scope.
   {
     value: 'home',
     name: 'Home',
     icon: 'ci ci-home',
     sequence: 0,
-    scope: 'ORG',
+    scope: 'GLOBAL',
     isMandatory: true,
     screens: [],
   },
+
+  // ── ORG scope (per-client) ────────────────────────────────
   {
     value: 'userManagement',
     name: 'User Management',
@@ -132,7 +138,7 @@ async function upsertPermission(
     parentId: string | null;
     icon?: string;
     sequence: number;
-    scope: 'SYSTEM' | 'ORG';
+    scope: 'SYSTEM' | 'ORG' | 'GLOBAL';
     isMandatory?: boolean;
   },
 ): Promise<string> {

@@ -39,7 +39,7 @@ interface PermissionNode {
   name: string;
   icon: string | null;
   sequence: number;
-  scope: 'SYSTEM' | 'ORG';
+  scope: 'SYSTEM' | 'ORG' | 'GLOBAL';
   /** Set on every node EXCEPT pure section-parents that have at least
    *  one granted child. A leaf-only module (e.g. `home`) carries level. */
   level?: number;

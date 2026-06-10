@@ -11,10 +11,7 @@
  */
 import { NextFunction, Request, Response } from 'express';
 import { CODE } from '../../../config/config';
-import {
-  GENERIC,
-  CLIENT as CLIENT_MSG,
-} from '../constants/response.messages';
+import { GENERIC, CLIENT as CLIENT_MSG } from '../constants/response.messages';
 import { Client } from '../db/entities/client.entity';
 import { getErrorMessage } from '../utility/getErrorMessage';
 import Logger from '../utility/logger/logger';
@@ -38,14 +35,10 @@ const VerifyResourceMiddleware = async (
       where: { id: clientId },
       relations: ['config'],
     });
+    // console.log(client);
 
     if (!client) {
-      return sendResponse(
-        res,
-        false,
-        CODE.NOT_FOUND,
-        CLIENT_MSG.NOT_FOUND,
-      );
+      return sendResponse(res, false, CODE.NOT_FOUND, CLIENT_MSG.NOT_FOUND);
     }
 
     res.locals.loggedInClientId = clientId;

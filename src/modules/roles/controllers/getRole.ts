@@ -6,7 +6,7 @@
  * middleware to keep the pre-load pattern consistent with other GET endpoints.
  */
 import { Request, Response } from 'express';
-import { CODE } from '../../../../config/config';
+import { CODE, IS_DEFAULT } from '../../../../config/config';
 import {
   GENERIC,
   ROLE as ROLE_MSG,
@@ -21,7 +21,14 @@ const getRole = async (req: Request, res: Response) => {
   const { role } = res.locals;
 
   try {
-    sendResponse(res, true, CODE.SUCCESS, ROLE_MSG.FETCHED, role);
+    // Default roles (Administrator / Member) are immutable — the FE hides
+    // Edit / Delete via these flags.
+    const isMutable = role.isDefault !== IS_DEFAULT.YES;
+    sendResponse(res, true, CODE.SUCCESS, ROLE_MSG.FETCHED, {
+      ...role,
+      canEdit: isMutable,
+      canDelete: isMutable,
+    });
   } catch (error) {
     Logger.error(`Error while fetching role: ${getErrorMessage(error)}`);
     return sendResponse(res, false, CODE.SERVER_ERROR, GENERIC.SERVER_ERROR);

@@ -25,8 +25,16 @@ import {
  * (`VerifyPermissionMiddleware('users', ACCESS.READ)`); `name` is the
  * human-readable label shown in the sidebar / role editor.
  *
- * `scope` ('SYSTEM' | 'ORG') keeps platform-only permissions
- * (e.g. clientManagement) out of the per-client role editor.
+ * `scope` ('SYSTEM' | 'ORG' | 'GLOBAL') segments the catalog:
+ *   SYSTEM  — platform-only (clientManagement, systemAdmin). Only the
+ *             System Admin role editor shows these.
+ *   ORG     — per-client (users, roles, dashboards). Only the per-client
+ *             role editor shows these.
+ *   GLOBAL  — cross-cutting items that apply to every authenticated user
+ *             regardless of role (e.g. the `home` landing page).
+ *             Surfaced by listPermissions on BOTH scope filters. Always
+ *             paired with `isMandatory = true` — there's no use case for
+ *             a non-mandatory GLOBAL permission today.
  */
 @Entity()
 @Index(['parentId'])
@@ -59,10 +67,10 @@ export class Permission extends BaseEntity {
 
   @Column({
     type: 'enum',
-    enum: ['SYSTEM', 'ORG'],
+    enum: ['SYSTEM', 'ORG', 'GLOBAL'],
     default: 'ORG',
   })
-  scope: 'SYSTEM' | 'ORG';
+  scope: 'SYSTEM' | 'ORG' | 'GLOBAL';
 
   @Column({
     type: 'enum',

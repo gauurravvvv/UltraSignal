@@ -4,14 +4,19 @@
  * radio columns.
  *
  * Query parameters:
- *   ?scope=ORG|SYSTEM       defaults to ORG
+ *   ?scope=ORG|SYSTEM       defaults to ORG. GLOBAL-scope rows (cross-
+ *                           cutting / mandatory items like `home`) are
+ *                           ALWAYS included regardless of this filter,
+ *                           so both role editors see them as locked,
+ *                           always-granted rows.
  *   ?includeInactive=true   include rows with status = 0 (defaults to
  *                           active-only; only useful for an admin
  *                           "Permission Catalog" management screen)
  *   ?roleId=<uuid>          optional — when present, each submodule row
  *                           (and leaf-only module) is enriched with the
  *                           role's current `level` from
- *                           role_permission_mapping (0 if no mapping)
+ *                           role_permission_mapping (0 if no mapping).
+ *                           Mandatory rows report level 1 regardless.
  *
  * Response shape:
  *   {
@@ -33,6 +38,7 @@
  * single-row entries in the editor.
  */
 import { Request, Response } from 'express';
+import { In } from 'typeorm';
 import { CODE } from '../../../../config/config';
 import { GENERIC } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
@@ -49,7 +55,7 @@ interface SubmoduleOut {
   status: number;
   icon: string | null;
   sequence: number;
-  scope: 'SYSTEM' | 'ORG';
+  scope: 'SYSTEM' | 'ORG' | 'GLOBAL';
   isMandatory: boolean;
   level?: number;
 }
@@ -68,7 +74,10 @@ const listPermissions = async (req: Request, res: Response) => {
   const roleId = (req.query.roleId as string) || null;
 
   try {
-    const where: Record<string, unknown> = { scope };
+    // GLOBAL-scope rows are always included alongside the requested
+    // scope so cross-cutting items (e.g. `home`) appear in both role
+    // editors as locked, always-granted rows.
+    const where: Record<string, unknown> = { scope: In([scope, 'GLOBAL']) };
     if (!includeInactive) where.status = 1;
 
     const all = await AppDataSource.getRepository(Permission).find({

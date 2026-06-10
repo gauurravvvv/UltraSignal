@@ -13,7 +13,7 @@
  * first-class parameter with its own query param slot, not a filter field.
  */
 import { Request, Response } from 'express';
-import { CODE, DEFAULT_PAGE, MAX_ROW } from '../../../../config/config';
+import { CODE, DEFAULT_PAGE, IS_DEFAULT, MAX_ROW } from '../../../../config/config';
 import {
   GENERIC,
   GROUP as GROUP_MSG,
@@ -122,14 +122,21 @@ const listGroup = async (req: Request, res: Response) => {
         roleMap[r.id] = r.name;
       });
     }
-    const groupsWithRole = groups.map((g: any) => ({
-      ...g,
-      roleName: g.roleId ? roleMap[g.roleId] || null : null,
-    }));
+    // Default groups (Administrators / Members, seeded at client onboarding)
+    // are immutable — the FE hides Edit / Delete via these flags.
+    const groupsWithMeta = groups.map((g: any) => {
+      const isMutable = g.isDefault !== IS_DEFAULT.YES;
+      return {
+        ...g,
+        roleName: g.roleId ? roleMap[g.roleId] || null : null,
+        canEdit: isMutable,
+        canDelete: isMutable,
+      };
+    });
 
     sendResponse(res, true, CODE.SUCCESS, GROUP_MSG.LIST_FETCHED, {
       count,
-      groups: groupsWithRole,
+      groups: groupsWithMeta,
     });
   } catch (error) {
     Logger.error(`Error in listGroup: ${error}`);
