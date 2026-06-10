@@ -27,6 +27,9 @@ interface ModuleSeed {
   icon?: string;
   sequence: number;
   scope: 'SYSTEM' | 'ORG';
+  // Mandatory permissions are granted to every authenticated user without
+  // a mapping row. Used for things like the Home landing page.
+  isMandatory?: boolean;
   screens: ScreenSeed[];
 }
 
@@ -35,6 +38,7 @@ interface ScreenSeed {
   name: string;
   icon?: string;
   sequence: number;
+  isMandatory?: boolean;
 }
 
 /**
@@ -57,12 +61,19 @@ const CATALOG: ModuleSeed[] = [
   },
 
   // ── ORG scope (per-client) ────────────────────────────────
+  // `home` is mandatory — the FE renders it for every authenticated user.
+  // It still lives in the catalog (so the role editor can list it as a
+  // locked, always-granted row) but is NEVER stored in
+  // role_permission_mapping; resolveUserPermissions UNIONs it onto every
+  // user's effective set at read time.
+  // Sequence 0 so it always sorts first across both scopes.
   {
     value: 'home',
     name: 'Home',
     icon: 'ci ci-home',
-    sequence: 1,
+    sequence: 0,
     scope: 'ORG',
+    isMandatory: true,
     screens: [],
   },
   {
@@ -122,10 +133,12 @@ async function upsertPermission(
     icon?: string;
     sequence: number;
     scope: 'SYSTEM' | 'ORG';
+    isMandatory?: boolean;
   },
 ): Promise<string> {
   const repo = manager.getRepository(Permission);
   const existing = await repo.findOne({ where: { value: data.value } });
+  const isMandatory = data.isMandatory ?? false;
   if (existing) {
     // Refresh display fields in case the catalog evolved; leave id stable.
     existing.name = data.name;
@@ -133,6 +146,7 @@ async function upsertPermission(
     existing.icon = data.icon ?? existing.icon ?? null;
     existing.sequence = data.sequence;
     existing.scope = data.scope;
+    existing.isMandatory = isMandatory;
     if (existing.status === 0) existing.status = 1;
     await repo.save(existing);
     return existing.id;
@@ -145,6 +159,7 @@ async function upsertPermission(
     sequence: data.sequence,
     scope: data.scope,
     status: 1,
+    isMandatory,
   });
   const saved = await repo.save(created);
   return saved.id;
@@ -165,6 +180,7 @@ const seedPermissionCatalog = async (
       icon: mod.icon,
       sequence: mod.sequence,
       scope: mod.scope,
+      isMandatory: mod.isMandatory,
     });
 
     for (const scr of mod.screens) {
@@ -175,9 +191,21 @@ const seedPermissionCatalog = async (
         icon: scr.icon,
         sequence: scr.sequence,
         scope: mod.scope,
+        isMandatory: scr.isMandatory,
       });
     }
   }
+
+  // Cleanup: mandatory permissions are granted implicitly at read time,
+  // so explicit role_permission_mapping rows for them are redundant.
+  // Runs after the catalog upsert so `isMandatory` is current. Idempotent
+  // — does nothing on fresh installs or after the first run.
+  await manager.query(
+    `DELETE FROM role_permission_mapping rpm
+     USING permission p
+     WHERE rpm."permissionId" = p.id
+       AND p."isMandatory" = true`,
+  );
 
   Logger.info('Permission catalog seeded / refreshed.');
 };
@@ -208,6 +236,10 @@ export async function getPermissionIdByValue(
  * Helper for other seed code: get ALL permission ids that match a scope.
  * Used to grant Administrator FULL on every ORG permission, or System Admin
  * FULL on every SYSTEM permission.
+ *
+ * Mandatory permissions are EXCLUDED — they're granted implicitly to every
+ * authenticated user via resolveUserPermissions, so creating explicit
+ * mapping rows for them would be redundant.
  */
 export async function getPermissionIdsByScope(
   manager: EntityManager,
@@ -215,7 +247,11 @@ export async function getPermissionIdsByScope(
   options: { leavesOnly?: boolean } = {},
 ): Promise<{ id: string; value: string }[]> {
   const repo = manager.getRepository(Permission);
-  const where: Record<string, unknown> = { scope, status: 1 };
+  const where: Record<string, unknown> = {
+    scope,
+    status: 1,
+    isMandatory: false,
+  };
   const rows = await repo.find({ where, order: { sequence: 'ASC' } });
   if (options.leavesOnly === false) return rows.map(r => ({ id: r.id, value: r.value }));
 

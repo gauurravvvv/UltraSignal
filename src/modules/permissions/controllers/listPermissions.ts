@@ -50,6 +50,7 @@ interface SubmoduleOut {
   icon: string | null;
   sequence: number;
   scope: 'SYSTEM' | 'ORG';
+  isMandatory: boolean;
   level?: number;
 }
 
@@ -107,9 +108,14 @@ const listPermissions = async (req: Request, res: Response) => {
         icon: p.icon ?? null,
         sequence: p.sequence,
         scope: p.scope,
+        isMandatory: p.isMandatory,
       };
       if (roleId && levelOptional) {
-        out.level = levelByPermId.get(p.id) ?? 0;
+        // Mandatory permissions are implicit — they always behave as
+        // granted regardless of the role's mapping rows. Report level
+        // READ (1) so the FE can render them as locked and visually
+        // distinct from "not granted".
+        out.level = p.isMandatory ? 1 : levelByPermId.get(p.id) ?? 0;
       }
       return out;
     };

@@ -22,8 +22,11 @@ export class Client extends BaseEntity {
   @Column({ nullable: true })
   name!: string;
 
-  @Column({ type: 'varchar', length: 4, nullable: true })
-  clientCode: string | null;
+  // Short, human-readable tenant identifier (4 chars, uppercase alphanumeric).
+  // Surfaced in audit exports, support tickets, and tenant-scoped URLs. Set
+  // at creation, immutable afterwards. Unique across all clients.
+  @Column({ type: 'varchar', length: 4, unique: true })
+  clientCode!: string;
 
   @Column({ nullable: true })
   description!: string;

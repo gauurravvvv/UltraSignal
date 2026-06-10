@@ -25,10 +25,7 @@ import {
 } from '../../../../config/config';
 import { ACCESS } from '../../../shared/constants/permissions/access';
 import { RolePermissionMapping } from '../../../shared/db/entities/role-permission-mapping.entity';
-import {
-  getPermissionIdByValue,
-  getPermissionIdsByScope,
-} from '../../../shared/helpers/system/seedPermissionCatalog';
+import { getPermissionIdsByScope } from '../../../shared/helpers/system/seedPermissionCatalog';
 import {
   GENERIC,
   CLIENT as CLIENT_MSG,
@@ -56,6 +53,7 @@ const addClient = async (req: Request, res: Response) => {
 
   const {
     name,
+    clientCode,
     description,
     adminFirstName,
     adminLastName,
@@ -122,6 +120,7 @@ const addClient = async (req: Request, res: Response) => {
 
         const client = new Client();
         client.name = name;
+        client.clientCode = clientCode;
         client.description = description;
         client.status = STATUS.ACTIVE;
         client.configId = clientConfig.id;
@@ -167,15 +166,10 @@ const addClient = async (req: Request, res: Response) => {
             .save(adminMappings);
         }
 
-        // Member: READ on `home` only. The tenant Administrator can raise
-        // levels or add more permissions via the role editor.
-        const homePermissionId = await getPermissionIdByValue(manager, 'home');
-        const memberHome = new RolePermissionMapping();
-        memberHome.roleId = savedMemberRole.id;
-        memberHome.permissionId = homePermissionId;
-        memberHome.level = ACCESS.READ;
-        memberHome.createdBy = loggedInId;
-        await manager.getRepository(RolePermissionMapping).save(memberHome);
+        // Member: no permission mappings on creation. The Home landing
+        // page is permanent for every authenticated user and is not a
+        // permission. The tenant Administrator adds grants via the role
+        // editor as their org's needs are defined.
 
         // Seed default groups bound to the roles
         const adminGroup = new Group();

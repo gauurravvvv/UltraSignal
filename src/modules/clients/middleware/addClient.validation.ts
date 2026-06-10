@@ -29,6 +29,7 @@ import { validateSchema } from '../../../shared/utility/validate.middleware';
 
 const schema = Joi.object({
   name: fields.clientName.required(),
+  clientCode: fields.clientCode.required(),
   description: fields.description.required(),
   // All client secrets are encrypted with the platform master key
   // (env: ULTRASIGNAL_MASTER_KEY) — no per-client crypto fields here.
@@ -82,6 +83,19 @@ const AddClientValidation = async (
         false,
         CODE.ALREADY_EXISTS,
         CLIENT_MSG.ALREADY_EXISTS,
+      );
+    }
+
+    const isCodeTaken = await Client.findOne({
+      where: { clientCode: value.clientCode },
+    });
+
+    if (isCodeTaken) {
+      return sendResponse(
+        res,
+        false,
+        CODE.ALREADY_EXISTS,
+        CLIENT_MSG.CODE_ALREADY_EXISTS,
       );
     }
 

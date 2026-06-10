@@ -71,6 +71,14 @@ export class Permission extends BaseEntity {
   })
   status: number;
 
+  // Mandatory permissions are granted to every authenticated user
+  // implicitly — no row in `role_permission_mapping` is needed.
+  // resolveUserPermissions UNIONs them onto every user's effective set
+  // at read time. Used for things like the Home landing page that must
+  // be available to everyone regardless of role.
+  @Column({ type: 'boolean', default: false })
+  isMandatory: boolean;
+
   @CreateDateColumn({ nullable: true })
   createdOn?: Date;
 

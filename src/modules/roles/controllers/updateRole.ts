@@ -22,6 +22,7 @@ import {
   ROLE as ROLE_MSG,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
+import { Permission } from '../../../shared/db/entities/permission.entity';
 import { Role } from '../../../shared/db/entities/role.entity';
 import { RolePermissionMapping } from '../../../shared/db/entities/role-permission-mapping.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
@@ -61,12 +62,20 @@ const updateRole = async (req: Request, res: Response) => {
           .getRepository(RolePermissionMapping)
           .delete({ roleId: role.id });
 
+        // Strip mandatory permissions from the input — they're granted
+        // implicitly via resolveUserPermissions, no mapping row needed.
+        const mandatoryRows = await manager
+          .getRepository(Permission)
+          .find({ where: { isMandatory: true }, select: ['id'] });
+        const mandatoryIds = new Set(mandatoryRows.map(r => r.id));
+
         const wantedMappings = selectedPermissions
           .filter(
             p =>
               p.permissionId &&
               p.level >= ACCESS.READ &&
-              p.level <= ACCESS.FULL,
+              p.level <= ACCESS.FULL &&
+              !mandatoryIds.has(p.permissionId),
           )
           .map(p => {
             const m = new RolePermissionMapping();

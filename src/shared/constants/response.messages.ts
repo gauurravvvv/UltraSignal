@@ -56,6 +56,7 @@ export const CLIENT = {
   LIST_FETCHED: 'client.list_fetched',
   NOT_FOUND: 'client.not_found',
   ALREADY_EXISTS: 'client.already_exists',
+  CODE_ALREADY_EXISTS: 'client.code_already_exists',
   ID_REQUIRED: 'client.id_required',
   INVALID_ID: 'client.invalid_id',
   DB_CONNECTION_FAILED: 'client.db_connection_failed',

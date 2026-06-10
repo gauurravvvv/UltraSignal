@@ -26,6 +26,7 @@ import {
   ROLE as ROLE_MSG,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
+import { Permission } from '../../../shared/db/entities/permission.entity';
 import { Role } from '../../../shared/db/entities/role.entity';
 import { RolePermissionMapping } from '../../../shared/db/entities/role-permission-mapping.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
@@ -60,8 +61,23 @@ const addRole = async (req: Request, res: Response) => {
       role.createdBy = loggedInId;
       saved = await manager.getRepository(Role).save(role);
 
+      // Mandatory permissions are granted implicitly to every authenticated
+      // user via resolveUserPermissions; storing explicit mapping rows for
+      // them would be redundant. Look up the mandatory permission ids and
+      // strip them from the input before inserting.
+      const mandatoryRows = await manager
+        .getRepository(Permission)
+        .find({ where: { isMandatory: true }, select: ['id'] });
+      const mandatoryIds = new Set(mandatoryRows.map(r => r.id));
+
       const wantedMappings = (selectedPermissions ?? [])
-        .filter(p => p.permissionId && p.level >= ACCESS.READ && p.level <= ACCESS.FULL)
+        .filter(
+          p =>
+            p.permissionId &&
+            p.level >= ACCESS.READ &&
+            p.level <= ACCESS.FULL &&
+            !mandatoryIds.has(p.permissionId),
+        )
         .map(p => {
           const m = new RolePermissionMapping();
           m.roleId = saved.id;

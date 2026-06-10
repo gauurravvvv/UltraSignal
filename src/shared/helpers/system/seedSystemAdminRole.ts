@@ -22,18 +22,7 @@ import { ACCESS } from '../../constants/permissions/access';
 import { Role } from '../../db/entities/role.entity';
 import { RolePermissionMapping } from '../../db/entities/role-permission-mapping.entity';
 import Logger from '../../utility/logger/logger';
-import {
-  getPermissionIdByValue,
-  getPermissionIdsByScope,
-} from './seedPermissionCatalog';
-
-/**
- * Cross-scope permissions that the System Admin should always carry, in
- * addition to every SYSTEM-scope leaf. `home` is the landing page — it
- * lives in the catalog as ORG-scope so per-client users get it, but the
- * System Admin also needs it as their post-login destination.
- */
-const CROSS_SCOPE_GRANTS_FOR_SYSTEM_ADMIN = ['home'] as const;
+import { getPermissionIdsByScope } from './seedPermissionCatalog';
 
 const SYSTEM_ADMIN_ROLE_NAME = 'System Admin';
 
@@ -82,17 +71,11 @@ const seedSystemAdminRole = async (
     await mappingRepo.save(m);
   };
 
-  // 1. FULL on every SYSTEM-scope permission leaf.
+  // FULL on every SYSTEM-scope permission leaf. The System Admin carries
+  // no ORG-scope grants; the Home landing page is permanent for every
+  // authenticated user and is not gated by a permission.
   const systemPerms = await getPermissionIdsByScope(manager, 'SYSTEM');
   for (const p of systemPerms) await upsertFull(p.id);
-
-  // 2. FULL on cross-scope permissions System Admin always needs
-  //    (`home` etc. — they live in the catalog under ORG scope but the
-  //    System Admin still needs them, e.g. for the post-login landing page).
-  for (const value of CROSS_SCOPE_GRANTS_FOR_SYSTEM_ADMIN) {
-    const id = await getPermissionIdByValue(manager, value);
-    await upsertFull(id);
-  }
 
   return role.id;
 };

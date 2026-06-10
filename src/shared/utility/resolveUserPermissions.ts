@@ -40,32 +40,46 @@ export async function resolveUserPermissions(
 ): Promise<ResolvedPermissions> {
   // Merged permission set — one MAX(level) per permission value.
   //
-  // `g.status` / `r.status` / `p.status` are Postgres ENUMs whose labels
-  // are the strings '0' and '1' (the underlying TypeORM column is
-  // `enum: [0, 1]`). Compare against the string label, not an int, or
-  // Postgres raises "operator does not exist: <enum> = integer".
-  // `rpm.level >= 1` filters out NONE (0) explicitly — the contract is
-  // that absence means NONE, but a defensive read-side filter ensures
-  // an accidentally-stored 0 row can never surface as a granted
-  // permission. Also ensures HAVING-style logic via the WHERE clause
-  // before GROUP BY runs.
+  // Two sources merge here:
+  //   1. Group-resolved grants: walk user → group → role → mapping →
+  //      permission. Filter g/r/p.status = '1' (Postgres ENUMs store
+  //      string labels — comparing to integer raises a type error) and
+  //      rpm.level >= 1 (defensive — NONE should never appear, but if a
+  //      stale row carries 0, drop it).
+  //   2. Mandatory permissions: every active permission with
+  //      isMandatory = true is granted to every authenticated user at
+  //      level READ (1). No mapping rows are ever stored for these.
+  //
+  // The outer GROUP BY + MAX(level) merges the two sources so a role that
+  // happens to also explicitly grant a mandatory permission (legacy
+  // mappings) still wins at its higher level.
   const permRows: { value: string; level: number | string }[] =
     await connection.query(
       `
-      SELECT p.value          AS value,
-             MAX(rpm.level)   AS level
-      FROM   user_group_mapping ugm
-      JOIN   "group" g                    ON g.id = ugm."groupId"
-      JOIN   role r                       ON r.id = g."roleId"
-      JOIN   role_permission_mapping rpm  ON rpm."roleId" = r.id
-      JOIN   permission p                 ON p.id = rpm."permissionId"
-      WHERE  ugm."userId" = $1
-        AND  g.status = '1'
-        AND  r.status = '1'
-        AND  p.status = '1'
-        AND  rpm.level >= 1
-      GROUP  BY p.value
-      HAVING MAX(rpm.level) >= 1
+      SELECT value, MAX(level) AS level
+      FROM (
+        SELECT p.value          AS value,
+               MAX(rpm.level)   AS level
+        FROM   user_group_mapping ugm
+        JOIN   "group" g                    ON g.id = ugm."groupId"
+        JOIN   role r                       ON r.id = g."roleId"
+        JOIN   role_permission_mapping rpm  ON rpm."roleId" = r.id
+        JOIN   permission p                 ON p.id = rpm."permissionId"
+        WHERE  ugm."userId" = $1
+          AND  g.status = '1'
+          AND  r.status = '1'
+          AND  p.status = '1'
+          AND  rpm.level >= 1
+        GROUP  BY p.value
+
+        UNION ALL
+
+        SELECT p.value, 1 AS level
+        FROM   permission p
+        WHERE  p."isMandatory" = true
+          AND  p.status = '1'
+      ) merged
+      GROUP BY value
       `,
       [userId],
     );

@@ -13,10 +13,10 @@ POST  /api/v1/roles
 
 ### Headers
 
-| Header | Required | Notes |
-|---|:---:|---|
-| `x-auth-token` | ✅ | JWT issued by `/api/v1/auth/login` or `/api/v1/auth/refresh` |
-| `Content-Type` | ✅ | `application/json` |
+| Header         | Required | Notes                                                        |
+| -------------- | :------: | ------------------------------------------------------------ |
+| `x-auth-token` |    ✅    | JWT issued by `/api/v1/auth/login` or `/api/v1/auth/refresh` |
+| `Content-Type` |    ✅    | `application/json`                                           |
 
 ### Permission required
 
@@ -31,32 +31,32 @@ Caller's JWT must carry `roles` with **level ≥ WRITE (2)**. Returns `401` othe
   "name": "Senior Analyst",
   "description": "Analysts who also moderate user groups",
   "selectedPermissions": [
-    { "permissionId": "<uuid-of-users-permission>",        "level": 1 },
-    { "permissionId": "<uuid-of-groups-permission>",       "level": 2 },
+    { "permissionId": "<uuid-of-users-permission>", "level": 1 },
+    { "permissionId": "<uuid-of-groups-permission>", "level": 2 },
     { "permissionId": "<uuid-of-productGroup-permission>", "level": 3 },
-    { "permissionId": "<uuid-of-alertConfiguration-perm>", "level": 2 }
-  ]
+    { "permissionId": "<uuid-of-alertConfiguration-perm>", "level": 2 },
+  ],
 }
 ```
 
 ### Field reference
 
-| Field | Type | Required | Constraints |
-|---|---|:---:|---|
-| `name` | string | ✅ | 2–64 chars, starts with letter/number, allows letters, digits, spaces, `.` `_` `-`. **Unique per client** — Administrator of Acme can have an "Analyst" role independent of Beta Pharma's "Analyst". |
-| `description` | string \| null | optional | Free text, ≤ 500 chars. Pass `null` or omit if not provided. |
-| `selectedPermissions` | array | ✅ | **At least 1 entry** required. Each entry shape: `{ permissionId: string (uuid), level: number }`. |
-| `selectedPermissions[].permissionId` | UUID | ✅ | The `id` of a row in the `permission` table. Get these from `GET /api/v1/permissions`. |
-| `selectedPermissions[].level` | number | ✅ | `0 = NONE` (skipped silently — no row stored), `1 = READ`, `2 = WRITE`, `3 = FULL`. Entries outside `1..3` are ignored. |
+| Field                                | Type           | Required | Constraints                                                                                                                                                                                          |
+| ------------------------------------ | -------------- | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                               | string         |    ✅    | 2–64 chars, starts with letter/number, allows letters, digits, spaces, `.` `_` `-`. **Unique per client** — Administrator of Acme can have an "Analyst" role independent of Beta Pharma's "Analyst". |
+| `description`                        | string \| null | optional | Free text, ≤ 500 chars. Pass `null` or omit if not provided.                                                                                                                                         |
+| `selectedPermissions`                | array          |    ✅    | **At least 1 entry** required. Each entry shape: `{ permissionId: string (uuid), level: number }`.                                                                                                   |
+| `selectedPermissions[].permissionId` | UUID           |    ✅    | The `id` of a row in the `permission` table. Get these from `GET /api/v1/permissions`.                                                                                                               |
+| `selectedPermissions[].level`        | number         |    ✅    | `0 = NONE` (skipped silently — no row stored), `1 = READ`, `2 = WRITE`, `3 = FULL`. Entries outside `1..3` are ignored.                                                                              |
 
 ### Level semantics
 
-| Value | Code | Effect |
-|:---:|---|---|
-| `0` | `NONE` | Permission not granted. **No row inserted in `role_permission_mapping`.** Equivalent to omitting the entry entirely. |
-| `1` | `READ` | View/list only. Passes routes gated at `ACCESS.READ`. |
-| `2` | `WRITE` | Create + edit + everything `READ` allows. |
-| `3` | `FULL` | Delete + admin actions + everything `WRITE` allows. |
+| Value | Code    | Effect                                                                                                               |
+| :---: | ------- | -------------------------------------------------------------------------------------------------------------------- |
+|  `0`  | `NONE`  | Permission not granted. **No row inserted in `role_permission_mapping`.** Equivalent to omitting the entry entirely. |
+|  `1`  | `READ`  | View/list only. Passes routes gated at `ACCESS.READ`.                                                                |
+|  `2`  | `WRITE` | Create + edit + everything `READ` allows.                                                                            |
+|  `3`  | `FULL`  | Delete + admin actions + everything `WRITE` allows.                                                                  |
 
 **Rule:** higher levels imply all lower levels — a single FULL row makes the role pass every READ and WRITE check on that permission.
 
@@ -106,6 +106,7 @@ which returns the role with its `permissions: [...]` array enriched with each gr
 ```
 
 Common causes:
+
 - `selectedPermissions` is empty or missing
 - `name` is missing, too short, or fails the name pattern
 - `description` exceeds 500 chars
@@ -121,6 +122,7 @@ Common causes:
 ```
 
 Server log line will read:
+
 ```
 VerifyPermission: blocked — wanted roles >= 2, user has <X>
 ```
@@ -188,15 +190,15 @@ The FE needs three endpoints to render the Add Role screen and submit the form:
 
 Suppose the FE has these in state after the Administrator picks levels in the editor:
 
-| Permission row (from catalog)               | permissionId                            | Picked level |
-|---------------------------------------------|-----------------------------------------|:------------:|
-| Home                                         | `a1b2…0001`                             | 1 (Read)     |
-| User Management → Users                      | `a1b2…0002`                             | 0 (None) ⨯   |
-| User Management → Groups                     | `a1b2…0003`                             | 2 (Write)    |
-| User Management → Roles                      | `a1b2…0004`                             | 1 (Read)     |
-| Business Config → Product Group              | `a1b2…0005`                             | 3 (Full)     |
-| Business Config → Event Group                | `a1b2…0006`                             | 0 (None) ⨯   |
-| Signaling → Alert Configuration              | `a1b2…0007`                             | 2 (Write)    |
+| Permission row (from catalog)   | permissionId | Picked level |
+| ------------------------------- | ------------ | :----------: |
+| Home                            | `a1b2…0001`  |   1 (Read)   |
+| User Management → Users         | `a1b2…0002`  |  0 (None) ⨯  |
+| User Management → Groups        | `a1b2…0003`  |  2 (Write)   |
+| User Management → Roles         | `a1b2…0004`  |   1 (Read)   |
+| Business Config → Product Group | `a1b2…0005`  |   3 (Full)   |
+| Business Config → Event Group   | `a1b2…0006`  |  0 (None) ⨯  |
+| Signaling → Alert Configuration | `a1b2…0007`  |  2 (Write)   |
 
 The FE should send **only the non-NONE entries** (`level > 0`):
 
@@ -248,6 +250,10 @@ This means a "remove this permission" operation is just sending the new full lis
 
 ## Read for the Update screen
 
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
 When the Administrator clicks **Edit Role**, the FE should call:
 
 ```
@@ -263,12 +269,12 @@ The response is the same catalog shape as above, but every submodule (and leaf-o
       "value": "userManagement",
       "name": "User Management",
       "submodules": [
-        { "value": "roles",  "name": "Roles",  "level": 1 },
+        { "value": "roles", "name": "Roles", "level": 1 },
         { "value": "groups", "name": "Groups", "level": 2 },
-        { "value": "users",  "name": "Users",  "level": 0 }   // not granted
-      ]
-    }
-  ]
+        { "value": "users", "name": "Users", "level": 0 }, // not granted
+      ],
+    },
+  ],
 }
 ```
 
@@ -278,14 +284,14 @@ The FE then renders the form with the correct selections, the user adjusts, and 
 
 ## Edge cases
 
-| Case | Behavior |
-|---|---|
-| `selectedPermissions` contains a `permissionId` that doesn't exist | The row gets inserted; FK constraint will fail at COMMIT → 500. Validate on the FE by only sending IDs from the catalog response. |
+| Case                                                                   | Behavior                                                                                                                                      |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `selectedPermissions` contains a `permissionId` that doesn't exist     | The row gets inserted; FK constraint will fail at COMMIT → 500. Validate on the FE by only sending IDs from the catalog response.             |
 | `selectedPermissions` contains a `permissionId` from a different scope | Allowed by the schema (catalog scope isn't checked at insert). Avoid by filtering catalog responses to `scope=ORG` before letting users pick. |
-| Trying to create a role named "Administrator" or "Member" | Will fail with `role.already_exists` because the default seed roles exist with those names. Pick a different name. |
-| `name` differs only in case (e.g. "analyst" vs "Analyst") | Uniqueness is currently case-sensitive — both rows succeed. If you want case-insensitive uniqueness, that's a separate change. |
-| Creating a role with no `selectedPermissions` | Blocked by validation (`min: 1`). Roles must grant at least one permission. |
-| Trying to set `isDefault = 1` via the request | Ignored — the controller hardcodes `isDefault = 0`. Default roles can only be created via the seed flow. |
+| Trying to create a role named "Administrator" or "Member"              | Will fail with `role.already_exists` because the default seed roles exist with those names. Pick a different name.                            |
+| `name` differs only in case (e.g. "analyst" vs "Analyst")              | Uniqueness is currently case-sensitive — both rows succeed. If you want case-insensitive uniqueness, that's a separate change.                |
+| Creating a role with no `selectedPermissions`                          | Blocked by validation (`min: 1`). Roles must grant at least one permission.                                                                   |
+| Trying to set `isDefault = 1` via the request                          | Ignored — the controller hardcodes `isDefault = 0`. Default roles can only be created via the seed flow.                                      |
 
 ---
 

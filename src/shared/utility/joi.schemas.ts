@@ -140,6 +140,21 @@ export const fields = {
       'any.required': 'Client name is required',
     }),
 
+  // 4-char tenant identifier. Auto-uppercased so callers can send any case;
+  // the stored / unique-compared value is always uppercase.
+  clientCode: Joi.string()
+    .trim()
+    .uppercase()
+    .length(4)
+    .pattern(/^[A-Z0-9]{4}$/)
+    .messages({
+      'string.empty': 'Client code is required',
+      'string.length': 'Client code must be exactly 4 characters',
+      'string.pattern.base':
+        'Client code must contain only letters (A-Z) and digits (0-9)',
+      'any.required': 'Client code is required',
+    }),
+
   description: Joi.string()
     .trim()
     .min(MIN_LENGTH.DESCRIPTION)
