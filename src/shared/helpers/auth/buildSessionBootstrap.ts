@@ -93,6 +93,12 @@ function buildPermissionTree(
   });
 
   for (const grant of granted) {
+    // Skip NONE grants outright — a permission with level 0 must not
+    // surface in the session response, otherwise the FE would render the
+    // module / screen even though the user can't act on it. Belt-and-
+    // suspenders with the SQL-side filter in resolveUserPermissions.
+    if (!grant.level || grant.level < 1) continue;
+
     const perm = byValue.get(grant.value);
     if (!perm) continue; // catalog out of sync; skip silently
 

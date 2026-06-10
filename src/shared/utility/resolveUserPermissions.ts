@@ -44,6 +44,11 @@ export async function resolveUserPermissions(
   // are the strings '0' and '1' (the underlying TypeORM column is
   // `enum: [0, 1]`). Compare against the string label, not an int, or
   // Postgres raises "operator does not exist: <enum> = integer".
+  // `rpm.level >= 1` filters out NONE (0) explicitly — the contract is
+  // that absence means NONE, but a defensive read-side filter ensures
+  // an accidentally-stored 0 row can never surface as a granted
+  // permission. Also ensures HAVING-style logic via the WHERE clause
+  // before GROUP BY runs.
   const permRows: { value: string; level: number | string }[] =
     await connection.query(
       `
@@ -58,7 +63,9 @@ export async function resolveUserPermissions(
         AND  g.status = '1'
         AND  r.status = '1'
         AND  p.status = '1'
+        AND  rpm.level >= 1
       GROUP  BY p.value
+      HAVING MAX(rpm.level) >= 1
       `,
       [userId],
     );
