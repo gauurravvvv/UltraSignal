@@ -1,10 +1,12 @@
 /**
  * refreshToken — issues a new short-lived access token using the opaque refresh token.
  *
- * The refresh token is matched against the DB record (not decoded — it's an opaque
- * random string). This also re-resolves the user's latest permissions so role
- * changes or group membership updates take effect without requiring a full logout.
- * The refresh token itself is NOT rotated here to avoid breaking concurrent tabs.
+ * The refresh token is a 32-byte random hex string — globally unique — so it
+ * identifies the user on its own. No client identifier is taken from the
+ * request body; `user.clientId` / `user.clientName` are read off the matched
+ * row and stamped into the new JWT. This re-resolves permissions on every
+ * refresh so role / group changes take effect without a full logout. The
+ * refresh token itself is NOT rotated here to avoid breaking concurrent tabs.
  */
 import { Request, Response } from 'express';
 import { ACCESS_TOKEN_EXPIRY, CODE } from '../../../../config/config';
@@ -13,7 +15,6 @@ import {
   GENERIC,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
-import { Client } from '../../../shared/db/entities/client.entity';
 import { User } from '../../../shared/db/entities/user.entity';
 import { createToken } from '../../../shared/utility/jwt';
 import Logger from '../../../shared/utility/logger/logger';
@@ -23,33 +24,18 @@ import sendResponse from '../../../shared/utility/response';
 const refreshToken = async (req: Request, res: Response) => {
   Logger.info(`Refresh token request`);
 
-  const { refreshToken: refreshTokenInput, client: clientNameInput } = req.body;
+  const { refreshToken: refreshTokenInput } = req.body;
 
-  if (!refreshTokenInput || !clientNameInput) {
+  if (!refreshTokenInput) {
     return sendResponse(res, false, CODE.BAD_REQUEST, GENERIC.BAD_REQUEST);
   }
 
   try {
-    const client = await Client.findOne({
-      where: { name: clientNameInput },
-      relations: ['config'],
-    });
-
-    if (!client) {
-      return sendResponse(
-        res,
-        false,
-        CODE.UNAUTHORIZED,
-        AUTH_MSG.REFRESH_TOKEN_INVALID,
-      );
-    }
-
     const user = await AppDataSource.getRepository(User)
       .createQueryBuilder('user')
       .addSelect('user.refreshToken')
       .addSelect('user.refreshTokenExpiresAt')
       .where('user.refreshToken = :token', { token: refreshTokenInput })
-      .andWhere('user.clientName = :client', { client: clientNameInput })
       .getOne();
 
     if (!user) {

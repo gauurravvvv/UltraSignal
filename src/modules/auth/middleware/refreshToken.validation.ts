@@ -1,8 +1,15 @@
 /**
  * RefreshTokenValidation — validates POST /auth/refresh body.
- * Both fields are required: the opaque refresh token and the client name
- * (needed to route to the correct DB when looking up the token).
- * The client name is sent in the body as `client`.
+ *
+ * Only the opaque refresh token is required. The token is a 32-byte
+ * random hex string — globally unique — so it identifies the user (and
+ * therefore the client) without any FE-supplied tenant identifier. The
+ * controller reads `user.clientId` / `user.clientName` off the matched
+ * row to mint the new JWT.
+ *
+ * Aligns with the rest of the codebase's "FE never names a client"
+ * principle; the sanitizer would strip a `client` field anyway on every
+ * other route.
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
@@ -19,10 +26,6 @@ const RefreshTokenValidation = async (
     refreshToken: Joi.string().trim().required().messages({
       'string.empty': 'Refresh token is required',
       'any.required': 'Refresh token is required',
-    }),
-    client: Joi.string().trim().required().messages({
-      'string.empty': 'Client is required',
-      'any.required': 'Client is required',
     }),
   });
 
