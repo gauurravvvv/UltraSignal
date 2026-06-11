@@ -114,6 +114,24 @@
     "invalid_type": "无效的角色类型",
     "type_mismatch": "角色类型与用户角色不匹配"
   },
+  "data_source": {
+    "created": "数据源创建成功",
+    "updated": "数据源更新成功",
+    "deleted": "数据源删除成功",
+    "fetched": "数据源详情获取成功",
+    "list_fetched": "数据源获取成功",
+    "not_found": "未找到数据源",
+    "already_exists": "已存在同名数据源",
+    "id_required": "数据源 ID 不能为空",
+    "invalid_id": "数据源 ID 格式无效",
+    "type_not_found": "未找到所选数据源类型",
+    "connection_ok": "连接测试成功",
+    "connection_failed": "连接测试失败",
+    "schema_not_found": "目标数据库中未找到该模式"
+  },
+  "data_source_type": {
+    "list_fetched": "数据源类型获取成功"
+  },
   "profile": {
     "fetched": "个人资料获取成功",
     "locale_updated": "语言偏好更新成功"

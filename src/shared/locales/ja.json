@@ -114,6 +114,24 @@
     "invalid_type": "ロールタイプが無効です",
     "type_mismatch": "ロールタイプがユーザーのロールと一致しません"
   },
+  "data_source": {
+    "created": "データソースが正常に作成されました",
+    "updated": "データソースが正常に更新されました",
+    "deleted": "データソースが正常に削除されました",
+    "fetched": "データソースの詳細が正常に取得されました",
+    "list_fetched": "データソースが正常に取得されました",
+    "not_found": "データソースが見つかりません",
+    "already_exists": "この名前のデータソースは既に存在します",
+    "id_required": "データソースIDは必須です",
+    "invalid_id": "データソースIDの形式が無効です",
+    "type_not_found": "選択されたデータソースタイプが見つかりません",
+    "connection_ok": "接続テストに成功しました",
+    "connection_failed": "接続テストに失敗しました",
+    "schema_not_found": "対象データベースにスキーマが見つかりません"
+  },
+  "data_source_type": {
+    "list_fetched": "データソースタイプが正常に取得されました"
+  },
   "profile": {
     "fetched": "プロフィールの取得に成功しました",
     "locale_updated": "言語設定を正常に更新しました"

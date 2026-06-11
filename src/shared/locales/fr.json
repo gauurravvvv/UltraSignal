@@ -114,6 +114,24 @@
     "invalid_type": "Type de rôle invalide",
     "type_mismatch": "Le type de rôle ne correspond pas au rôle de l'utilisateur"
   },
+  "data_source": {
+    "created": "Source de données créée avec succès",
+    "updated": "Source de données mise à jour avec succès",
+    "deleted": "Source de données supprimée avec succès",
+    "fetched": "Détails de la source de données récupérés avec succès",
+    "list_fetched": "Sources de données récupérées avec succès",
+    "not_found": "Source de données introuvable",
+    "already_exists": "Une source de données portant ce nom existe déjà",
+    "id_required": "L'ID de la source de données est requis",
+    "invalid_id": "Format d'ID de source de données invalide",
+    "type_not_found": "Type de source de données sélectionné introuvable",
+    "connection_ok": "Test de connexion réussi",
+    "connection_failed": "Échec du test de connexion",
+    "schema_not_found": "Schéma introuvable dans la base de données cible"
+  },
+  "data_source_type": {
+    "list_fetched": "Types de source de données récupérés avec succès"
+  },
   "profile": {
     "fetched": "Profil récupéré avec succès",
     "locale_updated": "Préférence de langue mise à jour avec succès"

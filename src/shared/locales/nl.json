@@ -114,6 +114,24 @@
     "invalid_type": "Ongeldig roltype",
     "type_mismatch": "Roltype komt niet overeen met gebruikersrol"
   },
+  "data_source": {
+    "created": "Gegevensbron succesvol aangemaakt",
+    "updated": "Gegevensbron succesvol bijgewerkt",
+    "deleted": "Gegevensbron succesvol verwijderd",
+    "fetched": "Details van gegevensbron succesvol opgehaald",
+    "list_fetched": "Gegevensbronnen succesvol opgehaald",
+    "not_found": "Gegevensbron niet gevonden",
+    "already_exists": "Er bestaat al een gegevensbron met deze naam",
+    "id_required": "Gegevensbron-ID is verplicht",
+    "invalid_id": "Ongeldig formaat voor gegevensbron-ID",
+    "type_not_found": "Geselecteerd gegevensbrontype niet gevonden",
+    "connection_ok": "Verbindingstest geslaagd",
+    "connection_failed": "Verbindingstest mislukt",
+    "schema_not_found": "Schema niet gevonden in de doeldatabase"
+  },
+  "data_source_type": {
+    "list_fetched": "Gegevensbrontypes succesvol opgehaald"
+  },
   "profile": {
     "fetched": "Profiel succesvol opgehaald",
     "locale_updated": "Taalvoorkeur succesvol bijgewerkt"

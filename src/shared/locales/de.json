@@ -114,6 +114,24 @@
     "invalid_type": "Ungültiger Rollentyp",
     "type_mismatch": "Rollentyp stimmt nicht mit Benutzerrolle überein"
   },
+  "data_source": {
+    "created": "Datenquelle erfolgreich erstellt",
+    "updated": "Datenquelle erfolgreich aktualisiert",
+    "deleted": "Datenquelle erfolgreich gelöscht",
+    "fetched": "Datenquellendetails erfolgreich abgerufen",
+    "list_fetched": "Datenquellen erfolgreich abgerufen",
+    "not_found": "Datenquelle nicht gefunden",
+    "already_exists": "Eine Datenquelle mit diesem Namen existiert bereits",
+    "id_required": "Datenquellen-ID ist erforderlich",
+    "invalid_id": "Ungültiges Datenquellen-ID-Format",
+    "type_not_found": "Ausgewählter Datenquellentyp nicht gefunden",
+    "connection_ok": "Verbindungstest erfolgreich",
+    "connection_failed": "Verbindungstest fehlgeschlagen",
+    "schema_not_found": "Schema in der Zieldatenbank nicht gefunden"
+  },
+  "data_source_type": {
+    "list_fetched": "Datenquellentypen erfolgreich abgerufen"
+  },
   "profile": {
     "fetched": "Profil erfolgreich abgerufen",
     "locale_updated": "Spracheinstellung erfolgreich aktualisiert"

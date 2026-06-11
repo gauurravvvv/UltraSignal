@@ -114,6 +114,24 @@
     "invalid_type": "유효하지 않은 역할 유형입니다",
     "type_mismatch": "역할 유형이 사용자 역할과 일치하지 않습니다"
   },
+  "data_source": {
+    "created": "데이터 소스가 성공적으로 생성되었습니다",
+    "updated": "데이터 소스가 성공적으로 업데이트되었습니다",
+    "deleted": "데이터 소스가 성공적으로 삭제되었습니다",
+    "fetched": "데이터 소스 정보를 성공적으로 가져왔습니다",
+    "list_fetched": "데이터 소스 목록을 성공적으로 가져왔습니다",
+    "not_found": "데이터 소스를 찾을 수 없습니다",
+    "already_exists": "이 이름의 데이터 소스가 이미 존재합니다",
+    "id_required": "데이터 소스 ID가 필요합니다",
+    "invalid_id": "잘못된 데이터 소스 ID 형식입니다",
+    "type_not_found": "선택한 데이터 소스 유형을 찾을 수 없습니다",
+    "connection_ok": "연결 테스트에 성공했습니다",
+    "connection_failed": "연결 테스트에 실패했습니다",
+    "schema_not_found": "대상 데이터베이스에서 스키마를 찾을 수 없습니다"
+  },
+  "data_source_type": {
+    "list_fetched": "데이터 소스 유형 목록을 성공적으로 가져왔습니다"
+  },
   "profile": {
     "fetched": "프로필을 성공적으로 가져왔습니다",
     "locale_updated": "언어 기본 설정이 성공적으로 업데이트되었습니다"

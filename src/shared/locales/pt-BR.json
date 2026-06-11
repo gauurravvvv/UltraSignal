@@ -114,6 +114,24 @@
     "invalid_type": "Tipo de função inválido",
     "type_mismatch": "Tipo de função não corresponde à função do usuário"
   },
+  "data_source": {
+    "created": "Fonte de dados criada com sucesso",
+    "updated": "Fonte de dados atualizada com sucesso",
+    "deleted": "Fonte de dados excluída com sucesso",
+    "fetched": "Detalhes da fonte de dados obtidos com sucesso",
+    "list_fetched": "Fontes de dados obtidas com sucesso",
+    "not_found": "Fonte de dados não encontrada",
+    "already_exists": "Já existe uma fonte de dados com este nome",
+    "id_required": "O ID da fonte de dados é obrigatório",
+    "invalid_id": "Formato de ID da fonte de dados inválido",
+    "type_not_found": "Tipo de fonte de dados selecionado não encontrado",
+    "connection_ok": "Teste de conexão bem-sucedido",
+    "connection_failed": "Falha no teste de conexão",
+    "schema_not_found": "Esquema não encontrado no banco de dados de destino"
+  },
+  "data_source_type": {
+    "list_fetched": "Tipos de fonte de dados obtidos com sucesso"
+  },
   "profile": {
     "fetched": "Perfil obtido com sucesso",
     "locale_updated": "Preferência de idioma atualizada com sucesso"

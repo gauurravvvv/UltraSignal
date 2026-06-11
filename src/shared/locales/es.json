@@ -114,6 +114,24 @@
     "invalid_type": "Tipo de rol inválido",
     "type_mismatch": "El tipo de rol no coincide con el rol del usuario"
   },
+  "data_source": {
+    "created": "Fuente de datos creada correctamente",
+    "updated": "Fuente de datos actualizada correctamente",
+    "deleted": "Fuente de datos eliminada correctamente",
+    "fetched": "Detalles de la fuente de datos obtenidos correctamente",
+    "list_fetched": "Fuentes de datos obtenidas correctamente",
+    "not_found": "Fuente de datos no encontrada",
+    "already_exists": "Ya existe una fuente de datos con este nombre",
+    "id_required": "Se requiere el ID de la fuente de datos",
+    "invalid_id": "Formato de ID de fuente de datos no válido",
+    "type_not_found": "Tipo de fuente de datos seleccionado no encontrado",
+    "connection_ok": "Prueba de conexión exitosa",
+    "connection_failed": "La prueba de conexión falló",
+    "schema_not_found": "Esquema no encontrado en la base de datos de destino"
+  },
+  "data_source_type": {
+    "list_fetched": "Tipos de fuente de datos obtenidos correctamente"
+  },
   "profile": {
     "fetched": "Perfil obtenido con éxito",
     "locale_updated": "Preferencia de idioma actualizada con éxito"

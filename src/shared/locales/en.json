@@ -114,6 +114,24 @@
     "invalid_type": "Invalid role type",
     "type_mismatch": "Role type does not match user role"
   },
+  "data_source": {
+    "created": "Data source created successfully",
+    "updated": "Data source updated successfully",
+    "deleted": "Data source deleted successfully",
+    "fetched": "Data source details fetched successfully",
+    "list_fetched": "Data sources fetched successfully",
+    "not_found": "Data source not found",
+    "already_exists": "Data source with this name already exists",
+    "id_required": "Data source ID is required",
+    "invalid_id": "Invalid data source ID format",
+    "type_not_found": "Selected data source type not found",
+    "connection_ok": "Connection test successful",
+    "connection_failed": "Connection test failed",
+    "schema_not_found": "Schema not found in the target database"
+  },
+  "data_source_type": {
+    "list_fetched": "Data source types fetched successfully"
+  },
   "profile": {
     "fetched": "Profile fetched successfully",
     "locale_updated": "Language preference updated successfully"
