@@ -133,7 +133,10 @@
     "list_fetched": "数据源类型获取成功"
   },
   "threshold_profile": {
-    "list_fetched": "阈值配置文件获取成功"
+    "list_fetched": "阈值配置文件获取成功",
+    "copied": "阈值配置文件复制成功",
+    "not_found": "未找到阈值配置文件",
+    "already_exists": "已存在使用此代码的阈值配置文件"
   },
   "profile": {
     "fetched": "个人资料获取成功",

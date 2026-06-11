@@ -133,7 +133,10 @@
     "list_fetched": "Tipos de fonte de dados obtidos com sucesso"
   },
   "threshold_profile": {
-    "list_fetched": "Perfis de limite obtidos com sucesso"
+    "list_fetched": "Perfis de limite obtidos com sucesso",
+    "copied": "Perfil de limite copiado com sucesso",
+    "not_found": "Perfil de limite não encontrado",
+    "already_exists": "Já existe um perfil de limite com este código"
   },
   "profile": {
     "fetched": "Perfil obtido com sucesso",

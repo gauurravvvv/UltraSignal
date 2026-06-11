@@ -133,7 +133,10 @@
     "list_fetched": "Gegevensbrontypes succesvol opgehaald"
   },
   "threshold_profile": {
-    "list_fetched": "Drempelprofielen succesvol opgehaald"
+    "list_fetched": "Drempelprofielen succesvol opgehaald",
+    "copied": "Drempelprofiel succesvol gekopieerd",
+    "not_found": "Drempelprofiel niet gevonden",
+    "already_exists": "Er bestaat al een drempelprofiel met deze code"
   },
   "profile": {
     "fetched": "Profiel succesvol opgehaald",

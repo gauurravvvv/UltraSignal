@@ -133,7 +133,10 @@
     "list_fetched": "Datenquellentypen erfolgreich abgerufen"
   },
   "threshold_profile": {
-    "list_fetched": "Schwellenwertprofile erfolgreich abgerufen"
+    "list_fetched": "Schwellenwertprofile erfolgreich abgerufen",
+    "copied": "Schwellenwertprofil erfolgreich kopiert",
+    "not_found": "Schwellenwertprofil nicht gefunden",
+    "already_exists": "Ein Schwellenwertprofil mit diesem Code existiert bereits"
   },
   "profile": {
     "fetched": "Profil erfolgreich abgerufen",

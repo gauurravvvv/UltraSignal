@@ -88,6 +88,9 @@ export const DATA_SOURCE_TYPE = {
 // Threshold Profile
 export const THRESHOLD_PROFILE = {
   LIST_FETCHED: 'threshold_profile.list_fetched',
+  COPIED: 'threshold_profile.copied',
+  NOT_FOUND: 'threshold_profile.not_found',
+  ALREADY_EXISTS: 'threshold_profile.already_exists',
 };
 
 // System Admin

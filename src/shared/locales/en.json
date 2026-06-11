@@ -133,7 +133,10 @@
     "list_fetched": "Data source types fetched successfully"
   },
   "threshold_profile": {
-    "list_fetched": "Threshold profiles fetched successfully"
+    "list_fetched": "Threshold profiles fetched successfully",
+    "copied": "Threshold profile copied successfully",
+    "not_found": "Threshold profile not found",
+    "already_exists": "A threshold profile with this code already exists"
   },
   "profile": {
     "fetched": "Profile fetched successfully",

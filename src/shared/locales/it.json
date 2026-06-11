@@ -133,7 +133,10 @@
     "list_fetched": "Tipi di origine dati recuperati con successo"
   },
   "threshold_profile": {
-    "list_fetched": "Profili di soglia recuperati con successo"
+    "list_fetched": "Profili di soglia recuperati con successo",
+    "copied": "Profilo di soglia copiato con successo",
+    "not_found": "Profilo di soglia non trovato",
+    "already_exists": "Esiste già un profilo di soglia con questo codice"
   },
   "profile": {
     "fetched": "Profilo recuperato con successo",

@@ -133,7 +133,10 @@
     "list_fetched": "Tipos de fuente de datos obtenidos correctamente"
   },
   "threshold_profile": {
-    "list_fetched": "Perfiles de umbral obtenidos correctamente"
+    "list_fetched": "Perfiles de umbral obtenidos correctamente",
+    "copied": "Perfil de umbral copiado correctamente",
+    "not_found": "Perfil de umbral no encontrado",
+    "already_exists": "Ya existe un perfil de umbral con este código"
   },
   "profile": {
     "fetched": "Perfil obtenido con éxito",
