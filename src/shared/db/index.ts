@@ -6,6 +6,7 @@ import {
   SYSTEM_CLIENT,
 } from '../../../config/config';
 import { Client } from './entities/client.entity';
+import backfillAdminRoleMappings from '../helpers/system/backfillAdminRoleMappings';
 import onboardDB, { sendOnboardEmail } from '../helpers/system/onboardDB';
 import onboardClient from '../helpers/system/onboardClient';
 import seedAccessLevels from '../helpers/system/seedAccessLevels';
@@ -42,13 +43,18 @@ class Database {
     Logger.http(`${DB_CONFIG.database} Database Connected!`);
     Logger.info(`DB URL: ${DB_CONFIG.host}`);
 
-    // Step 1: always (re)seed the access-level + permission catalogs.
-    // Both seeders are idempotent — every row upserts by its stable key,
-    // so re-running on each boot just refreshes labels / icons / sequence
-    // if the catalog evolved.
+    // Step 1: always (re)seed the access-level + permission catalogs and
+    // backfill default-role mappings. All three are idempotent — every
+    // row upserts by its stable key, so re-running on each boot just
+    // refreshes labels / icons / sequence if the catalog evolved.
+    // The Administrator backfill runs after the catalog seed so it sees
+    // the freshly-upserted permission set; it inserts missing FULL
+    // mappings on every existing Administrator role across all clients,
+    // so net-new ORG-scope permissions don't leave older tenants behind.
     await connection.manager.transaction(async manager => {
       await seedAccessLevels(manager);
       await seedPermissionCatalog(manager);
+      await backfillAdminRoleMappings(manager);
     });
 
     // Step 2: ensure the platform System client (UG) exists. On the first

@@ -96,33 +96,28 @@ const CATALOG: ModuleSeed[] = [
   },
   {
     value: 'businessConfig',
-    name: 'Business Config',
+    name: 'Business Configuration',
     icon: 'ci ci-sliders',
     sequence: 3,
     scope: 'ORG',
     screens: [
-      { value: 'productGroup', name: 'Product Group', icon: 'ci ci-pills', sequence: 1 },
-      { value: 'eventGroup', name: 'Event Group', icon: 'ci ci-clipboard-medical', sequence: 2 },
+      { value: 'dataSource', name: 'Data Source', icon: 'ci ci-database', sequence: 1 },
+      { value: 'detectionMethod', name: 'Detection Method', icon: 'ci ci-flask', sequence: 2 },
+      { value: 'eventGroup', name: 'Event Group', icon: 'ci ci-clipboard-medical', sequence: 3 },
+      { value: 'productGroup', name: 'Product Group', icon: 'ci ci-pills', sequence: 4 },
     ],
   },
   {
-    value: 'signaling',
-    name: 'Signaling',
+    value: 'main',
+    name: 'Main',
     icon: 'ci ci-chart-line',
     sequence: 4,
     scope: 'ORG',
     screens: [
       { value: 'alertConfiguration', name: 'Alert Configuration', icon: 'ci ci-bell', sequence: 1 },
-    ],
-  },
-  {
-    value: 'appSettings',
-    name: 'App Settings',
-    icon: 'ci ci-cog',
-    sequence: 5,
-    scope: 'ORG',
-    screens: [
-      { value: 'announcementManagement', name: 'Announcements', icon: 'ci ci-bell', sequence: 1 },
+      { value: 'alertRuns', name: 'Alert Runs', icon: 'ci ci-play', sequence: 2 },
+      { value: 'detectionWorkspace', name: 'Detection Workspace', icon: 'ci ci-layer-group', sequence: 3 },
+      { value: 'signalCalendar', name: 'Signal Calendar', icon: 'ci ci-calendar', sequence: 4 },
     ],
   },
 ];
@@ -202,7 +197,7 @@ const seedPermissionCatalog = async (
     }
   }
 
-  // Cleanup: mandatory permissions are granted implicitly at read time,
+  // Cleanup 1: mandatory permissions are granted implicitly at read time,
   // so explicit role_permission_mapping rows for them are redundant.
   // Runs after the catalog upsert so `isMandatory` is current. Idempotent
   // — does nothing on fresh installs or after the first run.
@@ -212,6 +207,27 @@ const seedPermissionCatalog = async (
      WHERE rpm."permissionId" = p.id
        AND p."isMandatory" = true`,
   );
+
+  // Cleanup 2: remove permission rows that are no longer in the catalog.
+  // The catalog is the source of truth; any row whose `value` doesn't
+  // appear in it (e.g. a deprecated module like `signaling`,
+  // `appSettings`, or their orphan children) gets dropped here. The
+  // ON DELETE CASCADE on role_permission_mapping clears any stale role
+  // grants automatically. Idempotent — on a fresh install or once the
+  // catalog has converged, this DELETE matches zero rows.
+  const catalogValues = new Set<string>();
+  for (const mod of CATALOG) {
+    catalogValues.add(mod.value);
+    for (const scr of mod.screens) catalogValues.add(scr.value);
+  }
+  if (catalogValues.size > 0) {
+    await manager
+      .getRepository(Permission)
+      .createQueryBuilder()
+      .delete()
+      .where('value NOT IN (:...values)', { values: [...catalogValues] })
+      .execute();
+  }
 
   Logger.info('Permission catalog seeded / refreshed.');
 };
