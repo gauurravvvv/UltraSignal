@@ -63,6 +63,25 @@ export const CLIENT = {
   MASTER_DB_REFRESHED: 'client.master_db_refreshed',
 };
 
+// Data Source
+export const DATA_SOURCE = {
+  CREATED: 'data_source.created',
+  UPDATED: 'data_source.updated',
+  DELETED: 'data_source.deleted',
+  FETCHED: 'data_source.fetched',
+  LIST_FETCHED: 'data_source.list_fetched',
+  NOT_FOUND: 'data_source.not_found',
+  ALREADY_EXISTS: 'data_source.already_exists',
+  ID_REQUIRED: 'data_source.id_required',
+  INVALID_ID: 'data_source.invalid_id',
+  TYPE_NOT_FOUND: 'data_source.type_not_found',
+};
+
+// Data Source Type
+export const DATA_SOURCE_TYPE = {
+  LIST_FETCHED: 'data_source_type.list_fetched',
+};
+
 // System Admin
 export const SYSTEM_ADMIN = {
   CREATED: 'system_admin.created',

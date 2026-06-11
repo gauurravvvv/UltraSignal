@@ -229,6 +229,25 @@ const seedPermissionCatalog = async (
       .execute();
   }
 
+  // Cleanup 3: enforce the "frozen at onboarding" invariant for the
+  // default Administrator role. A permission whose `createdOn` is later
+  // than the role's `createdOn` did not exist when the client was
+  // onboarded — so the Administrator should NOT carry a mapping for it.
+  // Any such mapping was injected by a previous backfill pass; drop it.
+  // This keeps the catalog additive without auto-extending existing
+  // tenants. New clients (added later by `addClient`) get the full ORG
+  // leaf set at their own creation time, so this DELETE never matches
+  // their rows. Idempotent — once converged, matches zero rows.
+  await manager.query(
+    `DELETE FROM role_permission_mapping rpm
+     USING role r, permission p
+     WHERE rpm."roleId" = r.id
+       AND rpm."permissionId" = p.id
+       AND r.name = 'Administrator'
+       AND r.scope = 'ORG'
+       AND p."createdOn" > r."createdOn"`,
+  );
+
   Logger.info('Permission catalog seeded / refreshed.');
 };
 

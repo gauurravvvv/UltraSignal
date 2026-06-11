@@ -9,6 +9,8 @@ import morgan from 'morgan';
 import { CODE, FE_URL } from '../config/config';
 import accessLevelRoutes from './modules/access-levels/access-levels.routes';
 import authRoutes from './modules/auth/auth.routes';
+import dataSourceRoutes from './modules/data-sources/data-sources.routes';
+import dataSourceTypeRoutes from './modules/data-source-types/data-source-types.routes';
 import groupRoutes from './modules/groups/groups.routes';
 import homeRoutes from './modules/home/home.routes';
 import clientRoutes from './modules/clients/clients.routes';
@@ -107,6 +109,8 @@ class Server {
     this.app.use('/api/v1/roles', roleRoutes);
     this.app.use('/api/v1/access-levels', accessLevelRoutes);
     this.app.use('/api/v1/permissions', permissionRoutes);
+    this.app.use('/api/v1/data-sources', dataSourceRoutes);
+    this.app.use('/api/v1/data-source-types', dataSourceTypeRoutes);
 
     // Catch-all for unmatched routes
     this.app.all('*', (req, res) => {

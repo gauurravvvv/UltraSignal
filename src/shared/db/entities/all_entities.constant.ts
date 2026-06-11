@@ -1,6 +1,8 @@
 import { AccessLevel } from './access-level.entity';
 import { Client } from './client.entity';
 import { ClientConfig } from './clientConfig.entity';
+import { DataSource } from './data-source.entity';
+import { DataSourceType } from './data-source-type.entity';
 import { Group } from './group.entity';
 import { PasswordHistory } from './passwordHistory.entity';
 import { Permission } from './permission.entity';
@@ -13,6 +15,8 @@ export const ALL_ENTITIES = [
   AccessLevel,
   Client,
   ClientConfig,
+  DataSource,
+  DataSourceType,
   Group,
   PasswordHistory,
   Permission,
