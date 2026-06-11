@@ -18,10 +18,24 @@ import AddDataSourceValidation from './middleware/addDataSource.validation';
 import DeleteDataSourceValidation from './middleware/deleteDataSource.validation';
 import GetDataSourceValidation from './middleware/getDataSource.validation';
 import ListDataSourceValidation from './middleware/listDataSource.validation';
+import TestDataSourceConnectionValidation from './middleware/testDataSourceConnection.validation';
 import UpdateDataSourceValidation from './middleware/updateDataSource.validation';
 
 const router = Router();
 const controller = new DataSourceController();
+
+// `test-connection` is a literal path — register it BEFORE `/` so Express
+// doesn't try to treat "test-connection" as a body for the create route
+// (POST / and POST /test-connection are distinct paths, but keeping the
+// order explicit avoids surprises if /:something paths are added later).
+router.post(
+  '/test-connection',
+  AuthMiddleware,
+  VerifyPermissionMiddleware('dataSource', ACCESS.WRITE),
+  VerifyResourceMiddleware,
+  TestDataSourceConnectionValidation,
+  controller.testConnection,
+);
 
 router.post(
   '/',

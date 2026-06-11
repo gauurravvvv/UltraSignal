@@ -13,20 +13,26 @@ import {
  * not per-client. Used to populate the type dropdown on the per-client
  * Data Source creation screen.
  *
- *   sourceId  — stable short code ("AEMS", "UAN"). Never rename after
- *               seeding; the FE / connectors reference it by code.
- *   name      — human-readable label shown in the dropdown.
- *   scope     — always 'SYSTEM' for now (platform-defined). Kept as an
- *               enum column so a future 'ORG'-scope type (per-client
+ *   id        — UUID primary key, used as the FK target from `data_source`.
+ *   sourceId  — Stable unique integer (1, 2, ...). Friendly numeric
+ *               identifier shown in the UI / referenced by connectors.
+ *               Never renumber after seeding; rows that reference it by
+ *               code rely on stability.
+ *   name      — Human-readable label shown in the dropdown.
+ *   scope     — Always 'SYSTEM' for now (platform-defined). Enum column
+ *               kept open so a future 'ORG'-scope type (per-client
  *               custom source) can be added without a schema change.
+ *
+ * Display order is `sourceId ASC` — seed assigns sourceId monotonically,
+ * so no separate sequence column is needed.
  */
 @Entity('data_source_type')
 export class DataSourceType extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', length: 32, unique: true })
-  sourceId: string;
+  @Column({ type: 'int', unique: true })
+  sourceId: number;
 
   @Column({ type: 'varchar', length: 64 })
   name: string;
@@ -44,9 +50,6 @@ export class DataSourceType extends BaseEntity {
     default: 1,
   })
   status: number;
-
-  @Column({ type: 'smallint', default: 0 })
-  sequence: number;
 
   @CreateDateColumn({ nullable: true })
   createdOn?: Date;

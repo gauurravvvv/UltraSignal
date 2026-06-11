@@ -75,6 +75,9 @@ export const DATA_SOURCE = {
   ID_REQUIRED: 'data_source.id_required',
   INVALID_ID: 'data_source.invalid_id',
   TYPE_NOT_FOUND: 'data_source.type_not_found',
+  CONNECTION_OK: 'data_source.connection_ok',
+  CONNECTION_FAILED: 'data_source.connection_failed',
+  SCHEMA_NOT_FOUND: 'data_source.schema_not_found',
 };
 
 // Data Source Type

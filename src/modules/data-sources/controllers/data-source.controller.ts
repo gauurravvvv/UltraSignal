@@ -3,6 +3,7 @@ import addDataSource from './addDataSource';
 import deleteDataSource from './deleteDataSource';
 import getDataSource from './getDataSource';
 import listDataSource from './listDataSource';
+import testDataSourceConnection from './testDataSourceConnection';
 import updateDataSource from './updateDataSource';
 
 class DataSourceController {
@@ -24,6 +25,10 @@ class DataSourceController {
 
   public delete = async (req: Request, res: Response) => {
     deleteDataSource(req, res);
+  };
+
+  public testConnection = async (req: Request, res: Response) => {
+    testDataSourceConnection(req, res);
   };
 }
 

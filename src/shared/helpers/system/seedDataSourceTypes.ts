@@ -2,10 +2,13 @@
  * seedDataSourceTypes — populates the `data_source_type` catalog with
  * the upstream systems UltraSignal supports (AEMS, UAN, ...).
  *
- * Idempotent: each row is upserted by its unique `sourceId`. Re-running
- * the seed on every boot just refreshes the display name / sequence if
- * the catalog evolved. Adding a new type later is a one-line change in
- * the CATALOG array.
+ * Idempotent: each row is upserted by its stable `sourceId` integer.
+ * Re-running the seed on every boot just refreshes the display name if
+ * the catalog evolved.
+ *
+ * `sourceId` is the stable identifier — once assigned to a name, never
+ * change it (consumers reference rows by sourceId). Adding a new type
+ * means appending to the bottom of the array with the next free integer.
  *
  * Scope is fixed to 'SYSTEM' — platform-defined sources visible to every
  * client. If an 'ORG'-scope (tenant-defined) source becomes a need, add
@@ -17,14 +20,13 @@ import { DataSourceType } from '../../db/entities/data-source-type.entity';
 import Logger from '../../utility/logger/logger';
 
 interface DataSourceTypeSeed {
-  sourceId: string;
+  sourceId: number;
   name: string;
-  sequence: number;
 }
 
 const CATALOG: DataSourceTypeSeed[] = [
-  { sourceId: 'AEMS', name: 'AEMS', sequence: 1 },
-  { sourceId: 'UAN', name: 'UAN', sequence: 2 },
+  { sourceId: 1, name: 'AEMS' },
+  { sourceId: 2, name: 'UAN' },
 ];
 
 const seedDataSourceTypes = async (
@@ -36,7 +38,6 @@ const seedDataSourceTypes = async (
     const existing = await repo.findOne({ where: { sourceId: t.sourceId } });
     if (existing) {
       existing.name = t.name;
-      existing.sequence = t.sequence;
       existing.scope = 'SYSTEM';
       if (existing.status === 0) existing.status = 1;
       await repo.save(existing);
@@ -45,7 +46,6 @@ const seedDataSourceTypes = async (
     const created = repo.create({
       sourceId: t.sourceId,
       name: t.name,
-      sequence: t.sequence,
       scope: 'SYSTEM',
       status: 1,
     });

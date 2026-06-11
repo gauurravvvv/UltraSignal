@@ -24,7 +24,7 @@ const listDataSourceType = async (req: Request, res: Response) => {
   try {
     const types = await AppDataSource.getRepository(DataSourceType).find({
       where: { status: 1 },
-      order: { sequence: 'ASC' },
+      order: { sourceId: 'ASC' },
     });
 
     sendResponse(res, true, CODE.SUCCESS, DST_MSG.LIST_FETCHED, {
