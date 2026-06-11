@@ -42,6 +42,33 @@ export class DataSource extends BaseEntity {
   @JoinColumn({ name: 'typeId' })
   type: DataSourceType;
 
+  /**
+   * Connection details supplied by the tenant at create time. `typeId` is
+   * immutable; the rest are editable. `password` is encrypted with the
+   * platform master key (env: ULTRASIGNAL_MASTER_KEY) via
+   * `encryptForClient` before storage, and marked `select: false` so it
+   * NEVER appears in default findOne / find results — it has to be
+   * pulled explicitly with `.addSelect('ds.password')` when the
+   * ingestion pipeline needs it.
+   */
+  @Column({ type: 'varchar', length: 255 })
+  host: string;
+
+  @Column({ type: 'int' })
+  port: number;
+
+  @Column({ type: 'varchar', length: 128 })
+  dbname: string;
+
+  @Column({ type: 'varchar', length: 128 })
+  username: string;
+
+  @Column({ type: 'varchar', length: 1024, select: false })
+  password: string;
+
+  @Column({ type: 'varchar', length: 64 })
+  schema: string;
+
   @Column({ nullable: false })
   clientId: string;
 

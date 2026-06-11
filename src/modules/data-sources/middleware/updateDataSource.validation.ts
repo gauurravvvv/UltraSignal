@@ -1,10 +1,18 @@
 /**
- * UpdateDataSourceValidation — partial update. All fields optional except
- * `id` (which comes from the path param).
+ * UpdateDataSourceValidation — partial update.
+ *
+ * `typeId` is intentionally `forbidden()` — the upstream system (AEMS,
+ * UAN, ...) is decided at creation time and cannot be switched
+ * afterward. A 400 with a clear message tells the FE not to send it.
+ *
+ * `password` is optional. Sending it (non-empty) replaces the stored
+ * encrypted value. Omitting it (or sending '' / null) leaves the
+ * existing password untouched — so the FE can render the edit form
+ * with a blank password field and only update credentials if the user
+ * types a new one.
  *
  * Uniqueness check uses `Not(id)` so submitting the same name as the
- * current row doesn't trigger a false conflict. If `typeId` is in the
- * payload, the referenced type must exist & be active.
+ * current row doesn't trigger a false conflict.
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
@@ -16,18 +24,39 @@ import {
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
 import { DataSource } from '../../../shared/db/entities/data-source.entity';
-import { DataSourceType } from '../../../shared/db/entities/data-source-type.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import { fields } from '../../../shared/utility/joi.schemas';
 import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
 import { validateSchema } from '../../../shared/utility/validate.middleware';
 
+const SCHEMA_NAME_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
 const schema = Joi.object({
   id: fields.id.required(),
   name: fields.groupName.optional(),
   description: fields.description.optional().allow('', null),
-  typeId: fields.id.optional(),
+  typeId: Joi.any().forbidden().messages({
+    'any.unknown':
+      'Type cannot be changed after creation. Remove `typeId` from the payload.',
+  }),
+  host: Joi.string().trim().min(1).max(255).optional(),
+  port: Joi.number().integer().min(1).max(65535).optional(),
+  dbname: Joi.string().trim().min(1).max(128).optional(),
+  username: Joi.string().trim().min(1).max(128).optional(),
+  // Password is optional on update. Empty string / null = "no change",
+  // any other value = replace.
+  password: Joi.string().max(256).optional().allow('', null),
+  schema: Joi.string()
+    .trim()
+    .min(1)
+    .max(64)
+    .pattern(SCHEMA_NAME_PATTERN)
+    .optional()
+    .messages({
+      'string.pattern.base':
+        'Schema must start with a letter or underscore and contain only letters, numbers, and underscores',
+    }),
   status: fields.status.optional(),
 });
 
@@ -43,22 +72,13 @@ const UpdateDataSourceValidation = async (
     if (error) return sendResponse(res, false, CODE.BAD_REQUEST, error);
     req.body = value;
 
-    const { id, name, typeId } = value;
+    const { id, name } = value;
 
     const existing = await AppDataSource.getRepository(DataSource).findOne({
       where: { id, clientId: clientData.id },
     });
     if (!existing) {
       return sendResponse(res, false, CODE.NOT_FOUND, DS_MSG.NOT_FOUND);
-    }
-
-    if (typeId) {
-      const type = await AppDataSource.getRepository(DataSourceType).findOne({
-        where: { id: typeId, status: 1 },
-      });
-      if (!type) {
-        return sendResponse(res, false, CODE.NOT_FOUND, DS_MSG.TYPE_NOT_FOUND);
-      }
     }
 
     if (name) {
