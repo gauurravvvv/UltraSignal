@@ -139,8 +139,11 @@
     "list_fetched": "Schwellenwertprofile erfolgreich abgerufen",
     "fetched": "Schwellenwertprofil-Details erfolgreich abgerufen",
     "saved": "Schwellenwertprofil erfolgreich gespeichert",
+    "updated": "Erkennungsprofil erfolgreich aktualisiert",
+    "deleted": "Erkennungsprofil erfolgreich gelöscht",
     "not_found": "Schwellenwertprofil nicht gefunden",
-    "already_exists": "Ein Schwellenwertprofil mit diesem Code existiert bereits"
+    "already_exists": "Ein Schwellenwertprofil mit diesem Code existiert bereits",
+    "system_immutable": "Systemprofile können nicht geändert werden"
   },
   "profile": {
     "fetched": "Profil erfolgreich abgerufen",

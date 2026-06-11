@@ -139,8 +139,11 @@
     "list_fetched": "Perfiles de umbral obtenidos correctamente",
     "fetched": "Detalles del perfil de umbral obtenidos correctamente",
     "saved": "Perfil de umbral guardado correctamente",
+    "updated": "Perfil de detección actualizado correctamente",
+    "deleted": "Perfil de detección eliminado correctamente",
     "not_found": "Perfil de umbral no encontrado",
-    "already_exists": "Ya existe un perfil de umbral con este código"
+    "already_exists": "Ya existe un perfil de umbral con este código",
+    "system_immutable": "Los perfiles del sistema no pueden modificarse"
   },
   "profile": {
     "fetched": "Perfil obtenido con éxito",

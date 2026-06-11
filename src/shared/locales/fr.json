@@ -139,8 +139,11 @@
     "list_fetched": "Profils de seuil récupérés avec succès",
     "fetched": "Détails du profil de seuil récupérés avec succès",
     "saved": "Profil de seuil enregistré avec succès",
+    "updated": "Profil de détection mis à jour avec succès",
+    "deleted": "Profil de détection supprimé avec succès",
     "not_found": "Profil de seuil introuvable",
-    "already_exists": "Un profil de seuil avec ce code existe déjà"
+    "already_exists": "Un profil de seuil avec ce code existe déjà",
+    "system_immutable": "Les profils système ne peuvent pas être modifiés"
   },
   "profile": {
     "fetched": "Profil récupéré avec succès",

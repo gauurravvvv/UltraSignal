@@ -100,8 +100,11 @@ export const THRESHOLD_PROFILE = {
   // URL stays `/copy` to describe what the BE is doing (cloning from a
   // source row).
   SAVED: 'threshold_profile.saved',
+  UPDATED: 'threshold_profile.updated',
+  DELETED: 'threshold_profile.deleted',
   NOT_FOUND: 'threshold_profile.not_found',
   ALREADY_EXISTS: 'threshold_profile.already_exists',
+  SYSTEM_IMMUTABLE: 'threshold_profile.system_immutable',
 };
 
 // System Admin

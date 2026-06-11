@@ -139,8 +139,11 @@
     "list_fetched": "Perfis de limite obtidos com sucesso",
     "fetched": "Detalhes do perfil de limite obtidos com sucesso",
     "saved": "Perfil de limite salvo com sucesso",
+    "updated": "Perfil de detecção atualizado com sucesso",
+    "deleted": "Perfil de detecção excluído com sucesso",
     "not_found": "Perfil de limite não encontrado",
-    "already_exists": "Já existe um perfil de limite com este código"
+    "already_exists": "Já existe um perfil de limite com este código",
+    "system_immutable": "Perfis do sistema não podem ser modificados"
   },
   "profile": {
     "fetched": "Perfil obtido com sucesso",

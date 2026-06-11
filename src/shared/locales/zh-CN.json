@@ -139,8 +139,11 @@
     "list_fetched": "阈值配置文件获取成功",
     "fetched": "阈值配置文件详情获取成功",
     "saved": "阈值配置文件保存成功",
+    "updated": "检测配置文件更新成功",
+    "deleted": "检测配置文件删除成功",
     "not_found": "未找到阈值配置文件",
-    "already_exists": "已存在使用此代码的阈值配置文件"
+    "already_exists": "已存在使用此代码的阈值配置文件",
+    "system_immutable": "系统配置文件无法修改"
   },
   "profile": {
     "fetched": "个人资料获取成功",

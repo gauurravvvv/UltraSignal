@@ -139,8 +139,11 @@
     "list_fetched": "Drempelprofielen succesvol opgehaald",
     "fetched": "Details van drempelprofiel succesvol opgehaald",
     "saved": "Drempelprofiel succesvol opgeslagen",
+    "updated": "Detectieprofiel succesvol bijgewerkt",
+    "deleted": "Detectieprofiel succesvol verwijderd",
     "not_found": "Drempelprofiel niet gevonden",
-    "already_exists": "Er bestaat al een drempelprofiel met deze code"
+    "already_exists": "Er bestaat al een drempelprofiel met deze code",
+    "system_immutable": "Systeemprofielen kunnen niet worden gewijzigd"
   },
   "profile": {
     "fetched": "Profiel succesvol opgehaald",

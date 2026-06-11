@@ -95,13 +95,13 @@ const copyThresholdProfile = async (req: Request, res: Response) => {
         const copy = profileRepo.create({
           code,
           displayName,
-          // Allow caller to override description; fall back to source's
-          // value so a copy without an explicit description still has
-          // useful context.
-          description:
-            description !== undefined && description !== null
-              ? description
-              : sourceProfile.description,
+          // Take description exactly as the caller supplies it. Empty
+          // / null collapses to undefined so the column stays NULL
+          // until the user types something. The previous behaviour of
+          // inheriting from the source was confusing because every
+          // copy of the STANDARD profile ended up echoing the same
+          // built-in description until the user manually cleared it.
+          description: description ?? undefined,
           scopeId: orgScope.scopeId,
           // Caller's tenant code stamped on the row so the copy is
           // identifiable as that tenant's.

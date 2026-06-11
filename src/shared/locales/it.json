@@ -139,8 +139,11 @@
     "list_fetched": "Profili di soglia recuperati con successo",
     "fetched": "Dettagli del profilo di soglia recuperati con successo",
     "saved": "Profilo di soglia salvato con successo",
+    "updated": "Profilo di rilevamento aggiornato con successo",
+    "deleted": "Profilo di rilevamento eliminato con successo",
     "not_found": "Profilo di soglia non trovato",
-    "already_exists": "Esiste già un profilo di soglia con questo codice"
+    "already_exists": "Esiste già un profilo di soglia con questo codice",
+    "system_immutable": "I profili di sistema non possono essere modificati"
   },
   "profile": {
     "fetched": "Profilo recuperato con successo",

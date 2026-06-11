@@ -1,10 +1,10 @@
 /**
- * GetThresholdProfileValidation — resolves the threshold profile and
- * pre-loads its conditions + scope, so the controller is pure response
- * shaping. Used by the "click Copy → prefill the form" flow on the FE.
+ * DeleteThresholdProfileValidation — verifies the row exists, scopes
+ * out system rows, and pre-loads the entity for the controller.
  *
- * `:id` must parse as a positive integer; anything else returns 400
- * before we touch the DB.
+ * System-scope rule mirrors the Update guard: rows with
+ * `scope.code === 'system'` return 403 — they're platform-defined and
+ * shared across every tenant, so deletion is not allowed.
  */
 import { NextFunction, Request, Response } from 'express';
 import { CODE } from '../../../../config/config';
@@ -18,7 +18,7 @@ import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
 
-const GetThresholdProfileValidation = async (
+const DeleteThresholdProfileValidation = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -29,19 +29,26 @@ const GetThresholdProfileValidation = async (
       return sendResponse(res, false, CODE.BAD_REQUEST, TP_MSG.NOT_FOUND);
     }
 
-    const profile = await AppDataSource.getRepository(ThresholdProfile)
+    const existing = await AppDataSource.getRepository(ThresholdProfile)
       .createQueryBuilder('p')
       .leftJoinAndSelect('p.scope', 'scope')
-      .leftJoinAndSelect('p.conditions', 'conditions')
       .where('p.threshold_profile_id = :id', { id })
-      .orderBy('conditions.thresholdConditionId', 'ASC')
       .getOne();
 
-    if (!profile) {
+    if (!existing) {
       return sendResponse(res, false, CODE.NOT_FOUND, TP_MSG.NOT_FOUND);
     }
 
-    res.locals.thresholdProfile = profile;
+    if (existing.scope?.code === 'system') {
+      return sendResponse(
+        res,
+        false,
+        CODE.UNAUTHORIZED,
+        TP_MSG.SYSTEM_IMMUTABLE,
+      );
+    }
+
+    res.locals.thresholdProfile = existing;
     next();
   } catch (error) {
     Logger.error(`Validation error: ${getErrorMessage(error)}`);
@@ -49,4 +56,4 @@ const GetThresholdProfileValidation = async (
   }
 };
 
-export default GetThresholdProfileValidation;
+export default DeleteThresholdProfileValidation;
