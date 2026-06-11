@@ -134,6 +134,7 @@
   },
   "threshold_profile": {
     "list_fetched": "Perfis de limite obtidos com sucesso",
+    "fetched": "Detalhes do perfil de limite obtidos com sucesso",
     "copied": "Perfil de limite copiado com sucesso",
     "not_found": "Perfil de limite não encontrado",
     "already_exists": "Já existe um perfil de limite com este código"

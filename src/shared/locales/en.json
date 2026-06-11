@@ -134,6 +134,7 @@
   },
   "threshold_profile": {
     "list_fetched": "Threshold profiles fetched successfully",
+    "fetched": "Threshold profile details fetched successfully",
     "copied": "Threshold profile copied successfully",
     "not_found": "Threshold profile not found",
     "already_exists": "A threshold profile with this code already exists"

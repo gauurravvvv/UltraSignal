@@ -8,6 +8,11 @@
  * resolves it via `leftJoinAndSelect`, so the response is a flat
  * array of profiles each with its `conditions` array nested inline.
  *
+ * Each row carries `canEdit` / `canDelete` flags so the FE can render
+ * action buttons consistently: system-scope profiles (`scope.code ===
+ * 'system'`) are read-only — they're shared across tenants and can't
+ * be mutated. The same flag pattern is used by users / roles / groups.
+ *
  * No pagination, no filtering — this list is small (system-default +
  * a handful of tenant overrides). If it grows, add `page` / `limit` /
  * filter params following the data-sources pattern.
@@ -40,9 +45,17 @@ const listThresholdProfile = async (req: Request, res: Response) => {
       .addOrderBy('conditions.threshold_condition_id', 'ASC')
       .getMany();
 
+    // System-scope profiles are platform-defined and shared across
+    // tenants. They appear in every tenant's list (so the user can
+    // pick / copy them) but cannot be edited or deleted.
+    const thresholdProfiles = profiles.map((p: any) => {
+      const isMutable = p.scope?.code !== 'system';
+      return { ...p, canEdit: isMutable, canDelete: isMutable };
+    });
+
     sendResponse(res, true, CODE.SUCCESS, TP_MSG.LIST_FETCHED, {
-      count: profiles.length,
-      thresholdProfiles: profiles,
+      count: thresholdProfiles.length,
+      thresholdProfiles,
     });
   } catch (error) {
     Logger.error(
