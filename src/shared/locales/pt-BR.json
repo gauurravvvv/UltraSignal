@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "Tipos de fonte de dados obtidos com sucesso"
   },
+  "threshold_profile": {
+    "list_fetched": "Perfis de limite obtidos com sucesso"
+  },
   "profile": {
     "fetched": "Perfil obtido com sucesso",
     "locale_updated": "Preferência de idioma atualizada com sucesso"

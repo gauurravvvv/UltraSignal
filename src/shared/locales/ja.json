@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "データソースタイプが正常に取得されました"
   },
+  "threshold_profile": {
+    "list_fetched": "しきい値プロファイルが正常に取得されました"
+  },
   "profile": {
     "fetched": "プロフィールの取得に成功しました",
     "locale_updated": "言語設定を正常に更新しました"

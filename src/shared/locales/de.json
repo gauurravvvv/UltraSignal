@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "Datenquellentypen erfolgreich abgerufen"
   },
+  "threshold_profile": {
+    "list_fetched": "Schwellenwertprofile erfolgreich abgerufen"
+  },
   "profile": {
     "fetched": "Profil erfolgreich abgerufen",
     "locale_updated": "Spracheinstellung erfolgreich aktualisiert"

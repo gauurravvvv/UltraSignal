@@ -8,6 +8,10 @@ import { PasswordHistory } from './passwordHistory.entity';
 import { Permission } from './permission.entity';
 import { Role } from './role.entity';
 import { RolePermissionMapping } from './role-permission-mapping.entity';
+import { Scope } from './scope.entity';
+import { StatisticalConstantsProfile } from './statistical-constants-profile.entity';
+import { ThresholdCondition } from './threshold-condition.entity';
+import { ThresholdProfile } from './threshold-profile.entity';
 import { User } from './user.entity';
 import { UserGroupMapping } from './user-group-mapping.entity';
 
@@ -22,6 +26,10 @@ export const ALL_ENTITIES = [
   Permission,
   Role,
   RolePermissionMapping,
+  Scope,
+  StatisticalConstantsProfile,
+  ThresholdCondition,
+  ThresholdProfile,
   User,
   UserGroupMapping,
 ];

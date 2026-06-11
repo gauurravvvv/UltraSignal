@@ -57,8 +57,18 @@ const CATALOG: ModuleSeed[] = [
     sequence: 1,
     scope: 'SYSTEM',
     screens: [
-      { value: 'systemAdmin', name: 'System Admins', icon: 'ci ci-user-gear', sequence: 1 },
-      { value: 'clientManagement', name: 'Clients', icon: 'ci ci-building', sequence: 2 },
+      {
+        value: 'systemAdmin',
+        name: 'System Admins',
+        icon: 'ci ci-user-gear',
+        sequence: 1,
+      },
+      {
+        value: 'clientManagement',
+        name: 'Clients',
+        icon: 'ci ci-building',
+        sequence: 2,
+      },
     ],
   },
 
@@ -89,8 +99,18 @@ const CATALOG: ModuleSeed[] = [
     sequence: 2,
     scope: 'ORG',
     screens: [
-      { value: 'roles', name: 'Roles', icon: 'ci ci-shield-halved', sequence: 1 },
-      { value: 'groups', name: 'Groups', icon: 'ci ci-user-group', sequence: 2 },
+      {
+        value: 'roles',
+        name: 'Roles',
+        icon: 'ci ci-shield-halved',
+        sequence: 1,
+      },
+      {
+        value: 'groups',
+        name: 'Groups',
+        icon: 'ci ci-user-group',
+        sequence: 2,
+      },
       { value: 'users', name: 'Users', icon: 'ci ci-users', sequence: 3 },
     ],
   },
@@ -101,10 +121,30 @@ const CATALOG: ModuleSeed[] = [
     sequence: 3,
     scope: 'ORG',
     screens: [
-      { value: 'dataSource', name: 'Data Source', icon: 'ci ci-database', sequence: 1 },
-      { value: 'detectionMethod', name: 'Detection Method', icon: 'ci ci-flask', sequence: 2 },
-      { value: 'eventGroup', name: 'Event Group', icon: 'ci ci-clipboard-medical', sequence: 3 },
-      { value: 'productGroup', name: 'Product Group', icon: 'ci ci-pills', sequence: 4 },
+      {
+        value: 'dataSource',
+        name: 'Data Source',
+        icon: 'ci ci-database',
+        sequence: 1,
+      },
+      {
+        value: 'detectionProfile',
+        name: 'Detection Profile',
+        icon: 'ci ci-flask',
+        sequence: 2,
+      },
+      {
+        value: 'eventGroup',
+        name: 'Event Group',
+        icon: 'ci ci-clipboard-medical',
+        sequence: 3,
+      },
+      {
+        value: 'productGroup',
+        name: 'Product Group',
+        icon: 'ci ci-pills',
+        sequence: 4,
+      },
     ],
   },
   {
@@ -114,10 +154,30 @@ const CATALOG: ModuleSeed[] = [
     sequence: 4,
     scope: 'ORG',
     screens: [
-      { value: 'alertConfiguration', name: 'Alert Configuration', icon: 'ci ci-bell', sequence: 1 },
-      { value: 'alertRuns', name: 'Alert Runs', icon: 'ci ci-play', sequence: 2 },
-      { value: 'detectionWorkspace', name: 'Detection Workspace', icon: 'ci ci-layer-group', sequence: 3 },
-      { value: 'signalCalendar', name: 'Signal Calendar', icon: 'ci ci-calendar', sequence: 4 },
+      {
+        value: 'alertConfiguration',
+        name: 'Alert Configuration',
+        icon: 'ci ci-bell',
+        sequence: 1,
+      },
+      {
+        value: 'alertRuns',
+        name: 'Alert Runs',
+        icon: 'ci ci-play',
+        sequence: 2,
+      },
+      {
+        value: 'detectionWorkspace',
+        name: 'Detection Workspace',
+        icon: 'ci ci-layer-group',
+        sequence: 3,
+      },
+      {
+        value: 'signalCalendar',
+        name: 'Signal Calendar',
+        icon: 'ci ci-calendar',
+        sequence: 4,
+      },
     ],
   },
 ];
@@ -166,9 +226,7 @@ async function upsertPermission(
   return saved.id;
 }
 
-const seedPermissionCatalog = async (
-  manager: EntityManager,
-): Promise<void> => {
+const seedPermissionCatalog = async (manager: EntityManager): Promise<void> => {
   for (const mod of CATALOG) {
     // For "leaf-only" modules (no screens) we still create the module row
     // but it ALSO doubles as the grantable permission — `home` is one such
@@ -294,7 +352,8 @@ export async function getPermissionIdsByScope(
     isMandatory: false,
   };
   const rows = await repo.find({ where, order: { sequence: 'ASC' } });
-  if (options.leavesOnly === false) return rows.map(r => ({ id: r.id, value: r.value }));
+  if (options.leavesOnly === false)
+    return rows.map(r => ({ id: r.id, value: r.value }));
 
   // Default: leaves only (children of a module). If a module has no children
   // (like `home`), treat the module itself as a leaf.

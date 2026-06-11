@@ -11,7 +11,10 @@ import onboardClient from '../helpers/system/onboardClient';
 import seedAccessLevels from '../helpers/system/seedAccessLevels';
 import seedDataSourceTypes from '../helpers/system/seedDataSourceTypes';
 import seedPermissionCatalog from '../helpers/system/seedPermissionCatalog';
+import seedScopes from '../helpers/system/seedScopes';
+import seedStatisticalConstantsProfiles from '../helpers/system/seedStatisticalConstantsProfiles';
 import seedSystemAdminRole from '../helpers/system/seedSystemAdminRole';
+import seedThresholdProfiles from '../helpers/system/seedThresholdProfiles';
 import Logger from '../utility/logger/logger';
 import CustomLogger from '../utility/logger/typeORMLogger';
 import { ALL_ENTITIES } from './entities/all_entities.constant';
@@ -58,6 +61,11 @@ class Database {
       await seedAccessLevels(manager);
       await seedPermissionCatalog(manager);
       await seedDataSourceTypes(manager);
+      // Pharmacovigilance reference data. Scope must seed first because
+      // threshold + stats-constants profiles reference scope by code.
+      await seedScopes(manager);
+      await seedThresholdProfiles(manager);
+      await seedStatisticalConstantsProfiles(manager);
     });
 
     // Step 2: ensure the platform System client (UG) exists. On the first

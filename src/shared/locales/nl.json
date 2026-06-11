@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "Gegevensbrontypes succesvol opgehaald"
   },
+  "threshold_profile": {
+    "list_fetched": "Drempelprofielen succesvol opgehaald"
+  },
   "profile": {
     "fetched": "Profiel succesvol opgehaald",
     "locale_updated": "Taalvoorkeur succesvol bijgewerkt"

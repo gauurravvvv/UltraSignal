@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "데이터 소스 유형 목록을 성공적으로 가져왔습니다"
   },
+  "threshold_profile": {
+    "list_fetched": "임계값 프로필 목록을 성공적으로 가져왔습니다"
+  },
   "profile": {
     "fetched": "프로필을 성공적으로 가져왔습니다",
     "locale_updated": "언어 기본 설정이 성공적으로 업데이트되었습니다"

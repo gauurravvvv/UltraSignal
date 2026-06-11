@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "数据源类型获取成功"
   },
+  "threshold_profile": {
+    "list_fetched": "阈值配置文件获取成功"
+  },
   "profile": {
     "fetched": "个人资料获取成功",
     "locale_updated": "语言偏好更新成功"
