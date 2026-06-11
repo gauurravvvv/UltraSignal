@@ -135,7 +135,7 @@
   "threshold_profile": {
     "list_fetched": "Profili di soglia recuperati con successo",
     "fetched": "Dettagli del profilo di soglia recuperati con successo",
-    "copied": "Profilo di soglia copiato con successo",
+    "saved": "Profilo di soglia salvato con successo",
     "not_found": "Profilo di soglia non trovato",
     "already_exists": "Esiste già un profilo di soglia con questo codice"
   },

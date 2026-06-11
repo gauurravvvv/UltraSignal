@@ -135,7 +135,7 @@
   "threshold_profile": {
     "list_fetched": "Perfiles de umbral obtenidos correctamente",
     "fetched": "Detalles del perfil de umbral obtenidos correctamente",
-    "copied": "Perfil de umbral copiado correctamente",
+    "saved": "Perfil de umbral guardado correctamente",
     "not_found": "Perfil de umbral no encontrado",
     "already_exists": "Ya existe un perfil de umbral con este código"
   },

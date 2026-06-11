@@ -124,7 +124,7 @@ const copyThresholdProfile = async (req: Request, res: Response) => {
       },
     );
 
-    sendResponse(res, true, CODE.SUCCESS, TP_MSG.COPIED, {
+    sendResponse(res, true, CODE.SUCCESS, TP_MSG.SAVED, {
       ...result.profile,
       conditions: result.conditions,
     });

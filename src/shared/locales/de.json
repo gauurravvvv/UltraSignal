@@ -135,7 +135,7 @@
   "threshold_profile": {
     "list_fetched": "Schwellenwertprofile erfolgreich abgerufen",
     "fetched": "Schwellenwertprofil-Details erfolgreich abgerufen",
-    "copied": "Schwellenwertprofil erfolgreich kopiert",
+    "saved": "Schwellenwertprofil erfolgreich gespeichert",
     "not_found": "Schwellenwertprofil nicht gefunden",
     "already_exists": "Ein Schwellenwertprofil mit diesem Code existiert bereits"
   },

@@ -135,7 +135,7 @@
   "threshold_profile": {
     "list_fetched": "Drempelprofielen succesvol opgehaald",
     "fetched": "Details van drempelprofiel succesvol opgehaald",
-    "copied": "Drempelprofiel succesvol gekopieerd",
+    "saved": "Drempelprofiel succesvol opgeslagen",
     "not_found": "Drempelprofiel niet gevonden",
     "already_exists": "Er bestaat al een drempelprofiel met deze code"
   },

@@ -135,7 +135,7 @@
   "threshold_profile": {
     "list_fetched": "Profils de seuil récupérés avec succès",
     "fetched": "Détails du profil de seuil récupérés avec succès",
-    "copied": "Profil de seuil copié avec succès",
+    "saved": "Profil de seuil enregistré avec succès",
     "not_found": "Profil de seuil introuvable",
     "already_exists": "Un profil de seuil avec ce code existe déjà"
   },

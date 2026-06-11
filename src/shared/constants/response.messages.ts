@@ -89,7 +89,12 @@ export const DATA_SOURCE_TYPE = {
 export const THRESHOLD_PROFILE = {
   LIST_FETCHED: 'threshold_profile.list_fetched',
   FETCHED: 'threshold_profile.fetched',
-  COPIED: 'threshold_profile.copied',
+  // The `POST /:id/copy` endpoint reports back as "saved" rather than
+  // "copied" because the user-facing action on the form is Save — they
+  // copy from a source, edit the conditions, and save. The endpoint
+  // URL stays `/copy` to describe what the BE is doing (cloning from a
+  // source row).
+  SAVED: 'threshold_profile.saved',
   NOT_FOUND: 'threshold_profile.not_found',
   ALREADY_EXISTS: 'threshold_profile.already_exists',
 };
