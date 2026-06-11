@@ -24,7 +24,7 @@ const controller = new ThresholdProfileController();
 router.get(
   '/',
   AuthMiddleware,
-  VerifyPermissionMiddleware('detectionMethod', ACCESS.READ),
+  VerifyPermissionMiddleware('detectionProfile', ACCESS.READ),
   VerifyResourceMiddleware,
   controller.list,
 );
@@ -32,7 +32,7 @@ router.get(
 router.post(
   '/:id/copy',
   AuthMiddleware,
-  VerifyPermissionMiddleware('detectionMethod', ACCESS.WRITE),
+  VerifyPermissionMiddleware('detectionProfile', ACCESS.WRITE),
   VerifyResourceMiddleware,
   CopyThresholdProfileValidation,
   controller.copy,
