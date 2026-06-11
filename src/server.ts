@@ -17,6 +17,7 @@ import clientRoutes from './modules/clients/clients.routes';
 import permissionRoutes from './modules/permissions/permissions.routes';
 import profileRoutes from './modules/profile/profile.routes';
 import roleRoutes from './modules/roles/roles.routes';
+import scopeRoutes from './modules/scopes/scopes.routes';
 import systemAdminRoutes from './modules/system-admins/system-admins.routes';
 import thresholdProfileRoutes from './modules/threshold-profiles/threshold-profiles.routes';
 import userRoutes from './modules/users/users.routes';
@@ -113,6 +114,7 @@ class Server {
     this.app.use('/api/v1/data-sources', dataSourceRoutes);
     this.app.use('/api/v1/data-source-types', dataSourceTypeRoutes);
     this.app.use('/api/v1/threshold-profiles', thresholdProfileRoutes);
+    this.app.use('/api/v1/scopes', scopeRoutes);
 
     // Catch-all for unmatched routes
     this.app.all('*', (req, res) => {

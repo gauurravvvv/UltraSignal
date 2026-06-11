@@ -52,7 +52,9 @@ export class StatisticalConstantsProfile extends BaseEntity {
   @JoinColumn({ name: 'scope_id' })
   scope: Scope;
 
-  @Column({ type: 'bigint', name: 'client_id', nullable: true })
+  // Stores the owning client's 4-char `clientCode` (e.g. 'UG'). NULL =
+  // system default (visible to every tenant).
+  @Column({ type: 'varchar', length: 4, name: 'client_id', nullable: true })
   clientId?: string | null;
 
   @Column({ type: 'boolean', name: 'is_default', default: false })

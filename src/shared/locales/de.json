@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "Datenquellentypen erfolgreich abgerufen"
   },
+  "scope": {
+    "list_fetched": "Bereiche erfolgreich abgerufen"
+  },
   "threshold_profile": {
     "list_fetched": "Schwellenwertprofile erfolgreich abgerufen",
     "fetched": "Schwellenwertprofil-Details erfolgreich abgerufen",

@@ -24,16 +24,17 @@
  *   - description — caller's payload if provided, source's otherwise
  *   - isDefault — forced to FALSE. Only seeded profiles can be defaults;
  *                 user-created copies are never defaults.
- *   - clientId — set to NULL. The DDL uses bigint for client_id but
- *                UltraSignal's tenant ids are UUIDs, so we can't fill
- *                this in from the JWT today. Defaulting to NULL makes
- *                the copy a "system-visible" row; when the bigint/UUID
- *                mismatch is resolved, tighten this to the caller's
- *                tenant id.
+ *   - scopeId — set to the `org` scope (looked up by code). System
+ *               profiles are platform-defined and read-only; any user
+ *               copy becomes a tenant-owned, editable org-scoped row.
+ *   - clientId — set to the caller's `clientCode` (e.g. 'UG'). The
+ *                column stores the 4-char code directly so the row
+ *                ties back to the originating tenant without depending
+ *                on the UUID-keyed `client` table.
  *   - createdAt — auto-set
  *
  * `category` from the FE payload is informational (the source's scope
- * label) and dropped here. The copy inherits the source's `scopeId`.
+ * label) and dropped here.
  */
 import { Request, Response } from 'express';
 import { EntityManager } from 'typeorm';
@@ -43,6 +44,7 @@ import {
   THRESHOLD_PROFILE as TP_MSG,
 } from '../../../shared/constants/response.messages';
 import { AppDataSource } from '../../../shared/db';
+import { Scope } from '../../../shared/db/entities/scope.entity';
 import { ThresholdCondition } from '../../../shared/db/entities/threshold-condition.entity';
 import { ThresholdProfile } from '../../../shared/db/entities/threshold-profile.entity';
 import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
@@ -70,12 +72,25 @@ const copyThresholdProfile = async (req: Request, res: Response) => {
 
   const { code, displayName, description, methods } = req.body as CopyBody;
   const sourceProfile = res.locals.sourceProfile as ThresholdProfile;
+  const { clientData } = res.locals;
 
   try {
     const result = await AppDataSource.manager.transaction(
       async (manager: EntityManager) => {
         const profileRepo = manager.getRepository(ThresholdProfile);
         const conditionRepo = manager.getRepository(ThresholdCondition);
+        const scopeRepo = manager.getRepository(Scope);
+
+        // User-created profiles are org-scoped, regardless of where they
+        // were copied from. Look up the `org` scope by its stable code
+        // rather than hard-coding a numeric id (auto-increment ids can
+        // drift between environments).
+        const orgScope = await scopeRepo.findOne({ where: { code: 'org' } });
+        if (!orgScope) {
+          throw new Error(
+            'Scope with code "org" not found. Did seedScopes run?',
+          );
+        }
 
         const copy = profileRepo.create({
           code,
@@ -87,8 +102,10 @@ const copyThresholdProfile = async (req: Request, res: Response) => {
             description !== undefined && description !== null
               ? description
               : sourceProfile.description,
-          scopeId: sourceProfile.scopeId,
-          clientId: null,
+          scopeId: orgScope.scopeId,
+          // Caller's tenant code stamped on the row so the copy is
+          // identifiable as that tenant's.
+          clientId: clientData?.clientCode ?? null,
           isDefault: false,
           isEnabled: sourceProfile.isEnabled,
         });

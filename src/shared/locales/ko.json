@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "데이터 소스 유형 목록을 성공적으로 가져왔습니다"
   },
+  "scope": {
+    "list_fetched": "범위 목록을 성공적으로 가져왔습니다"
+  },
   "threshold_profile": {
     "list_fetched": "임계값 프로필 목록을 성공적으로 가져왔습니다",
     "fetched": "임계값 프로필 정보를 성공적으로 가져왔습니다",

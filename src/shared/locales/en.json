@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "Data source types fetched successfully"
   },
+  "scope": {
+    "list_fetched": "Scopes fetched successfully"
+  },
   "threshold_profile": {
     "list_fetched": "Threshold profiles fetched successfully",
     "fetched": "Threshold profile details fetched successfully",

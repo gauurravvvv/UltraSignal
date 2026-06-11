@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "Tipos de fonte de dados obtidos com sucesso"
   },
+  "scope": {
+    "list_fetched": "Escopos obtidos com sucesso"
+  },
   "threshold_profile": {
     "list_fetched": "Perfis de limite obtidos com sucesso",
     "fetched": "Detalhes do perfil de limite obtidos com sucesso",

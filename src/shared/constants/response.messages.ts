@@ -85,6 +85,11 @@ export const DATA_SOURCE_TYPE = {
   LIST_FETCHED: 'data_source_type.list_fetched',
 };
 
+// Scope
+export const SCOPE = {
+  LIST_FETCHED: 'scope.list_fetched',
+};
+
 // Threshold Profile
 export const THRESHOLD_PROFILE = {
   LIST_FETCHED: 'threshold_profile.list_fetched',

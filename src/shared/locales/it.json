@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "Tipi di origine dati recuperati con successo"
   },
+  "scope": {
+    "list_fetched": "Ambiti recuperati con successo"
+  },
   "threshold_profile": {
     "list_fetched": "Profili di soglia recuperati con successo",
     "fetched": "Dettagli del profilo di soglia recuperati con successo",

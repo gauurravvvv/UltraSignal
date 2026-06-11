@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "数据源类型获取成功"
   },
+  "scope": {
+    "list_fetched": "范围获取成功"
+  },
   "threshold_profile": {
     "list_fetched": "阈值配置文件获取成功",
     "fetched": "阈值配置文件详情获取成功",

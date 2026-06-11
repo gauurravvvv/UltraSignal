@@ -27,9 +27,11 @@ import { ThresholdCondition } from './threshold-condition.entity';
  * raw SQL: `CREATE UNIQUE INDEX ux_tp_default ON threshold_profile
  * (COALESCE(client_id, 0::bigint), scope_id) WHERE is_default = true;`).
  *
- * `client_id` is a free-floating bigint with no FK — it doesn't link to
- * the UltraSignal `client.id` (UUID). Bridge that later if you want
- * cascades / joins to the tenant table.
+ * `client_id` holds the owning tenant's `client_code` (varchar(4),
+ * e.g. 'UG', 'KK01'). NULL means "system default — visible to every
+ * tenant". The column isn't an FK; it stores the stable 4-char code
+ * directly so the rest of the codebase can match tenant rows by code
+ * without joining back through the UUID-keyed `client` table.
  */
 @Entity('threshold_profile')
 @Index('ix_tp_scope_client', ['scopeId', 'clientId'])
@@ -53,10 +55,9 @@ export class ThresholdProfile extends BaseEntity {
   @JoinColumn({ name: 'scope_id' })
   scope: Scope;
 
-  // pg-node returns `bigint` as a string by default; keep the JS type as
-  // `string | null` to match the runtime shape. Treat NULL as the
-  // "system default" sentinel — present in every client's profile list.
-  @Column({ type: 'bigint', name: 'client_id', nullable: true })
+  // Stores the owning client's 4-char `clientCode` (e.g. 'UG'). NULL =
+  // system default (visible to every tenant).
+  @Column({ type: 'varchar', length: 4, name: 'client_id', nullable: true })
   clientId?: string | null;
 
   @Column({ type: 'boolean', name: 'is_default', default: false })

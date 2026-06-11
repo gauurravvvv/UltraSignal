@@ -132,6 +132,9 @@
   "data_source_type": {
     "list_fetched": "Gegevensbrontypes succesvol opgehaald"
   },
+  "scope": {
+    "list_fetched": "Bereiken succesvol opgehaald"
+  },
   "threshold_profile": {
     "list_fetched": "Drempelprofielen succesvol opgehaald",
     "fetched": "Details van drempelprofiel succesvol opgehaald",
