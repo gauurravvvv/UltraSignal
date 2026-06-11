@@ -1,22 +1,27 @@
 /**
- * copyThresholdProfile — clones a threshold profile and all its
- * conditions under a new code / displayName.
+ * copyThresholdProfile — clones a threshold profile and persists the
+ * (possibly edited) condition set the FE submits.
  *
  * Source profile is pre-loaded into `res.locals.sourceProfile` by the
  * validator (with the `conditions` relation eagerly joined), so this
  * controller is pure write logic.
  *
+ * Condition handling:
+ *   - If the body carries `methods` (the FE's edited rows), insert one
+ *     condition row per entry using its (metric, operator, value,
+ *     isEnabled). The `id` echoed back from the source row is ignored
+ *     — new rows get fresh auto-increment ids.
+ *   - If `methods` is omitted, fall back to cloning the source's
+ *     conditions verbatim (the original copy semantics).
+ *
  * Transaction wraps the whole thing — if condition inserts fail, the
  * new profile row rolls back too, so we never leave an orphan parent.
  *
- * What carries over from the source:
- *   - scopeId, isEnabled, every condition's (metric, operator, value, isEnabled)
- *   - description (if the caller didn't override it)
- *
- * What changes:
+ * What changes vs. the source:
  *   - thresholdProfileId — fresh auto-increment
  *   - thresholdConditionId — fresh per row
  *   - code, displayName — from the caller's payload
+ *   - description — caller's payload if provided, source's otherwise
  *   - isDefault — forced to FALSE. Only seeded profiles can be defaults;
  *                 user-created copies are never defaults.
  *   - clientId — set to NULL. The DDL uses bigint for client_id but
@@ -26,6 +31,9 @@
  *                mismatch is resolved, tighten this to the caller's
  *                tenant id.
  *   - createdAt — auto-set
+ *
+ * `category` from the FE payload is informational (the source's scope
+ * label) and dropped here. The copy inherits the source's `scopeId`.
  */
 import { Request, Response } from 'express';
 import { EntityManager } from 'typeorm';
@@ -41,16 +49,26 @@ import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
 
+interface MethodInput {
+  id?: number;
+  metric: string;
+  operator: string;
+  value: number;
+  isEnabled: boolean;
+}
+
 interface CopyBody {
   code: string;
   displayName: string;
   description?: string | null;
+  category?: string | null;
+  methods?: MethodInput[];
 }
 
 const copyThresholdProfile = async (req: Request, res: Response) => {
   Logger.info('Copy Threshold Profile request');
 
-  const { code, displayName, description } = req.body as CopyBody;
+  const { code, displayName, description, methods } = req.body as CopyBody;
   const sourceProfile = res.locals.sourceProfile as ThresholdProfile;
 
   try {
@@ -76,13 +94,26 @@ const copyThresholdProfile = async (req: Request, res: Response) => {
         });
         const savedProfile = await profileRepo.save(copy);
 
-        const conditions = (sourceProfile.conditions ?? []).map(c =>
+        // Pick the condition set to insert. If the FE sent edited rows,
+        // use those (the user adjusted toggles / values on the form);
+        // otherwise clone the source verbatim.
+        const sourceRows: MethodInput[] =
+          methods && methods.length > 0
+            ? methods
+            : (sourceProfile.conditions ?? []).map(c => ({
+                metric: c.metric,
+                operator: c.operator,
+                value: c.value,
+                isEnabled: c.isEnabled,
+              }));
+
+        const conditions = sourceRows.map(m =>
           conditionRepo.create({
             thresholdProfileId: savedProfile.thresholdProfileId,
-            metric: c.metric,
-            operator: c.operator,
-            value: c.value,
-            isEnabled: c.isEnabled,
+            metric: m.metric,
+            operator: m.operator,
+            value: m.value,
+            isEnabled: m.isEnabled,
           }),
         );
 

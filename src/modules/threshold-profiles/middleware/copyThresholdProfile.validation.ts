@@ -1,14 +1,22 @@
 /**
  * CopyThresholdProfileValidation — validates the request before the
- * controller copies the source profile + its conditions.
+ * controller copies the source profile + the (possibly edited) condition
+ * set from the body.
  *
  * Checks:
  *   1. `:id` path param resolves to an existing threshold_profile row.
  *      Loads it (with conditions) into `res.locals.sourceProfile` so the
- *      controller doesn't re-query.
+ *      controller can fall back to source conditions if `methods` is
+ *      omitted, without re-querying.
  *   2. Body shape — new `code` (required, uppercase code-style),
- *      `displayName` (required), `description` (optional).
- *   3. The new `code` isn't already used by another profile. Uniqueness
+ *      `displayName` (required), `description` (optional),
+ *      `category` (optional informational string, dropped at the
+ *      controller — kept here only so the FE contract is explicit),
+ *      `methods` (optional array of edited conditions).
+ *   3. Each method row carries `metric`, `operator`, `value`, `isEnabled`
+ *      plus an `id` from the source row. The `id` is accepted but
+ *      ignored — new rows get fresh auto-increment ids on insert.
+ *   4. The new `code` isn't already used by another profile. Uniqueness
  *      is checked globally to keep things simple; if you later need
  *      per-(client, scope) uniqueness (matching the original DDL's
  *      functional unique index), tighten this check.
@@ -28,6 +36,33 @@ import sendResponse from '../../../shared/utility/response';
 import { validateSchema } from '../../../shared/utility/validate.middleware';
 
 const PROFILE_CODE_PATTERN = /^[A-Z0-9][A-Z0-9_-]{1,63}$/;
+const ALLOWED_OPERATORS = ['>=', '<=', '>', '<', '=', '!='] as const;
+
+const methodSchema = Joi.object({
+  // Source row id — accepted so the FE can echo back the original
+  // condition row, but ignored when inserting. New rows get fresh
+  // auto-increment ids.
+  id: Joi.number().integer().positive().optional(),
+  metric: Joi.string().trim().min(1).max(64).required().messages({
+    'string.empty': 'Metric is required',
+    'any.required': 'Metric is required',
+  }),
+  operator: Joi.string()
+    .trim()
+    .valid(...ALLOWED_OPERATORS)
+    .required()
+    .messages({
+      'any.only': `Operator must be one of: ${ALLOWED_OPERATORS.join(', ')}`,
+      'any.required': 'Operator is required',
+    }),
+  value: Joi.number().required().messages({
+    'number.base': 'Value must be a number',
+    'any.required': 'Value is required',
+  }),
+  isEnabled: Joi.boolean().required().messages({
+    'any.required': 'isEnabled is required',
+  }),
+});
 
 const schema = Joi.object({
   code: Joi.string()
@@ -52,6 +87,13 @@ const schema = Joi.object({
     'string.max': 'Display name must not exceed 128 characters',
   }),
   description: Joi.string().trim().max(500).optional().allow('', null),
+  // Informational only — the source's scope label shown in the form.
+  // Accepted so the FE doesn't have to strip it; dropped by the
+  // controller. The new profile's scope is inherited from the source.
+  category: Joi.string().trim().max(64).optional().allow('', null),
+  // Edited conditions from the form. If omitted, controller falls back
+  // to cloning the source profile's conditions verbatim.
+  methods: Joi.array().items(methodSchema).min(1).optional(),
 });
 
 const CopyThresholdProfileValidation = async (
