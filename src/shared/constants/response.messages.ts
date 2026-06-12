@@ -99,7 +99,13 @@ export const PRODUCT_BROWSER = {
 export const PRODUCT_GROUP = {
   LIST_FETCHED: 'product_group.list_fetched',
   FETCHED: 'product_group.fetched',
+  CREATED: 'product_group.created',
+  UPDATED: 'product_group.updated',
+  DELETED: 'product_group.deleted',
+  ALREADY_EXISTS: 'product_group.already_exists',
+  SCOPE_INVALID: 'product_group.scope_invalid',
   NOT_FOUND: 'product_group.not_found',
+  IMMUTABLE: 'product_group.immutable',
 };
 
 // Threshold Profile

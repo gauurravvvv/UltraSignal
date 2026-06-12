@@ -138,7 +138,7 @@ const seedProductGroups = async (manager: EntityManager): Promise<void> => {
       existing.scopeId = scopeId;
       existing.clientId = g.clientId;
       existing.enterpriseId = g.enterpriseId;
-      existing.deleted = false;
+      existing.deletedOn = null;
       await groupRepo.save(existing);
       continue;
     }
@@ -149,7 +149,7 @@ const seedProductGroups = async (manager: EntityManager): Promise<void> => {
       scopeId,
       clientId: g.clientId,
       enterpriseId: g.enterpriseId,
-      deleted: false,
+      isEnabled: true,
     });
     await groupRepo.save(created);
   }
@@ -166,7 +166,7 @@ const seedProductGroups = async (manager: EntityManager): Promise<void> => {
       existing.code = m.code;
       existing.parentProductGroupId = m.parentProductGroupId;
       existing.name = m.name;
-      existing.deleted = false;
+      existing.deletedOn = null;
       await memberRepo.save(existing);
       continue;
     }
@@ -179,7 +179,6 @@ const seedProductGroups = async (manager: EntityManager): Promise<void> => {
       code: m.code,
       parentProductGroupId: m.parentProductGroupId,
       name: m.name,
-      deleted: false,
     });
     await memberRepo.save(created);
   }

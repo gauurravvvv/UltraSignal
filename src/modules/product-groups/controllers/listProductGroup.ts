@@ -15,10 +15,19 @@
  * Filter keys (all optional, only present keys filter):
  *   - name              → ILIKE %term% on name
  *   - code              → ILIKE %term% on code
+ *   - description       → ILIKE %term% on description
  *   - scopeId           → exact match (numeric)
- *   - clientId          → exact match (bigint string)
+ *   - status            → 0|1 maps to is_enabled boolean
  *   - createdDateFrom   → pg.created_at >= :from
  *   - createdDateTo     → pg.created_at <= :to
+ *
+ * Soft-deleted rows (`deleted_on IS NOT NULL`) are hidden at the SQL
+ * layer — they never appear in user-facing lists.
+ *
+ * `canEdit` / `canDelete` are computed per row:
+ *   - `scope.code === 'system'`        → both false (platform-owned, read-only)
+ *   - `clientId !== caller.clientCode` → both false (cross-tenant)
+ *   - otherwise                        → both true
  *
  * Malformed JSON in `filter` is logged + ignored. Mirrors threshold-
  * profile convention so a bad FE state doesn't break the page.
@@ -65,11 +74,17 @@ const listProductGroup = async (req: Request, res: Response) => {
     includeMembers?: boolean;
   };
 
+  /* clientData is stamped onto res.locals by AuthMiddleware. The 4-
+   * char clientCode is what we wrote into `client_id` on create, so
+   * the same value gates canEdit / canDelete here. */
+  const callerClientCode: string | null =
+    res.locals.clientData?.clientCode ?? null;
+
   try {
     const query = AppDataSource.getRepository(ProductGroup)
       .createQueryBuilder('pg')
       .leftJoinAndSelect('pg.scope', 'scope')
-      .where('pg.deleted = :deleted', { deleted: false });
+      .where('pg.deleted_on IS NULL');
 
     if (filter) {
       try {
@@ -84,6 +99,11 @@ const listProductGroup = async (req: Request, res: Response) => {
             code: `%${parsed.code}%`,
           });
         }
+        if (parsed.description) {
+          query.andWhere('pg.description ILIKE :description', {
+            description: `%${parsed.description}%`,
+          });
+        }
         if (
           parsed.scopeId !== undefined &&
           parsed.scopeId !== null &&
@@ -93,9 +113,13 @@ const listProductGroup = async (req: Request, res: Response) => {
             scopeId: Number(parsed.scopeId),
           });
         }
-        if (parsed.clientId) {
-          query.andWhere('pg.client_id = :clientId', {
-            clientId: String(parsed.clientId),
+        if (
+          parsed.status !== undefined &&
+          parsed.status !== null &&
+          parsed.status !== ''
+        ) {
+          query.andWhere('pg.is_enabled = :isEnabled', {
+            isEnabled: Number(parsed.status) === 1,
           });
         }
         if (parsed.createdDateFrom) {
@@ -131,7 +155,7 @@ const listProductGroup = async (req: Request, res: Response) => {
     if (groupIds.length > 0) {
       if (includeMembers) {
         const ms = await AppDataSource.getRepository(ProductGroupMember).find({
-          where: { productGroupId: In(groupIds), deleted: false },
+          where: { productGroupId: In(groupIds) },
           order: { productGroupMemberId: 'ASC' },
         });
         for (const m of ms) {
@@ -150,7 +174,7 @@ const listProductGroup = async (req: Request, res: Response) => {
           .select('m.product_group_id', 'productGroupId')
           .addSelect('COUNT(*)', 'count')
           .where('m.product_group_id IN (:...ids)', { ids: groupIds })
-          .andWhere('m.deleted = :deleted', { deleted: false })
+          .andWhere('m.deleted_on IS NULL')
           .groupBy('m.product_group_id')
           .getRawMany<{ productGroupId: number; count: string }>();
         for (const c of counts) {
@@ -160,7 +184,14 @@ const listProductGroup = async (req: Request, res: Response) => {
     }
 
     const productGroups = rows.map(pg => {
-      const isMutable = pg.scope?.code !== 'system';
+      /* Two-rule mutability check, mirrors threshold profiles:
+       *   - system-scope rows are platform-defined and read-only
+       *   - cross-tenant rows belong to another client; the caller
+       *     can list them (per scope rules) but can't mutate them */
+      const isSystem = pg.scope?.code === 'system';
+      const ownsRow =
+        !!callerClientCode && pg.clientId === callerClientCode;
+      const isMutable = !isSystem && ownsRow;
       return {
         ...pg,
         memberCount: countsByGroup.get(pg.productGroupId) ?? 0,

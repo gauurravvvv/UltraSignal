@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -15,22 +16,23 @@ import { ProductGroupMember } from './product-group-member.entity';
 
 /**
  * Saved grouping of MedDRA/product hierarchy picks. A product group
- * carries a `code` (unique per scope + client) and a name, with
- * members stored in `product_group_member`. Used by signal-detection
- * runs and dashboards to scope analytics to a curated product set.
+ * carries a `code` (unique per scope + client when not soft-deleted)
+ * and a name; the picks live in `product_group_member`. Used by
+ * signal-detection runs and dashboards to scope analytics to a
+ * curated product set.
  *
- * Soft-delete: `deleted = true` hides the row from list/get endpoints
- * but keeps the FK chain intact for any historical alert references.
- * The unique index covers only `deleted = false` rows so a new group
- * can reuse a code that an older soft-deleted row owned.
+ * Soft-delete via TypeORM's `@DeleteDateColumn` (`deleted_on`) +
+ * an audit `deleted_by` — same pattern as `Role` / `User`. List
+ * endpoints filter out soft-deleted rows; the partial unique index
+ * lets a deleted code be reused by a new row.
  *
- * The unique index in the DDL is `(COALESCE(client_id, 0), scope_id,
- * code) WHERE NOT deleted` — expressed here via a raw `@Index` so the
- * partial COALESCE survives a TypeORM synchronize cycle. If a future
- * sync drops it, recreate via:
+ * The partial unique index `(COALESCE(client_id, 0), scope_id, code)
+ * WHERE deleted_on IS NULL` from the DDL isn't expressible via TypeORM
+ * decorators — recreate after sync via:
  *
  *   CREATE UNIQUE INDEX ux_pg_code ON product_group
- *     (COALESCE(client_id, 0::bigint), scope_id, code) WHERE NOT deleted;
+ *     (COALESCE(client_id, 0::bigint), scope_id, code)
+ *     WHERE deleted_on IS NULL;
  */
 @Entity('product_group')
 @Index('ix_pg_scope', ['scopeId'])
@@ -44,6 +46,10 @@ export class ProductGroup extends BaseEntity {
   @Column({ type: 'text' })
   name: string;
 
+  /** Free-form description, ≤ 500 chars (enforced at the validator). */
+  @Column({ type: 'text', nullable: true })
+  description?: string | null;
+
   @Column({ type: 'smallint', name: 'scope_id' })
   scopeId: number;
 
@@ -51,28 +57,42 @@ export class ProductGroup extends BaseEntity {
   @JoinColumn({ name: 'scope_id' })
   scope?: Scope;
 
-  /** Multi-tenant owner. Null = system-scope (visible across clients). */
-  @Column({ type: 'bigint', name: 'client_id', nullable: true })
+  /** Multi-tenant owner — stamped with `clientData.clientCode` at
+   *  create time. Null = system-scope (visible across clients). */
+  @Column({ type: 'text', name: 'client_id', nullable: true })
   clientId?: string | null;
 
   /** Optional sub-tenant key — some clients carve into enterprises. */
   @Column({ type: 'bigint', name: 'enterprise_id', nullable: true })
   enterpriseId?: string | null;
 
-  @Column({ type: 'boolean', default: false })
-  deleted: boolean;
+  /** 1 = Active, 0 = Inactive. Edited via Edit page; defaults to
+   *  Active on create. */
+  @Column({ type: 'boolean', name: 'is_enabled', default: true })
+  isEnabled: boolean;
 
-  @Column({ type: 'bigint', name: 'created_by', nullable: true })
+  /* Audit columns store the caller's user id, which is a UUID across
+   * this codebase (User.id is uuid). Using `text` keeps the column
+   * type-flexible and matches the convention in `Role` / `User`. */
+  @Column({ type: 'text', name: 'created_by', nullable: true })
   createdBy?: string | null;
 
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;
 
-  @Column({ type: 'bigint', name: 'updated_by', nullable: true })
+  @Column({ type: 'text', name: 'updated_by', nullable: true })
   updatedBy?: string | null;
 
   @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at', nullable: true })
   updatedAt?: Date | null;
+
+  /** Soft-delete: set automatically by TypeORM's `softRemove`. List
+   *  endpoints add `WHERE deleted_on IS NULL` to hide these rows. */
+  @DeleteDateColumn({ type: 'timestamptz', name: 'deleted_on', nullable: true })
+  deletedOn?: Date | null;
+
+  @Column({ type: 'text', name: 'deleted_by', nullable: true })
+  deletedBy?: string | null;
 
   @OneToMany(() => ProductGroupMember, m => m.productGroup)
   members?: ProductGroupMember[];

@@ -3,6 +3,7 @@ import {
   Check,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -15,16 +16,19 @@ import { ProductGroup } from './product-group.entity';
  * A member of a product group. Two shapes share this table:
  *
  *   - `member_type='product'` — a hierarchy pick from the product
- *     catalog. Carries `source_system`, `level`, `name` and (when the
- *     catalog ships one) `code`. `parent_product_group_id` is null.
+ *     catalog. Carries `source_system`, `level`, `name`, and (when
+ *     the catalog ships one) `code`. `parent_product_group_id` is null.
  *
- *   - `member_type='group'` — a nested product group reference. Carries
- *     `code` (the child group's code) and `parent_product_group_id`
- *     (FK to product_group). `source_system`, `level` are null.
+ *   - `member_type='group'` — a nested product group reference.
+ *     Carries `code` (the child group's code) and
+ *     `parent_product_group_id` (FK to product_group).
+ *     `source_system`, `level` are null.
  *
  * The CHECK constraint enforces the shape disjunction; the partial
- * index on `parent_product_group_id` lets the nested-group lookup
- * stay fast even when most rows are products.
+ * index on `parent_product_group_id` keeps nested-group lookups fast
+ * when most rows are products.
+ *
+ * Soft-delete via `@DeleteDateColumn` mirrors the parent entity.
  */
 @Entity('product_group_member')
 @Index('ix_pgm_group', ['productGroupId'])
@@ -80,9 +84,13 @@ export class ProductGroupMember extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   name?: string | null;
 
-  @Column({ type: 'boolean', default: false })
-  deleted: boolean;
-
   @CreateDateColumn({ type: 'timestamptz', name: 'tgt_insert_date_time' })
   tgtInsertDateTime: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz', name: 'deleted_on', nullable: true })
+  deletedOn?: Date | null;
+
+  /* UUID user id — same shape as the parent entity. */
+  @Column({ type: 'text', name: 'deleted_by', nullable: true })
+  deletedBy?: string | null;
 }
