@@ -135,6 +135,9 @@
   "scope": {
     "list_fetched": "スコープが正常に取得されました"
   },
+  "product_browser": {
+    "list_fetched": "製品が正常に取得されました"
+  },
   "threshold_profile": {
     "list_fetched": "しきい値プロファイルが正常に取得されました",
     "fetched": "しきい値プロファイルの詳細が正常に取得されました",

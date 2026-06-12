@@ -135,6 +135,9 @@
   "scope": {
     "list_fetched": "Escopos obtidos com sucesso"
   },
+  "product_browser": {
+    "list_fetched": "Produtos obtidos com sucesso"
+  },
   "threshold_profile": {
     "list_fetched": "Perfis de limite obtidos com sucesso",
     "fetched": "Detalhes do perfil de limite obtidos com sucesso",

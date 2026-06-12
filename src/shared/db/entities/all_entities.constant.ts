@@ -6,6 +6,7 @@ import { DataSourceType } from './data-source-type.entity';
 import { Group } from './group.entity';
 import { PasswordHistory } from './passwordHistory.entity';
 import { Permission } from './permission.entity';
+import { ProductBrowser } from './product-browser.entity';
 import { Role } from './role.entity';
 import { RolePermissionMapping } from './role-permission-mapping.entity';
 import { Scope } from './scope.entity';
@@ -24,6 +25,7 @@ export const ALL_ENTITIES = [
   Group,
   PasswordHistory,
   Permission,
+  ProductBrowser,
   Role,
   RolePermissionMapping,
   Scope,

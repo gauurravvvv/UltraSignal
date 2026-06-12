@@ -135,6 +135,9 @@
   "scope": {
     "list_fetched": "Ámbitos obtenidos correctamente"
   },
+  "product_browser": {
+    "list_fetched": "Productos obtenidos correctamente"
+  },
   "threshold_profile": {
     "list_fetched": "Perfiles de umbral obtenidos correctamente",
     "fetched": "Detalles del perfil de umbral obtenidos correctamente",

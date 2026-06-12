@@ -15,6 +15,7 @@ import groupRoutes from './modules/groups/groups.routes';
 import homeRoutes from './modules/home/home.routes';
 import clientRoutes from './modules/clients/clients.routes';
 import permissionRoutes from './modules/permissions/permissions.routes';
+import productBrowserRoutes from './modules/product-browser/product-browser.routes';
 import profileRoutes from './modules/profile/profile.routes';
 import roleRoutes from './modules/roles/roles.routes';
 import scopeRoutes from './modules/scopes/scopes.routes';
@@ -115,6 +116,7 @@ class Server {
     this.app.use('/api/v1/data-source-types', dataSourceTypeRoutes);
     this.app.use('/api/v1/threshold-profiles', thresholdProfileRoutes);
     this.app.use('/api/v1/scopes', scopeRoutes);
+    this.app.use('/api/v1/product-browser', productBrowserRoutes);
 
     // Catch-all for unmatched routes
     this.app.all('*', (req, res) => {

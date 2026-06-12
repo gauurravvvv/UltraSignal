@@ -135,6 +135,9 @@
   "scope": {
     "list_fetched": "Ambiti recuperati con successo"
   },
+  "product_browser": {
+    "list_fetched": "Prodotti recuperati con successo"
+  },
   "threshold_profile": {
     "list_fetched": "Profili di soglia recuperati con successo",
     "fetched": "Dettagli del profilo di soglia recuperati con successo",

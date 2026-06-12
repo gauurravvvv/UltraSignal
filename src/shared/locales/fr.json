@@ -135,6 +135,9 @@
   "scope": {
     "list_fetched": "Portées récupérées avec succès"
   },
+  "product_browser": {
+    "list_fetched": "Produits récupérés avec succès"
+  },
   "threshold_profile": {
     "list_fetched": "Profils de seuil récupérés avec succès",
     "fetched": "Détails du profil de seuil récupérés avec succès",

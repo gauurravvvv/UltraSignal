@@ -135,6 +135,9 @@
   "scope": {
     "list_fetched": "범위 목록을 성공적으로 가져왔습니다"
   },
+  "product_browser": {
+    "list_fetched": "제품 목록을 성공적으로 가져왔습니다"
+  },
   "threshold_profile": {
     "list_fetched": "임계값 프로필 목록을 성공적으로 가져왔습니다",
     "fetched": "임계값 프로필 정보를 성공적으로 가져왔습니다",

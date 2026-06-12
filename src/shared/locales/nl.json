@@ -135,6 +135,9 @@
   "scope": {
     "list_fetched": "Bereiken succesvol opgehaald"
   },
+  "product_browser": {
+    "list_fetched": "Producten succesvol opgehaald"
+  },
   "threshold_profile": {
     "list_fetched": "Drempelprofielen succesvol opgehaald",
     "fetched": "Details van drempelprofiel succesvol opgehaald",

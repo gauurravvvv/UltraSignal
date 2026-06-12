@@ -135,6 +135,9 @@
   "scope": {
     "list_fetched": "范围获取成功"
   },
+  "product_browser": {
+    "list_fetched": "产品获取成功"
+  },
   "threshold_profile": {
     "list_fetched": "阈值配置文件获取成功",
     "fetched": "阈值配置文件详情获取成功",

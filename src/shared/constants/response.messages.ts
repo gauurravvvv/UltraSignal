@@ -90,6 +90,11 @@ export const SCOPE = {
   LIST_FETCHED: 'scope.list_fetched',
 };
 
+// Product Browser
+export const PRODUCT_BROWSER = {
+  LIST_FETCHED: 'product_browser.list_fetched',
+};
+
 // Threshold Profile
 export const THRESHOLD_PROFILE = {
   LIST_FETCHED: 'threshold_profile.list_fetched',
