@@ -4,6 +4,7 @@
  *   POST /api/v1/product-browser/search
  *   {
  *     "type": 0 | 1,
+ *     "filter": "contains" | "startsWith" | "endsWith" | "exactMatch",
  *     "searchedValue": "paracetamol",
  *     "level": "INGREDIENT" | "PRODUCT_FAMILY" | "PRODUCT_NAME" |
  *              "TRADE_NAME" | "ALL",
@@ -11,15 +12,16 @@
  *   }
  *
  * `type` mirrors UAN's two modes:
- *   0 = SEARCH — ILIKE %value% at `level`, return matches (level=ALL
- *       fans out to every category).
+ *   0 = SEARCH — ILIKE the value at `level` (filter mode picks the
+ *       wildcard shape — contains / startsWith / endsWith / exactMatch).
+ *       `level=ALL` fans out to every category.
  *   1 = HIERARCHY — exact-match the value at `level`, walk the
- *       hierarchy and return related items at every OTHER level. Does
- *       NOT support `level=ALL` (hierarchy walk only makes sense from
- *       a single level — validation rejects ALL+hierarchy with 400).
+ *       hierarchy and return related items at every OTHER level. The
+ *       `filter` field is ignored under type=1 (hierarchy always uses
+ *       `=`). Does NOT support `level=ALL`.
  *
- * Defaults to `type: 0` so existing callers that omit it keep
- * behaving as a plain search.
+ * Defaults: `type: 0`, `filter: 'contains'` — existing callers that
+ * omit either keep behaving as a plain contains-search.
  */
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
@@ -46,12 +48,27 @@ export type ProductBrowserSearchType =
   | typeof SEARCH_TYPE_SEARCH
   | typeof SEARCH_TYPE_HIERARCHY;
 
+export const PRODUCT_BROWSER_FILTERS = [
+  'contains',
+  'startsWith',
+  'endsWith',
+  'exactMatch',
+] as const;
+
+export type ProductBrowserFilter = (typeof PRODUCT_BROWSER_FILTERS)[number];
+
 const schema = Joi.object({
   type: Joi.number()
     .valid(SEARCH_TYPE_SEARCH, SEARCH_TYPE_HIERARCHY)
     .default(SEARCH_TYPE_SEARCH)
     .messages({
       'any.only': 'type must be 0 (search) or 1 (hierarchy)',
+    }),
+  filter: Joi.string()
+    .valid(...PRODUCT_BROWSER_FILTERS)
+    .default('contains')
+    .messages({
+      'any.only': `filter must be one of: ${PRODUCT_BROWSER_FILTERS.join(', ')}`,
     }),
   searchedValue: Joi.string().trim().min(1).max(255).required().messages({
     'string.empty': 'searchedValue is required',

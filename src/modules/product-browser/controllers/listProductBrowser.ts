@@ -37,10 +37,30 @@ import { getErrorMessage } from '../../../shared/utility/getErrorMessage';
 import Logger from '../../../shared/utility/logger/logger';
 import sendResponse from '../../../shared/utility/response';
 import {
+  ProductBrowserFilter,
   ProductBrowserLevel,
   ProductBrowserSearchType,
   SEARCH_TYPE_HIERARCHY,
 } from '../middleware/listProductBrowser.validation';
+
+/**
+ * Wraps the user's search term in the right wildcards for the chosen
+ * filter mode. `ILIKE %term%` becomes `ILIKE term%` for startsWith etc.
+ * Matches UAN's `ConvertFilteredValue` semantics one-for-one.
+ */
+const toFilteredTerm = (value: string, filter: ProductBrowserFilter): string => {
+  switch (filter) {
+    case 'startsWith':
+      return `${value}%`;
+    case 'endsWith':
+      return `%${value}`;
+    case 'exactMatch':
+      return value;
+    case 'contains':
+    default:
+      return `%${value}%`;
+  }
+};
 
 const BROWSER_LIMIT = 50;
 
@@ -51,6 +71,10 @@ interface SearchedItem {
 }
 
 interface SearchedResponse {
+  // Echo back the source system the FE queried for. Every item in the
+  // four arrays below shares this value (the filter is single-valued),
+  // so we surface it once at the root instead of repeating it per item.
+  sourceSystem: string;
   ingredients: SearchedItem[];
   pFamily: SearchedItem[];
   pName: SearchedItem[];
@@ -64,11 +88,14 @@ const baseQuery = (sourceSystem: string) =>
 
 const queryIngredients = async (
   searchedValue: string,
+  filter: ProductBrowserFilter,
   sourceSystem: string,
 ): Promise<SearchedItem[]> => {
   const rows = await baseQuery(sourceSystem)
     .select(['pb.ingredient_id AS ingredient_id', 'pb.ingredient_name AS ingredient_name'])
-    .andWhere('pb.ingredient_name ILIKE :term', { term: `%${searchedValue}%` })
+    .andWhere('pb.ingredient_name ILIKE :term', {
+      term: toFilteredTerm(searchedValue, filter),
+    })
     .distinctOn(['pb.ingredient_name'])
     .limit(BROWSER_LIMIT)
     .getRawMany();
@@ -83,11 +110,14 @@ const queryIngredients = async (
 
 const queryFamily = async (
   searchedValue: string,
+  filter: ProductBrowserFilter,
   sourceSystem: string,
 ): Promise<SearchedItem[]> => {
   const rows = await baseQuery(sourceSystem)
     .select(['pb.family_id AS family_id', 'pb.family_name AS family_name'])
-    .andWhere('pb.family_name ILIKE :term', { term: `%${searchedValue}%` })
+    .andWhere('pb.family_name ILIKE :term', {
+      term: toFilteredTerm(searchedValue, filter),
+    })
     .distinctOn(['pb.family_name'])
     .limit(BROWSER_LIMIT)
     .getRawMany();
@@ -102,6 +132,7 @@ const queryFamily = async (
 
 const queryProductName = async (
   searchedValue: string,
+  filter: ProductBrowserFilter,
   sourceSystem: string,
 ): Promise<SearchedItem[]> => {
   const rows = await baseQuery(sourceSystem)
@@ -110,7 +141,9 @@ const queryProductName = async (
       'pb.product_name AS product_name',
       'pb.product_name_display AS product_name_display',
     ])
-    .andWhere('pb.product_name ILIKE :term', { term: `%${searchedValue}%` })
+    .andWhere('pb.product_name ILIKE :term', {
+      term: toFilteredTerm(searchedValue, filter),
+    })
     .distinctOn(['pb.product_name'])
     .limit(BROWSER_LIMIT)
     .getRawMany();
@@ -125,6 +158,7 @@ const queryProductName = async (
 
 const queryTradeName = async (
   searchedValue: string,
+  filter: ProductBrowserFilter,
   sourceSystem: string,
 ): Promise<SearchedItem[]> => {
   const rows = await baseQuery(sourceSystem)
@@ -133,7 +167,9 @@ const queryTradeName = async (
       'pb.trade_name AS trade_name',
       'pb.trade_name_display AS trade_name_display',
     ])
-    .andWhere('pb.trade_name ILIKE :term', { term: `%${searchedValue}%` })
+    .andWhere('pb.trade_name ILIKE :term', {
+      term: toFilteredTerm(searchedValue, filter),
+    })
     .distinctOn(['pb.trade_name'])
     .limit(BROWSER_LIMIT)
     .getRawMany();
@@ -254,8 +290,9 @@ const hierarchyTradeName = async (
 const searchProductBrowser = async (req: Request, res: Response) => {
   Logger.info('Search Product Browser request');
 
-  const { type, searchedValue, level, sourceSystem } = req.body as {
+  const { type, filter, searchedValue, level, sourceSystem } = req.body as {
     type: ProductBrowserSearchType;
+    filter: ProductBrowserFilter;
     searchedValue: string;
     level: ProductBrowserLevel;
     sourceSystem: string;
@@ -263,6 +300,7 @@ const searchProductBrowser = async (req: Request, res: Response) => {
 
   try {
     const result: SearchedResponse = {
+      sourceSystem,
       ingredients: [],
       pFamily: [],
       pName: [],
@@ -361,26 +399,27 @@ const searchProductBrowser = async (req: Request, res: Response) => {
         }
       }
     } else {
-      // type=0 — search. ILIKE on the chosen level's name column.
+      // type=0 — search. ILIKE on the chosen level's name column with
+      // the wildcard shape determined by `filter` (contains by default).
       switch (level) {
         case 'INGREDIENT':
-          result.ingredients = await queryIngredients(searchedValue, sourceSystem);
+          result.ingredients = await queryIngredients(searchedValue, filter, sourceSystem);
           break;
         case 'PRODUCT_FAMILY':
-          result.pFamily = await queryFamily(searchedValue, sourceSystem);
+          result.pFamily = await queryFamily(searchedValue, filter, sourceSystem);
           break;
         case 'PRODUCT_NAME':
-          result.pName = await queryProductName(searchedValue, sourceSystem);
+          result.pName = await queryProductName(searchedValue, filter, sourceSystem);
           break;
         case 'TRADE_NAME':
-          result.tradeName = await queryTradeName(searchedValue, sourceSystem);
+          result.tradeName = await queryTradeName(searchedValue, filter, sourceSystem);
           break;
         case 'ALL': {
           const [ingredients, pFamily, pName, tradeName] = await Promise.all([
-            queryIngredients(searchedValue, sourceSystem),
-            queryFamily(searchedValue, sourceSystem),
-            queryProductName(searchedValue, sourceSystem),
-            queryTradeName(searchedValue, sourceSystem),
+            queryIngredients(searchedValue, filter, sourceSystem),
+            queryFamily(searchedValue, filter, sourceSystem),
+            queryProductName(searchedValue, filter, sourceSystem),
+            queryTradeName(searchedValue, filter, sourceSystem),
           ]);
           result.ingredients = ingredients;
           result.pFamily = pFamily;

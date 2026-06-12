@@ -200,6 +200,7 @@ Body:
 ```json
 {
   "type": 0,
+  "filter": "contains",
   "searchedValue": "paracetamol",
   "level": "INGREDIENT",
   "sourceSystem": "UAN"
@@ -209,20 +210,33 @@ Body:
 | Field | Required | Notes |
 |---|:---:|---|
 | `type` | optional, default `0` | `0` = ILIKE search, `1` = exact-match hierarchy walk. |
+| `filter` | optional, default `"contains"` | One of `contains`, `startsWith`, `endsWith`, `exactMatch`. **Only applies under `type=0`** — ignored when `type=1` (hierarchy always uses `=`). |
 | `searchedValue` | ✅ | 1–255 chars. The term to match. |
 | `level` | ✅ | `INGREDIENT`, `PRODUCT_FAMILY`, `PRODUCT_NAME`, `TRADE_NAME`, or `ALL` (`ALL` only valid for `type=0`). |
 | `sourceSystem` | ✅ | E.g. `UAN`, `AEMS`. Exact match. |
+
+**`filter` modes (type=0 only):**
+
+| Value | SQL pattern | Matches |
+|---|---|---|
+| `"contains"` *(default)* | `ILIKE '%term%'` | term anywhere |
+| `"startsWith"` | `ILIKE 'term%'` | starts with term |
+| `"endsWith"` | `ILIKE '%term'` | ends with term |
+| `"exactMatch"` | `ILIKE 'term'` | exact (still case-insensitive) |
 
 **Response is the same shape for both types:**
 
 ```json
 {
+  "sourceSystem": "UAN",
   "ingredients": [{ "name": "...", "code": "...", "original_name": "..." }],
   "pFamily":     [...],
   "pName":       [...],
   "tradeName":   [...]
 }
 ```
+
+`sourceSystem` echoes back what the FE queried for (every item in the four arrays shares it, so it's surfaced once at the root instead of per item).
 
 **Which arrays get populated:**
 
