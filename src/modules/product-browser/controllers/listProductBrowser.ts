@@ -81,10 +81,22 @@ interface SearchedResponse {
   tradeName: SearchedItem[];
 }
 
-const baseQuery = (sourceSystem: string) =>
-  AppDataSource.getRepository(ProductBrowser)
-    .createQueryBuilder('pb')
-    .where('pb.source_system = :sourceSystem', { sourceSystem });
+/**
+ * Search-mode base query (type=0). When `sourceSystem` is provided
+ * the search is scoped to that upstream system; when omitted the
+ * query fans out across every source — matching the FE contract
+ * where `sourceSystem` is optional for plain search and required
+ * only for the hierarchy walk.
+ */
+const baseQuery = (sourceSystem?: string) => {
+  const qb = AppDataSource.getRepository(ProductBrowser).createQueryBuilder(
+    'pb',
+  );
+  if (sourceSystem) {
+    qb.where('pb.source_system = :sourceSystem', { sourceSystem });
+  }
+  return qb;
+};
 
 /**
  * Hierarchy queries (type=1) do NOT filter by source_system — the same
@@ -99,14 +111,21 @@ const baseQueryAllSources = () =>
 const queryIngredients = async (
   searchedValue: string,
   filter: ProductBrowserFilter,
-  sourceSystem: string,
+  sourceSystem?: string,
 ): Promise<SearchedItem[]> => {
-  const rows = await baseQuery(sourceSystem)
-    .select(['pb.ingredient_id AS ingredient_id', 'pb.ingredient_name AS ingredient_name'])
-    .andWhere('pb.ingredient_name ILIKE :term', {
-      term: toFilteredTerm(searchedValue, filter),
-    })
-    .distinctOn(['pb.ingredient_name'])
+  const qb = baseQuery(sourceSystem).select([
+    'pb.ingredient_id AS ingredient_id',
+    'pb.ingredient_name AS ingredient_name',
+    'pb.source_system AS source_system',
+  ]);
+  const termClause = 'pb.ingredient_name ILIKE :term';
+  const params = { term: toFilteredTerm(searchedValue, filter) };
+  if (sourceSystem) qb.andWhere(termClause, params);
+  else qb.where(termClause, params);
+  const rows = await qb
+    .distinctOn(
+      sourceSystem ? ['pb.ingredient_name'] : ['pb.ingredient_name', 'pb.source_system'],
+    )
     .limit(BROWSER_LIMIT)
     .getRawMany();
   return rows
@@ -115,20 +134,28 @@ const queryIngredients = async (
       name: r.ingredient_name,
       code: r.ingredient_id,
       original_name: r.ingredient_name,
+      sourceSystem: r.source_system,
     }));
 };
 
 const queryFamily = async (
   searchedValue: string,
   filter: ProductBrowserFilter,
-  sourceSystem: string,
+  sourceSystem?: string,
 ): Promise<SearchedItem[]> => {
-  const rows = await baseQuery(sourceSystem)
-    .select(['pb.family_id AS family_id', 'pb.family_name AS family_name'])
-    .andWhere('pb.family_name ILIKE :term', {
-      term: toFilteredTerm(searchedValue, filter),
-    })
-    .distinctOn(['pb.family_name'])
+  const qb = baseQuery(sourceSystem).select([
+    'pb.family_id AS family_id',
+    'pb.family_name AS family_name',
+    'pb.source_system AS source_system',
+  ]);
+  const termClause = 'pb.family_name ILIKE :term';
+  const params = { term: toFilteredTerm(searchedValue, filter) };
+  if (sourceSystem) qb.andWhere(termClause, params);
+  else qb.where(termClause, params);
+  const rows = await qb
+    .distinctOn(
+      sourceSystem ? ['pb.family_name'] : ['pb.family_name', 'pb.source_system'],
+    )
     .limit(BROWSER_LIMIT)
     .getRawMany();
   return rows
@@ -137,24 +164,29 @@ const queryFamily = async (
       name: r.family_name,
       code: r.family_id,
       original_name: r.family_name,
+      sourceSystem: r.source_system,
     }));
 };
 
 const queryProductName = async (
   searchedValue: string,
   filter: ProductBrowserFilter,
-  sourceSystem: string,
+  sourceSystem?: string,
 ): Promise<SearchedItem[]> => {
-  const rows = await baseQuery(sourceSystem)
-    .select([
-      'pb.product_id AS product_id',
-      'pb.product_name AS product_name',
-      'pb.product_name_display AS product_name_display',
-    ])
-    .andWhere('pb.product_name ILIKE :term', {
-      term: toFilteredTerm(searchedValue, filter),
-    })
-    .distinctOn(['pb.product_name'])
+  const qb = baseQuery(sourceSystem).select([
+    'pb.product_id AS product_id',
+    'pb.product_name AS product_name',
+    'pb.product_name_display AS product_name_display',
+    'pb.source_system AS source_system',
+  ]);
+  const termClause = 'pb.product_name ILIKE :term';
+  const params = { term: toFilteredTerm(searchedValue, filter) };
+  if (sourceSystem) qb.andWhere(termClause, params);
+  else qb.where(termClause, params);
+  const rows = await qb
+    .distinctOn(
+      sourceSystem ? ['pb.product_name'] : ['pb.product_name', 'pb.source_system'],
+    )
     .limit(BROWSER_LIMIT)
     .getRawMany();
   return rows
@@ -163,24 +195,29 @@ const queryProductName = async (
       name: r.product_name_display ?? r.product_name,
       code: r.product_id,
       original_name: r.product_name,
+      sourceSystem: r.source_system,
     }));
 };
 
 const queryTradeName = async (
   searchedValue: string,
   filter: ProductBrowserFilter,
-  sourceSystem: string,
+  sourceSystem?: string,
 ): Promise<SearchedItem[]> => {
-  const rows = await baseQuery(sourceSystem)
-    .select([
-      'pb.trade_id AS trade_id',
-      'pb.trade_name AS trade_name',
-      'pb.trade_name_display AS trade_name_display',
-    ])
-    .andWhere('pb.trade_name ILIKE :term', {
-      term: toFilteredTerm(searchedValue, filter),
-    })
-    .distinctOn(['pb.trade_name'])
+  const qb = baseQuery(sourceSystem).select([
+    'pb.trade_id AS trade_id',
+    'pb.trade_name AS trade_name',
+    'pb.trade_name_display AS trade_name_display',
+    'pb.source_system AS source_system',
+  ]);
+  const termClause = 'pb.trade_name ILIKE :term';
+  const params = { term: toFilteredTerm(searchedValue, filter) };
+  if (sourceSystem) qb.andWhere(termClause, params);
+  else qb.where(termClause, params);
+  const rows = await qb
+    .distinctOn(
+      sourceSystem ? ['pb.trade_name'] : ['pb.trade_name', 'pb.source_system'],
+    )
     .limit(BROWSER_LIMIT)
     .getRawMany();
   return rows
@@ -189,6 +226,7 @@ const queryTradeName = async (
       name: r.trade_name_display ?? r.trade_name,
       code: r.trade_id,
       original_name: r.trade_name,
+      sourceSystem: r.source_system,
     }));
 };
 
@@ -322,7 +360,8 @@ const searchProductBrowser = async (req: Request, res: Response) => {
     filter: ProductBrowserFilter;
     searchedValue: string;
     level: ProductBrowserLevel;
-    sourceSystem: string;
+    /** Optional under type=0, required under type=1 (Joi enforces). */
+    sourceSystem?: string;
   };
 
   try {

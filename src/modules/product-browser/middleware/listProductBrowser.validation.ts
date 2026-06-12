@@ -81,10 +81,26 @@ const schema = Joi.object({
       'any.only': `level must be one of: ${PRODUCT_BROWSER_LEVELS.join(', ')}`,
       'any.required': 'level is required',
     }),
-  sourceSystem: Joi.string().trim().min(1).max(64).required().messages({
-    'string.empty': 'sourceSystem is required',
-    'any.required': 'sourceSystem is required',
-  }),
+  /**
+   * sourceSystem is required ONLY for type=1 (hierarchy walk) — that
+   * mode anchors on an exact term and the FE wants to scope siblings
+   * to a single upstream system. For type=0 (ILIKE search) it's
+   * optional; when omitted, the controller fans out across every
+   * source_system so the user sees all matches in one shot.
+   */
+  sourceSystem: Joi.string()
+    .trim()
+    .min(1)
+    .max(64)
+    .when('type', {
+      is: SEARCH_TYPE_HIERARCHY,
+      then: Joi.required(),
+      otherwise: Joi.optional(),
+    })
+    .messages({
+      'string.empty': 'sourceSystem is required',
+      'any.required': 'sourceSystem is required for type=1 (hierarchy)',
+    }),
 }).custom((value, helpers) => {
   if (value.type === SEARCH_TYPE_HIERARCHY && value.level === 'ALL') {
     return helpers.error('any.invalid', {
