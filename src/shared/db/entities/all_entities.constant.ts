@@ -7,6 +7,8 @@ import { Group } from './group.entity';
 import { PasswordHistory } from './passwordHistory.entity';
 import { Permission } from './permission.entity';
 import { ProductBrowser } from './product-browser.entity';
+import { ProductGroup } from './product-group.entity';
+import { ProductGroupMember } from './product-group-member.entity';
 import { Role } from './role.entity';
 import { RolePermissionMapping } from './role-permission-mapping.entity';
 import { Scope } from './scope.entity';
@@ -26,6 +28,8 @@ export const ALL_ENTITIES = [
   PasswordHistory,
   Permission,
   ProductBrowser,
+  ProductGroup,
+  ProductGroupMember,
   Role,
   RolePermissionMapping,
   Scope,

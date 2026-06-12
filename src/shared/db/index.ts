@@ -11,6 +11,7 @@ import onboardClient from '../helpers/system/onboardClient';
 import seedAccessLevels from '../helpers/system/seedAccessLevels';
 import seedDataSourceTypes from '../helpers/system/seedDataSourceTypes';
 import seedPermissionCatalog from '../helpers/system/seedPermissionCatalog';
+import seedProductGroups from '../helpers/system/seedProductGroups';
 import seedScopes from '../helpers/system/seedScopes';
 import seedStatisticalConstantsProfiles from '../helpers/system/seedStatisticalConstantsProfiles';
 import seedSystemAdminRole from '../helpers/system/seedSystemAdminRole';
@@ -66,6 +67,7 @@ class Database {
       await seedScopes(manager);
       await seedThresholdProfiles(manager);
       await seedStatisticalConstantsProfiles(manager);
+      await seedProductGroups(manager);
     });
 
     // Step 2: ensure the platform System client (UG) exists. On the first

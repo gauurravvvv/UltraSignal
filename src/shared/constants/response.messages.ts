@@ -95,6 +95,13 @@ export const PRODUCT_BROWSER = {
   LIST_FETCHED: 'product_browser.list_fetched',
 };
 
+// Product Group
+export const PRODUCT_GROUP = {
+  LIST_FETCHED: 'product_group.list_fetched',
+  FETCHED: 'product_group.fetched',
+  NOT_FOUND: 'product_group.not_found',
+};
+
 // Threshold Profile
 export const THRESHOLD_PROFILE = {
   LIST_FETCHED: 'threshold_profile.list_fetched',
