@@ -68,13 +68,13 @@ interface SearchedItem {
   name: string;
   code: string;
   original_name: string;
+  // Present only on type=1 (hierarchy) responses. Type=0 (search) is
+  // already filtered to one sourceSystem so the field is redundant
+  // there — we omit it to keep the search payload lean.
+  sourceSystem?: string;
 }
 
 interface SearchedResponse {
-  // Echo back the source system the FE queried for. Every item in the
-  // four arrays below shares this value (the filter is single-valued),
-  // so we surface it once at the root instead of repeating it per item.
-  sourceSystem: string;
   ingredients: SearchedItem[];
   pFamily: SearchedItem[];
   pName: SearchedItem[];
@@ -85,6 +85,16 @@ const baseQuery = (sourceSystem: string) =>
   AppDataSource.getRepository(ProductBrowser)
     .createQueryBuilder('pb')
     .where('pb.source_system = :sourceSystem', { sourceSystem });
+
+/**
+ * Hierarchy queries (type=1) do NOT filter by source_system — the same
+ * ingredient / family / product name can exist in multiple upstream
+ * systems (UAN, AEMS, ...) and the FE wants to see every related item
+ * regardless of where it came from. Each row carries its own
+ * `source_system` so the FE can label items by origin.
+ */
+const baseQueryAllSources = () =>
+  AppDataSource.getRepository(ProductBrowser).createQueryBuilder('pb');
 
 const queryIngredients = async (
   searchedValue: string,
@@ -191,15 +201,19 @@ const queryTradeName = async (
 interface IngredientHierarchyRow {
   family_id: string;
   family_name: string;
+  source_system: string;
 }
 const hierarchyIngredient = async (
   searchedValue: string,
-  sourceSystem: string,
 ): Promise<IngredientHierarchyRow[]> => {
-  return baseQuery(sourceSystem)
-    .select(['pb.family_id AS family_id', 'pb.family_name AS family_name'])
-    .andWhere('pb.ingredient_name = :value', { value: searchedValue })
-    .distinctOn(['pb.family_name'])
+  return baseQueryAllSources()
+    .select([
+      'pb.family_id AS family_id',
+      'pb.family_name AS family_name',
+      'pb.source_system AS source_system',
+    ])
+    .where('pb.ingredient_name = :value', { value: searchedValue })
+    .distinctOn(['pb.family_name', 'pb.source_system'])
     .limit(BROWSER_LIMIT)
     .getRawMany();
 };
@@ -210,21 +224,22 @@ interface FamilyHierarchyRow {
   product_id: string;
   product_name: string;
   product_name_display: string | null;
+  source_system: string;
 }
 const hierarchyFamily = async (
   searchedValue: string,
-  sourceSystem: string,
 ): Promise<FamilyHierarchyRow[]> => {
-  return baseQuery(sourceSystem)
+  return baseQueryAllSources()
     .select([
       'pb.ingredient_id AS ingredient_id',
       'pb.ingredient_name AS ingredient_name',
       'pb.product_id AS product_id',
       'pb.product_name AS product_name',
       'pb.product_name_display AS product_name_display',
+      'pb.source_system AS source_system',
     ])
-    .andWhere('pb.family_name = :value', { value: searchedValue })
-    .distinctOn(['pb.ingredient_name', 'pb.product_name'])
+    .where('pb.family_name = :value', { value: searchedValue })
+    .distinctOn(['pb.ingredient_name', 'pb.product_name', 'pb.source_system'])
     .limit(BROWSER_LIMIT)
     .getRawMany();
 };
@@ -237,12 +252,12 @@ interface ProductHierarchyRow {
   trade_id: string;
   trade_name: string;
   trade_name_display: string | null;
+  source_system: string;
 }
 const hierarchyProductName = async (
   searchedValue: string,
-  sourceSystem: string,
 ): Promise<ProductHierarchyRow[]> => {
-  return baseQuery(sourceSystem)
+  return baseQueryAllSources()
     .select([
       'pb.ingredient_id AS ingredient_id',
       'pb.ingredient_name AS ingredient_name',
@@ -251,9 +266,15 @@ const hierarchyProductName = async (
       'pb.trade_id AS trade_id',
       'pb.trade_name AS trade_name',
       'pb.trade_name_display AS trade_name_display',
+      'pb.source_system AS source_system',
     ])
-    .andWhere('pb.product_name = :value', { value: searchedValue })
-    .distinctOn(['pb.ingredient_name', 'pb.family_name', 'pb.trade_name'])
+    .where('pb.product_name = :value', { value: searchedValue })
+    .distinctOn([
+      'pb.ingredient_name',
+      'pb.family_name',
+      'pb.trade_name',
+      'pb.source_system',
+    ])
     .limit(BROWSER_LIMIT)
     .getRawMany();
 };
@@ -266,12 +287,12 @@ interface TradeHierarchyRow {
   product_id: string;
   product_name: string;
   product_name_display: string | null;
+  source_system: string;
 }
 const hierarchyTradeName = async (
   searchedValue: string,
-  sourceSystem: string,
 ): Promise<TradeHierarchyRow[]> => {
-  return baseQuery(sourceSystem)
+  return baseQueryAllSources()
     .select([
       'pb.ingredient_id AS ingredient_id',
       'pb.ingredient_name AS ingredient_name',
@@ -280,9 +301,15 @@ const hierarchyTradeName = async (
       'pb.product_id AS product_id',
       'pb.product_name AS product_name',
       'pb.product_name_display AS product_name_display',
+      'pb.source_system AS source_system',
     ])
-    .andWhere('pb.trade_name = :value', { value: searchedValue })
-    .distinctOn(['pb.ingredient_name', 'pb.family_name', 'pb.product_name'])
+    .where('pb.trade_name = :value', { value: searchedValue })
+    .distinctOn([
+      'pb.ingredient_name',
+      'pb.family_name',
+      'pb.product_name',
+      'pb.source_system',
+    ])
     .limit(BROWSER_LIMIT)
     .getRawMany();
 };
@@ -300,7 +327,6 @@ const searchProductBrowser = async (req: Request, res: Response) => {
 
   try {
     const result: SearchedResponse = {
-      sourceSystem,
       ingredients: [],
       pFamily: [],
       pName: [],
@@ -309,28 +335,34 @@ const searchProductBrowser = async (req: Request, res: Response) => {
 
     if (type === SEARCH_TYPE_HIERARCHY) {
       // type=1 — hierarchy walk. Validator already rejected level=ALL.
+      // Source filter is NOT applied here — the same ingredient/family/
+      // product/trade name can exist in multiple upstream systems, so
+      // each returned item carries its own `sourceSystem` and the FE
+      // labels it by origin.
       switch (level) {
         case 'INGREDIENT': {
-          const rows = await hierarchyIngredient(searchedValue, sourceSystem);
+          const rows = await hierarchyIngredient(searchedValue);
           for (const r of rows) {
             if (r.family_name) {
               result.pFamily.push({
                 name: r.family_name,
                 code: r.family_id,
                 original_name: r.family_name,
+                sourceSystem: r.source_system,
               });
             }
           }
           break;
         }
         case 'PRODUCT_FAMILY': {
-          const rows = await hierarchyFamily(searchedValue, sourceSystem);
+          const rows = await hierarchyFamily(searchedValue);
           for (const r of rows) {
             if (r.ingredient_name) {
               result.ingredients.push({
                 name: r.ingredient_name,
                 code: r.ingredient_id,
                 original_name: r.ingredient_name,
+                sourceSystem: r.source_system,
               });
             }
             if (r.product_name) {
@@ -338,19 +370,21 @@ const searchProductBrowser = async (req: Request, res: Response) => {
                 name: r.product_name_display ?? r.product_name,
                 code: r.product_id,
                 original_name: r.product_name,
+                sourceSystem: r.source_system,
               });
             }
           }
           break;
         }
         case 'PRODUCT_NAME': {
-          const rows = await hierarchyProductName(searchedValue, sourceSystem);
+          const rows = await hierarchyProductName(searchedValue);
           for (const r of rows) {
             if (r.ingredient_name) {
               result.ingredients.push({
                 name: r.ingredient_name,
                 code: r.ingredient_id,
                 original_name: r.ingredient_name,
+                sourceSystem: r.source_system,
               });
             }
             if (r.family_name) {
@@ -358,6 +392,7 @@ const searchProductBrowser = async (req: Request, res: Response) => {
                 name: r.family_name,
                 code: r.family_id,
                 original_name: r.family_name,
+                sourceSystem: r.source_system,
               });
             }
             if (r.trade_name) {
@@ -365,19 +400,21 @@ const searchProductBrowser = async (req: Request, res: Response) => {
                 name: r.trade_name_display ?? r.trade_name,
                 code: r.trade_id,
                 original_name: r.trade_name,
+                sourceSystem: r.source_system,
               });
             }
           }
           break;
         }
         case 'TRADE_NAME': {
-          const rows = await hierarchyTradeName(searchedValue, sourceSystem);
+          const rows = await hierarchyTradeName(searchedValue);
           for (const r of rows) {
             if (r.ingredient_name) {
               result.ingredients.push({
                 name: r.ingredient_name,
                 code: r.ingredient_id,
                 original_name: r.ingredient_name,
+                sourceSystem: r.source_system,
               });
             }
             if (r.family_name) {
@@ -385,6 +422,7 @@ const searchProductBrowser = async (req: Request, res: Response) => {
                 name: r.family_name,
                 code: r.family_id,
                 original_name: r.family_name,
+                sourceSystem: r.source_system,
               });
             }
             if (r.product_name) {
@@ -392,6 +430,7 @@ const searchProductBrowser = async (req: Request, res: Response) => {
                 name: r.product_name_display ?? r.product_name,
                 code: r.product_id,
                 original_name: r.product_name,
+                sourceSystem: r.source_system,
               });
             }
           }

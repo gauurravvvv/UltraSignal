@@ -224,11 +224,12 @@ Body:
 | `"endsWith"` | `ILIKE '%term'` | ends with term |
 | `"exactMatch"` | `ILIKE 'term'` | exact (still case-insensitive) |
 
-**Response is the same shape for both types:**
+**Response shape differs slightly by type:**
+
+`type=0` (search) — no `sourceSystem` anywhere. The FE already knows what it queried, every item is filtered to that one source, no need to echo.
 
 ```json
 {
-  "sourceSystem": "UAN",
   "ingredients": [{ "name": "...", "code": "...", "original_name": "..." }],
   "pFamily":     [...],
   "pName":       [...],
@@ -236,7 +237,21 @@ Body:
 }
 ```
 
-`sourceSystem` echoes back what the FE queried for (every item in the four arrays shares it, so it's surfaced once at the root instead of per item).
+`type=1` (hierarchy) — every item carries `sourceSystem`. **The hierarchy walk does NOT filter by `sourceSystem`** — the same ingredient / family / product / trade name can exist in multiple upstream systems (UAN, AEMS, ...), and the FE wants to see related items from every source. Each row tells you where it came from.
+
+```json
+{
+  "ingredients": [
+    { "name": "Paracetamol", "code": "ING-001", "original_name": "Paracetamol", "sourceSystem": "UAN" },
+    { "name": "Paracetamol", "code": "ING-A99", "original_name": "Paracetamol", "sourceSystem": "AEMS" }
+  ],
+  "pFamily":   [...],
+  "pName":     [...],
+  "tradeName": [...]
+}
+```
+
+The FE still sends `sourceSystem` on type=1 (the validator keeps it required for consistency), but the controller ignores it for hierarchy lookups.
 
 **Which arrays get populated:**
 
