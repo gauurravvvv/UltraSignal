@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import listProductBrowser from './listProductBrowser';
+import searchProductBrowser from './listProductBrowser';
 
 class ProductBrowserController {
-  public list = async (req: Request, res: Response) => {
-    listProductBrowser(req, res);
+  public search = async (req: Request, res: Response) => {
+    searchProductBrowser(req, res);
   };
 }
 
